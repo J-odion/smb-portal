@@ -8,61 +8,91 @@ datasource db {
 }
 
 model Tenant {
-  id             String        @id @default(uuid())
-  business_name  String
-  logo_url       String?
-  address        String?
-  bank_name      String?
-  account_number String?
-  account_holder String?
-  created_at     DateTime      @default(now())
-  
-  users          User[]
-  customers      Customer[]
-  transactions   Transaction[]
-  payments       Payment[]
-  expenses       Expense[]
-  staff          Staff[]
+  id           String   @id @default(uuid())
+  name         String
+  logo_url     String?
+  address      String?
+  bank_name    String?
+  account_no   String?
+  account_name String?
+  created_at   DateTime @default(now())
+
+  users        User[]
+  branches     Branch[]
+  customers    Customer[]
+  transactions Transaction[]
+  payments     Payment[]
+  expenses     Expense[]
+  staff        Staff[]
+  products     Product[]
+}
+
+model Branch {
+  id         String   @id @default(uuid())
+  tenant_id  String
+  tenant     Tenant   @relation(fields: [tenant_id], references: [id])
+  name       String
+  address    String?
+  created_at DateTime @default(now())
+
+  transactions Transaction[]
+  expenses     Expense[]
+  staff        Staff[]
 }
 
 model User {
-  id         String   @id @default(uuid())
-  email      String   @unique
-  password   String
-  tenant_id  String
-  tenant     Tenant   @relation(fields: [tenant_id], references: [id])
-  created_at DateTime @default(now())
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  tenant_id     String
+  tenant        Tenant   @relation(fields: [tenant_id], references: [id])
+  created_at    DateTime @default(now())
 }
 
 model Customer {
-  id               String        @id @default(uuid())
+  id               String   @id @default(uuid())
   tenant_id        String
-  tenant           Tenant        @relation(fields: [tenant_id], references: [id])
+  tenant           Tenant   @relation(fields: [tenant_id], references: [id])
   name             String
   phone            String
   whatsapp         String?
   address          String?
   notes            String?
-  whatsapp_consent Boolean       @default(false)
-  created_at       DateTime      @default(now())
-  
-  transactions     Transaction[]
+  whatsapp_consent Boolean  @default(false)
+  metadata         Json?    // Vertical-specific data (e.g. measurements)
+  created_at       DateTime @default(now())
+
+  transactions Transaction[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  tenant_id   String
+  tenant      Tenant   @relation(fields: [tenant_id], references: [id])
+  name        String
+  sku         String?
+  price       Decimal  @db.Decimal(10, 2)
+  stock_level Int      @default(0)
+  created_at  DateTime @default(now())
 }
 
 model Transaction {
-  id          String            @id @default(uuid())
+  id          String    @id @default(uuid())
   tenant_id   String
-  tenant      Tenant            @relation(fields: [tenant_id], references: [id])
-  customer_id String
-  customer    Customer          @relation(fields: [customer_id], references: [id])
-  subtotal    Float             @default(0.0)
-  vat         Float             @default(0.0)
-  total       Float             @default(0.0)
-  status      String            @default("PENDING") // PENDING, PAID, VOID
-  created_at  DateTime          @default(now())
-  
-  items       TransactionItem[]
-  payments    Payment[]
+  tenant      Tenant    @relation(fields: [tenant_id], references: [id])
+  branch_id   String?
+  branch      Branch?   @relation(fields: [branch_id], references: [id])
+  customer_id String?
+  customer    Customer? @relation(fields: [customer_id], references: [id])
+  subtotal    Decimal   @db.Decimal(10, 2)
+  vat         Decimal   @db.Decimal(10, 2)
+  total       Decimal   @db.Decimal(10, 2)
+  status      String    @default("Pending") // Pending, Paid, Void
+  metadata    Json?     // Vertical-specific data
+  created_at  DateTime  @default(now())
+
+  items    TransactionItem[]
+  payments Payment[]
 }
 
 model TransactionItem {
@@ -70,8 +100,8 @@ model TransactionItem {
   transaction_id String
   transaction    Transaction @relation(fields: [transaction_id], references: [id])
   description    String
-  quantity       Int         @default(1)
-  unit_price     Float       @default(0.0)
+  quantity       Int
+  unit_price     Decimal     @db.Decimal(10, 2)
 }
 
 model Payment {
@@ -80,9 +110,8 @@ model Payment {
   tenant         Tenant      @relation(fields: [tenant_id], references: [id])
   transaction_id String
   transaction    Transaction @relation(fields: [transaction_id], references: [id])
-  amount         Float
-  method         String      // CASH, BANK_TRANSFER, POS, MOBILE_WALLET
-  staff_id       String?
+  amount         Decimal     @db.Decimal(10, 2)
+  method         String      // Cash, POS, Transfer
   created_at     DateTime    @default(now())
 }
 
@@ -90,19 +119,25 @@ model Expense {
   id         String   @id @default(uuid())
   tenant_id  String
   tenant     Tenant   @relation(fields: [tenant_id], references: [id])
-  category   String
-  amount     Float
-  note       String?
+  branch_id  String?
+  branch     Branch?  @relation(fields: [branch_id], references: [id])
+  category   String   // Fuel, Rent, Supplies, Other
+  amount     Decimal  @db.Decimal(10, 2)
   date       DateTime @default(now())
+  note       String?
+  created_at DateTime @default(now())
 }
 
 model Staff {
-  id                 String  @id @default(uuid())
+  id                 String   @id @default(uuid())
   tenant_id          String
-  tenant             Tenant  @relation(fields: [tenant_id], references: [id])
+  tenant             Tenant   @relation(fields: [tenant_id], references: [id])
+  branch_id          String?
+  branch             Branch?  @relation(fields: [branch_id], references: [id])
   name               String
-  phone              String
-  pay_type           String  // FLAT, COMMISSION
-  flat_amount        Float?
-  commission_percent Float?
+  phone              String?
+  pay_type           String   // Flat, Commission
+  flat_amount        Decimal? @db.Decimal(10, 2)
+  commission_percent Decimal? @db.Decimal(5, 2)
+  created_at         DateTime @default(now())
 }

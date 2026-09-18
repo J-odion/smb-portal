@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { SyncProvider } from "../components/SyncProvider";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "SMB Portal | Business Management",
-  description: "Manage your business, customers, and invoices all in one place.",
+  title: "African SMB Portal",
+  description: "Business management platform for SMBs",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -16,8 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.variable}>
-        {children}
+      <body className={`${inter.className} antialiased`}>
+        <SyncProvider>
+          {children}
+        </SyncProvider>
       </body>
     </html>
   );

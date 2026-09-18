@@ -37,7 +37,32 @@ export default function InvoicesPage() {
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
     
+    const payload = {
+      customer_id: formData.get("customer_id"),
+      subtotal: parseFloat(formData.get("amount") as string),
+      vat: 0,
+      total: parseFloat(formData.get("amount") as string),
+      items: [
+        {
+          description: formData.get("description"),
+          quantity: 1,
+          unit_price: parseFloat(formData.get("amount") as string),
+        }
+      ]
+    };
+
     try {
+      if (!navigator.onLine) {
+        // Dynamic import because of browser APIs
+        const { addToSyncQueue } = await import('../../../lib/db');
+        await addToSyncQueue('transaction', payload);
+        setIsModalOpen(false);
+        setIsSubmitting(false);
+        // Show a temporary offline row or just alert
+        alert("You are offline. Invoice queued for sync when connection is restored.");
+        return;
+      }
+
       const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
       const res = await fetch("/api/transactions", {
         method: "POST",
@@ -45,19 +70,7 @@ export default function InvoicesPage() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({
-          customer_id: formData.get("customer_id"),
-          subtotal: parseFloat(formData.get("amount") as string),
-          vat: 0,
-          total: parseFloat(formData.get("amount") as string),
-          items: [
-            {
-              description: formData.get("description"),
-              quantity: 1,
-              unit_price: parseFloat(formData.get("amount") as string),
-            }
-          ]
-        }),
+        body: JSON.stringify(payload),
       });
       
       if (res.ok) {
@@ -97,44 +110,46 @@ export default function InvoicesPage() {
           </select>
         </div>
         
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-tertiary text-sm text-secondary">
-              <th className="pb-2">Date</th>
-              <th className="pb-2">Customer</th>
-              <th className="pb-2">Total (₦)</th>
-              <th className="pb-2">Status</th>
-              <th className="pb-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td className="py-4 text-center text-secondary" colSpan={5}>
-                  Loading invoices...
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[600px]">
+            <thead>
+              <tr className="border-b border-tertiary text-sm text-secondary">
+                <th className="pb-2">Date</th>
+                <th className="pb-2">Customer</th>
+                <th className="pb-2">Total (₦)</th>
+                <th className="pb-2">Status</th>
+                <th className="pb-2">Actions</th>
               </tr>
-            ) : invoices.length === 0 ? (
-              <tr>
-                <td className="py-4 text-center text-secondary" colSpan={5}>
-                  No invoices found. Click "Create Invoice" to start billing.
-                </td>
-              </tr>
-            ) : (
-              invoices.map((inv: any) => (
-                <tr key={inv.id} className="border-b border-tertiary">
-                  <td className="py-4">{new Date(inv.created_at).toLocaleDateString()}</td>
-                  <td className="py-4">{inv.customer?.name || 'Unknown'}</td>
-                  <td className="py-4 font-bold">₦{Number(inv.total).toLocaleString()}</td>
-                  <td className="py-4 text-secondary">{inv.status}</td>
-                  <td className="py-4">
-                    <button className="text-brand-600 mr-2">View</button>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td className="py-4 text-center text-secondary" colSpan={5}>
+                    Loading invoices...
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : invoices.length === 0 ? (
+                <tr>
+                  <td className="py-4 text-center text-secondary" colSpan={5}>
+                    No invoices found. Click "Create Invoice" to start billing.
+                  </td>
+                </tr>
+              ) : (
+                invoices.map((inv: any) => (
+                  <tr key={inv.id} className="border-b border-tertiary">
+                    <td className="py-4">{new Date(inv.created_at).toLocaleDateString()}</td>
+                    <td className="py-4">{inv.customer?.name || 'Unknown'}</td>
+                    <td className="py-4 font-bold">₦{Number(inv.total).toLocaleString()}</td>
+                    <td className="py-4 text-secondary">{inv.status}</td>
+                    <td className="py-4">
+                      <button className="text-brand-600 mr-2">View</button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {isModalOpen && (

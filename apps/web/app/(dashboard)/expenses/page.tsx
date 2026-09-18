@@ -80,40 +80,42 @@ export default function ExpensesPage() {
       </div>
 
       <div className="glass p-6 rounded-lg shadow-sm border border-tertiary">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-tertiary text-sm text-secondary">
-              <th className="pb-2">Date</th>
-              <th className="pb-2">Category</th>
-              <th className="pb-2">Amount (₦)</th>
-              <th className="pb-2">Note</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td className="py-4 text-center text-secondary" colSpan={4}>
-                  Loading expenses...
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[500px]">
+            <thead>
+              <tr className="border-b border-tertiary text-sm text-secondary">
+                <th className="pb-2">Date</th>
+                <th className="pb-2">Category</th>
+                <th className="pb-2">Amount (₦)</th>
+                <th className="pb-2">Note</th>
               </tr>
-            ) : expenses.length === 0 ? (
-              <tr>
-                <td className="py-4 text-center text-secondary" colSpan={4}>
-                  No expenses logged yet. Click "Log Expense" to track costs.
-                </td>
-              </tr>
-            ) : (
-              expenses.map((exp: any) => (
-                <tr key={exp.id} className="border-b border-tertiary">
-                  <td className="py-4">{new Date(exp.date).toLocaleDateString()}</td>
-                  <td className="py-4">{exp.category}</td>
-                  <td className="py-4 font-bold">₦{Number(exp.amount).toLocaleString()}</td>
-                  <td className="py-4 text-secondary">{exp.note || '-'}</td>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td className="py-4 text-center text-secondary" colSpan={4}>
+                    Loading expenses...
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : expenses.length === 0 ? (
+                <tr>
+                  <td className="py-4 text-center text-secondary" colSpan={4}>
+                    No expenses logged yet. Click "Log Expense" to track costs.
+                  </td>
+                </tr>
+              ) : (
+                expenses.map((exp: any) => (
+                  <tr key={exp.id} className="border-b border-tertiary">
+                    <td className="py-4">{new Date(exp.date).toLocaleDateString()}</td>
+                    <td className="py-4">{exp.category}</td>
+                    <td className="py-4 font-bold">₦{Number(exp.amount).toLocaleString()}</td>
+                    <td className="py-4 text-secondary">{exp.note || '-'}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {isModalOpen && (
