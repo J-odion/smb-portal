@@ -75,7 +75,9 @@ export default function SignupPage() {
             />
           </div>
           
-          <button type="submit" className="btn btn-primary mt-4 w-full p-4">Sign Up</button>
+          <button type="submit" disabled={loading} className="btn btn-primary mt-4 w-full p-4">
+            {loading ? "Creating account..." : "Sign Up"}
+          </button>
         </form>
         
         <p className="mt-8 text-sm text-secondary">

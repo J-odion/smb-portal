@@ -21,11 +21,11 @@ export class AuthService {
     // Create Tenant and Owner user in one transaction
     const tenant = await this.prisma.tenant.create({
       data: {
-        business_name: businessName,
+        name: businessName,
         users: {
           create: {
             email,
-            password: hashedPassword
+            password_hash: hashedPassword
           }
         }
       },
@@ -44,7 +44,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isMatch = await bcrypt.compare(passwordPlain, user.password);
+    const isMatch = await bcrypt.compare(passwordPlain, user.password_hash);
     if (!isMatch) {
       throw new UnauthorizedException('Invalid credentials');
     }
