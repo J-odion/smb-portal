@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id             String        @id @default(uuid())
+  business_name  String
+  logo_url       String?
+  address        String?
+  bank_name      String?
+  account_number String?
+  account_holder String?
+  created_at     DateTime      @default(now())
+  
+  users          User[]
+  customers      Customer[]
+  transactions   Transaction[]
+  payments       Payment[]
+  expenses       Expense[]
+  staff          Staff[]
+}
+
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  tenant_id  String
+  tenant     Tenant   @relation(fields: [tenant_id], references: [id])
+  created_at DateTime @default(now())
+}
+
+model Customer {
+  id               String        @id @default(uuid())
+  tenant_id        String
+  tenant           Tenant        @relation(fields: [tenant_id], references: [id])
+  name             String
+  phone            String
+  whatsapp         String?
+  address          String?
+  notes            String?
+  whatsapp_consent Boolean       @default(false)
+  created_at       DateTime      @default(now())
+  
+  transactions     Transaction[]
+}
+
+model Transaction {
+  id          String            @id @default(uuid())
+  tenant_id   String
+  tenant      Tenant            @relation(fields: [tenant_id], references: [id])
+  customer_id String
+  customer    Customer          @relation(fields: [customer_id], references: [id])
+  subtotal    Float             @default(0.0)
+  vat         Float             @default(0.0)
+  total       Float             @default(0.0)
+  status      String            @default("PENDING") // PENDING, PAID, VOID
+  created_at  DateTime          @default(now())
+  
+  items       TransactionItem[]
+  payments    Payment[]
+}
+
+model TransactionItem {
+  id             String      @id @default(uuid())
+  transaction_id String
+  transaction    Transaction @relation(fields: [transaction_id], references: [id])
+  description    String
+  quantity       Int         @default(1)
+  unit_price     Float       @default(0.0)
+}
+
+model Payment {
+  id             String      @id @default(uuid())
+  tenant_id      String
+  tenant         Tenant      @relation(fields: [tenant_id], references: [id])
+  transaction_id String
+  transaction    Transaction @relation(fields: [transaction_id], references: [id])
+  amount         Float
+  method         String      // CASH, BANK_TRANSFER, POS, MOBILE_WALLET
+  staff_id       String?
+  created_at     DateTime    @default(now())
+}
+
+model Expense {
+  id         String   @id @default(uuid())
+  tenant_id  String
+  tenant     Tenant   @relation(fields: [tenant_id], references: [id])
+  category   String
+  amount     Float
+  note       String?
+  date       DateTime @default(now())
+}
+
+model Staff {
+  id                 String  @id @default(uuid())
+  tenant_id          String
+  tenant             Tenant  @relation(fields: [tenant_id], references: [id])
+  name               String
+  phone              String
+  pay_type           String  // FLAT, COMMISSION
+  flat_amount        Float?
+  commission_percent Float?
+}
