@@ -95,16 +95,14 @@ async function main() {
       items: {
         create: [
           {
-            product_id: product1.id,
+            description: 'Coca Cola Can',
             quantity: 1,
             unit_price: 250.0,
-            subtotal: 250.0,
           },
           {
-            product_id: product2.id,
+            description: 'Peak Milk Refill',
             quantity: 1,
             unit_price: 1500.0,
-            subtotal: 1500.0,
           },
         ],
       },
