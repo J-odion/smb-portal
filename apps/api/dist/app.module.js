@@ -19,6 +19,10 @@ const expenses_module_js_1 = require("./expenses/expenses.module.js");
 const staff_module_js_1 = require("./staff/staff.module.js");
 const prisma_module_js_1 = require("./prisma/prisma.module.js");
 const payments_module_js_1 = require("./payments/payments.module.js");
+const branches_module_js_1 = require("./branches/branches.module.js");
+const inventory_module_js_1 = require("./inventory/inventory.module.js");
+const sync_module_js_1 = require("./sync/sync.module.js");
+const analytics_module_js_1 = require("./analytics/analytics.module.js");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +40,10 @@ exports.AppModule = AppModule = __decorate([
             expenses_module_js_1.ExpensesModule,
             staff_module_js_1.StaffModule,
             payments_module_js_1.PaymentsModule,
+            branches_module_js_1.BranchesModule,
+            inventory_module_js_1.InventoryModule,
+            sync_module_js_1.SyncModule,
+            analytics_module_js_1.AnalyticsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

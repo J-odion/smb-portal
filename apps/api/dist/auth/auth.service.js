@@ -62,11 +62,11 @@ let AuthService = class AuthService {
         const hashedPassword = await bcrypt.hash(passwordPlain, 10);
         const tenant = await this.prisma.tenant.create({
             data: {
-                business_name: businessName,
+                name: businessName,
                 users: {
                     create: {
                         email,
-                        password: hashedPassword
+                        password_hash: hashedPassword
                     }
                 }
             },
@@ -82,7 +82,7 @@ let AuthService = class AuthService {
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
-        const isMatch = await bcrypt.compare(passwordPlain, user.password);
+        const isMatch = await bcrypt.compare(passwordPlain, user.password_hash);
         if (!isMatch) {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
