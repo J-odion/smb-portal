@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
+    "postinstall": "npm run db:generate --workspace=@smb/database",
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
