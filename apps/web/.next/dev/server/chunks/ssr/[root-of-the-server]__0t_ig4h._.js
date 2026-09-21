@@ -26,12 +26,6 @@ const __TURBOPACK__default__export__ = {
 "[project]/apps/web/app/page.module.css [app-rsc] (css module)", ((__turbopack_context__) => {
 
 __turbopack_context__.v({
-  "blob1": "page-module__meqK-a__blob1",
-  "blob2": "page-module__meqK-a__blob2",
-  "hero": "page-module__meqK-a__hero",
-  "main": "page-module__meqK-a__main",
-  "mb-4": "page-module__meqK-a__mb-4",
-  "mb-8": "page-module__meqK-a__mb-8",
 });
 }),
 "[project]/apps/web/app/page.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
