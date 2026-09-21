@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/hp/Desktop/JAFARU/codes/smb-portal/apps/web/app/page.module.css"],"sourcesContent":[".main {\n  min-height: 100vh;\n  position: relative;\n  overflow: hidden;\n  background-color: var(--bg-primary);\n}\n\n.hero {\n  position: relative;\n  z-index: 10;\n  text-align: center;\n  border-radius: var(--radius-xl);\n  max-width: 600px;\n  box-shadow: var(--shadow-lg);\n}\n\n.mb-4 { margin-bottom: 1rem; }\n.mb-8 { margin-bottom: 2rem; }\n\n/* Abstract blobs for modern look */\n.blob1, .blob2 {\n  position: absolute;\n  border-radius: 50%;\n  filter: blur(80px);\n  z-index: 1;\n  opacity: 0.5;\n}\n\n.blob1 {\n  width: 400px;\n  height: 400px;\n  background: rgba(99, 102, 241, 0.3);\n  top: -100px;\n  right: -100px;\n}\n\n.blob2 {\n  width: 500px;\n  height: 500px;\n  background: rgba(168, 85, 247, 0.2);\n  bottom: -150px;\n  left: -150px;\n}\n"],"names":[],"mappings":"AAAA;;;;;;;AAOA;;;;;;;;;AASA;;;;AACA;;;;AAGA;;;;;;;;AAQA;;;;;;;;AAQA"}}]
+}

@@ -1,0 +1,50 @@
+/* [project]/apps/web/app/page.module.css [app-client] (css) */
+.page-module__meqK-a__main {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-module__meqK-a__hero {
+  z-index: 10;
+  text-align: center;
+  border-radius: var(--radius-xl);
+  max-width: 600px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.page-module__meqK-a__mb-4 {
+  margin-bottom: 1rem;
+}
+
+.page-module__meqK-a__mb-8 {
+  margin-bottom: 2rem;
+}
+
+.page-module__meqK-a__blob1, .page-module__meqK-a__blob2 {
+  filter: blur(80px);
+  z-index: 1;
+  opacity: .5;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.page-module__meqK-a__blob1 {
+  background: #6366f14d;
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  right: -100px;
+}
+
+.page-module__meqK-a__blob2 {
+  background: #a855f733;
+  width: 500px;
+  height: 500px;
+  bottom: -150px;
+  left: -150px;
+}
+
+/*# sourceMappingURL=apps_web_app_page_module_03walni.css.map*/
