@@ -13,30 +13,12 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
     
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      
-      if (!res.ok) {
-        const errData = await res.json().catch(() => null);
-        throw new Error(errData?.message || "Invalid email or password");
-      }
-      
-      const data = await res.json();
-      document.cookie = `token=${data.access_token}; path=/; max-age=86400`;
-      router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    // Mock successful login
+    document.cookie = `token=mock_token_123; path=/; max-age=86400`;
+    router.push("/dashboard");
   };
 
   return (

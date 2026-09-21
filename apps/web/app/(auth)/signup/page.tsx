@@ -13,31 +13,12 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
     
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const businessName = formData.get("businessName");
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
     
-    try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, passwordPlain: password, businessName }),
-      });
-      
-      if (!res.ok) {
-        const errData = await res.json().catch(() => null);
-        throw new Error(errData?.message || "Failed to create account");
-      }
-      
-      const data = await res.json();
-      document.cookie = `token=${data.access_token}; path=/; max-age=86400`;
-      router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    // Mock successful signup
+    document.cookie = `token=mock_token_123; path=/; max-age=86400`;
+    router.push("/dashboard");
   };
 
   return (

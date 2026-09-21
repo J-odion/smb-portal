@@ -18,18 +18,21 @@
 }
 
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #f1f3f5;
-  --text-primary: #1a1b1e;
-  --text-secondary: #495057;
-  --text-tertiary: #868e96;
+  /* Default to Deep premium purple theme */
+  --bg-primary: #0f0518; /* Very deep purple, almost black */
+  --bg-secondary: #1a0b2e;
+  --bg-tertiary: #2e1454;
+  --text-primary: #fdf4ff;
+  --text-secondary: #d8b4fe;
+  --text-tertiary: #a855f7;
   
-  --brand-50: #eef2ff;
-  --brand-100: #e0e7ff;
-  --brand-500: #6366f1;
-  --brand-600: #4f46e5;
-  --brand-700: #4338ca;
+  --brand-50: #f5f3ff;
+  --brand-100: #ede9fe;
+  --brand-400: #c084fc;
+  --brand-500: #a855f7; /* Bright vibrant purple */
+  --brand-600: #9333ea;
+  --brand-700: #7e22ce;
+  --brand-900: #3b0764;
   
   --success-500: #10b981;
   --danger-500: #ef4444;
@@ -43,21 +46,7 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 15px rgba(99, 102, 241, 0.3);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-tertiary: #94a3b8;
-    
-    --brand-500: #818cf8;
-    --brand-600: #6366f1;
-  }
+  --shadow-glow: 0 0 15px rgba(168, 85, 247, 0.4);
 }
 
 * {
