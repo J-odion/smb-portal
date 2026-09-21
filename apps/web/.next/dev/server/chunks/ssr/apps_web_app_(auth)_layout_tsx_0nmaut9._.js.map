@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/hp/Desktop/JAFARU/codes/smb-portal/apps/web/app/(auth)/layout.tsx"],"sourcesContent":["import { ReactNode } from \"react\";\n\nexport default function AuthLayout({ children }: { children: ReactNode }) {\n  return (\n    <div className=\"flex flex-col items-center justify-center min-h-screen bg-primary\">\n      {children}\n    </div>\n  );\n}\n"],"names":["AuthLayout","children","className"],"mappings":";;;;;;AAEe,SAASA,WAAW,EAAEC,QAAQ,EAA2B;IACtE,qBACE,8OAAC;QAAIC,WAAU;kBACZD;;;;;;AAGP"}}]
-}
