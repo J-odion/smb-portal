@@ -16,4 +16,9 @@ export class PaymentsController {
   async create(@Request() req: any, @Body() body: any) {
     return this.paymentsService.create(req.user.tenantId, body);
   }
+
+  @Post('checkout-session')
+  async createCheckoutSession(@Request() req: any) {
+    return this.paymentsService.createCheckoutSession(req.user.tenantId);
+  }
 }

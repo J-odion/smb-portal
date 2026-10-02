@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { Customer, Transaction, TransactionItem } from '../schemas/index.js';
 
 @Injectable()
 export class SyncService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectModel(Customer.name) private customerModel: Model<Customer>,
+    @InjectModel(Transaction.name) private transactionModel: Model<Transaction>,
+    @InjectModel(TransactionItem.name) private transactionItemModel: Model<TransactionItem>,
+  ) {}
 
   async syncOfflineData(tenantId: string, payload: any) {
     const results = {
@@ -16,22 +22,22 @@ export class SyncService {
     if (payload.customers && Array.isArray(payload.customers)) {
       for (const customer of payload.customers) {
         try {
-          await this.prisma.customer.upsert({
-            where: { id: customer.id || 'new-uuid-placeholder' }, // In a real app we'd use a robust offline UUID strategy
-            update: {
-              name: customer.name,
-              phone: customer.phone,
-              whatsapp: customer.whatsapp,
-              address: customer.address,
-            },
-            create: {
-              tenant_id: tenantId,
-              name: customer.name,
-              phone: customer.phone,
-              whatsapp: customer.whatsapp,
-              address: customer.address,
-            },
-          });
+          const updateData = {
+            name: customer.name,
+            phone: customer.phone,
+            whatsapp: customer.whatsapp,
+            address: customer.address,
+            tenant_id: tenantId,
+          };
+          
+          // Use phone + tenant_id as the unique identifier to prevent duplicates
+          // since mobile devices might not generate valid ObjectIds for new offline customers
+          await this.customerModel.findOneAndUpdate(
+            { tenant_id: tenantId, phone: customer.phone },
+            { $set: updateData },
+            { upsert: true, new: true }
+          ).exec();
+          
           results.customersSynced++;
         } catch (err: any) {
           results.errors.push({ type: 'customer', id: customer.id, error: err.message });
@@ -43,24 +49,39 @@ export class SyncService {
     if (payload.transactions && Array.isArray(payload.transactions)) {
       for (const txn of payload.transactions) {
         try {
-          // If the offline transaction doesn't exist, create it
-          await this.prisma.transaction.create({
-            data: {
-              tenant_id: tenantId,
-              customer_id: txn.customer_id,
-              subtotal: txn.subtotal,
-              vat: txn.vat || 0,
-              total: txn.total,
-              status: txn.status || 'Pending',
-              items: {
-                create: txn.items?.map((item: any) => ({
-                  description: item.description,
-                  quantity: item.quantity,
-                  unit_price: item.unit_price,
-                })) || [],
-              },
-            },
+          // Use offline ID stored in metadata or the provided ID to prevent duplicate transactions
+          const offlineId = txn.id || txn.offline_id;
+          
+          const existingTxn = await this.transactionModel.findOne({
+            tenant_id: tenantId,
+            'metadata.offline_id': offlineId
+          }).exec();
+
+          if (existingTxn) {
+            // Already synced, skip to prevent duplicates
+            continue;
+          }
+
+          const newTxn = await this.transactionModel.create({
+            tenant_id: tenantId,
+            customer_id: txn.customer_id,
+            subtotal: txn.subtotal,
+            vat: txn.vat || 0,
+            total: txn.total,
+            status: txn.status || 'Pending',
+            metadata: { offline_id: offlineId, ...txn.metadata }
           });
+
+          if (txn.items && Array.isArray(txn.items) && txn.items.length > 0) {
+            const itemsToInsert = txn.items.map((item: any) => ({
+              transaction_id: newTxn._id,
+              description: item.description,
+              quantity: item.quantity,
+              unit_price: item.unit_price,
+            }));
+            await this.transactionItemModel.insertMany(itemsToInsert);
+          }
+          
           results.transactionsSynced++;
         } catch (err: any) {
           results.errors.push({ type: 'transaction', id: txn.id, error: err.message });

@@ -1,23 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Customer } from '../schemas/index.js';
 
 @Injectable()
 export class CustomersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(@InjectModel(Customer.name) private customerModel: Model<Customer>) {}
 
   async findAll(tenantId: string) {
-    return this.prisma.customer.findMany({
-      where: { tenant_id: tenantId },
-      orderBy: { created_at: 'desc' },
-    });
+    return this.customerModel.find({ tenant_id: tenantId }).sort({ created_at: -1 }).exec();
   }
 
   async create(tenantId: string, data: { name: string; phone: string; whatsapp?: string; address?: string; notes?: string; whatsapp_consent?: boolean }) {
-    return this.prisma.customer.create({
-      data: {
-        tenant_id: tenantId,
-        ...data,
-      },
+    return this.customerModel.create({
+      tenant_id: tenantId,
+      ...data,
     });
   }
 }

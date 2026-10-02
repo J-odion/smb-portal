@@ -19,6 +19,29 @@ export default function OnboardingWizard() {
             />
           </div>
           
+          <div className="flex flex-col gap-2 mt-4">
+            <label htmlFor="industry" className="text-sm">Select your Business Industry</label>
+            <select 
+              id="industry" 
+              className="p-4 outline-none" 
+              style={{ borderRadius: 'var(--radius-sm)', border: '1px solid var(--bg-tertiary)', background: 'var(--bg-primary)' }}
+              required
+            >
+              <option value="" disabled selected>Select an industry...</option>
+              <option value="RETAIL">General Retail / Mart</option>
+              <option value="TAILOR">Tailoring & Fashion</option>
+              <option value="SALON">Barbing / Salon / Spa</option>
+              <option value="FOOD">Restaurant / Food Vendor</option>
+              <option value="BOOK_STORE">Book Store / Stationery</option>
+              <option value="PHOTOGRAPHY">Photography Studio</option>
+              <option value="RESTAURANT_BAR">Kitchen / Restaurant & Bar</option>
+              <option value="GYM_FITNESS">Gym & Fitness Center</option>
+              <option value="AUTO_REPAIR">Auto Repair / Mechanic</option>
+              <option value="REAL_ESTATE">Real Estate / Agency</option>
+            </select>
+            <p className="text-xs text-secondary">This helps us customize your dashboard with the right modules.</p>
+          </div>
+          
           <div className="flex flex-col gap-2">
             <label htmlFor="address" className="text-sm">Business Address</label>
             <textarea 
