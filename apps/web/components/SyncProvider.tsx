@@ -15,8 +15,13 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
     };
     const handleOffline = () => setIsOnline(false);
 
+    const handleSyncRequest = () => {
+      if (navigator.onLine) syncData();
+    };
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
+    window.addEventListener('sync-requested', handleSyncRequest);
 
     // Initial sync check on mount if online
     if (navigator.onLine) {
@@ -26,6 +31,7 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('sync-requested', handleSyncRequest);
     };
   }, []);
 

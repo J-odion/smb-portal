@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { addToSyncQueue } from "../../../lib/db";
 
 export default function POSPage() {
   const [cart, setCart] = useState<{id: string, name: string, price: number, qty: number, category: string, icon: string}[]>([]);
@@ -45,6 +46,32 @@ export default function POSPage() {
   };
 
   const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+  const handleCheckout = async () => {
+    if (cart.length === 0) return;
+
+    const payload = {
+      type: 'SALE',
+      subtotal: total,
+      vat: 0,
+      total: total,
+      items: cart.map(item => ({
+        // Omitting product_id for mock items to bypass backend strict ObjectId checks
+        description: item.name,
+        quantity: item.qty,
+        unit_price: item.price
+      }))
+    };
+
+    try {
+      await addToSyncQueue('transaction', payload);
+      window.dispatchEvent(new Event('sync-requested'));
+      alert("Transaction saved! It will sync automatically.");
+      setCart([]);
+    } catch (e) {
+      alert("Failed to save transaction.");
+    }
+  };
 
   return (
     <div className="flex flex-col lg:flex-row h-[calc(100vh-2rem)] md:h-[calc(100vh-80px)] overflow-hidden animate-fade-in -m-4 md:-m-8">
@@ -158,10 +185,7 @@ export default function POSPage() {
           <button 
             className="btn btn-primary w-full py-4 text-lg font-bold shadow-lg shadow-brand-500/20 disabled:opacity-50 disabled:shadow-none"
             disabled={cart.length === 0}
-            onClick={() => {
-              alert("Payment Successful! Mock transaction completed.");
-              setCart([]);
-            }}
+            onClick={handleCheckout}
           >
             Charge ₦{total.toLocaleString()}
           </button>
