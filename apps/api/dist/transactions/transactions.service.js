@@ -8,46 +8,51 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionsService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
+const index_js_1 = require("../schemas/index.js");
 let TransactionsService = class TransactionsService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    transactionModel;
+    transactionItemModel;
+    constructor(transactionModel, transactionItemModel) {
+        this.transactionModel = transactionModel;
+        this.transactionItemModel = transactionItemModel;
     }
     async findAll(tenantId) {
-        return this.prisma.transaction.findMany({
-            where: { tenant_id: tenantId },
-            include: {
-                customer: true,
-            },
-            orderBy: { created_at: 'desc' },
-        });
+        return this.transactionModel.find({ tenant_id: tenantId }).populate('customer_id').sort({ created_at: -1 }).exec();
     }
     async create(tenantId, data) {
-        return this.prisma.transaction.create({
-            data: {
-                tenant_id: tenantId,
-                customer_id: data.customer_id,
-                subtotal: data.subtotal,
-                vat: data.vat,
-                total: data.total,
-                items: {
-                    create: data.items.map(item => ({
-                        description: item.description,
-                        quantity: item.quantity,
-                        unit_price: item.unit_price,
-                    })),
-                },
-            },
+        const transaction = await this.transactionModel.create({
+            tenant_id: tenantId,
+            customer_id: data.customer_id,
+            subtotal: data.subtotal,
+            vat: data.vat,
+            total: data.total,
         });
+        if (data.items && data.items.length > 0) {
+            const itemsToInsert = data.items.map(item => ({
+                transaction_id: transaction._id,
+                description: item.description,
+                quantity: item.quantity,
+                unit_price: item.unit_price,
+            }));
+            await this.transactionItemModel.insertMany(itemsToInsert);
+        }
+        return transaction;
     }
 };
 exports.TransactionsService = TransactionsService;
 exports.TransactionsService = TransactionsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, mongoose_1.InjectModel)(index_js_1.Transaction.name)),
+    __param(1, (0, mongoose_1.InjectModel)(index_js_1.TransactionItem.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model])
 ], TransactionsService);
 //# sourceMappingURL=transactions.service.js.map

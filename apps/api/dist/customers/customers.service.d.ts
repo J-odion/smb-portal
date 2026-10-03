@@ -1,19 +1,15 @@
-import { PrismaService } from '../prisma/prisma.service';
+import { Model } from 'mongoose';
+import { Customer } from '../schemas/index.js';
 export declare class CustomersService {
-    private prisma;
-    constructor(prisma: PrismaService);
-    findAll(tenantId: string): Promise<{
+    private customerModel;
+    constructor(customerModel: Model<Customer>);
+    findAll(tenantId: string): Promise<(import("mongoose").Document<unknown, {}, Customer, {}, import("mongoose").DefaultSchemaOptions> & Customer & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        name: string;
-        address: string | null;
-        phone: string;
-        whatsapp: string | null;
-        notes: string | null;
-        whatsapp_consent: boolean;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-    }[]>;
+    })[]>;
     create(tenantId: string, data: {
         name: string;
         phone: string;
@@ -21,16 +17,11 @@ export declare class CustomersService {
         address?: string;
         notes?: string;
         whatsapp_consent?: boolean;
-    }): Promise<{
+    }): Promise<import("mongoose").Document<unknown, {}, Customer, {}, import("mongoose").DefaultSchemaOptions> & Customer & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        name: string;
-        address: string | null;
-        phone: string;
-        whatsapp: string | null;
-        notes: string | null;
-        whatsapp_consent: boolean;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
 }

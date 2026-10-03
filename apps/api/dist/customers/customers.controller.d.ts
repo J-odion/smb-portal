@@ -2,28 +2,18 @@ import { CustomersService } from './customers.service';
 export declare class CustomersController {
     private readonly customersService;
     constructor(customersService: CustomersService);
-    findAll(req: any): Promise<{
+    findAll(req: any): Promise<(import("mongoose").Document<unknown, {}, import("../schemas").Customer, {}, import("mongoose").DefaultSchemaOptions> & import("../schemas").Customer & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        name: string;
-        address: string | null;
-        phone: string;
-        whatsapp: string | null;
-        notes: string | null;
-        whatsapp_consent: boolean;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-    }[]>;
-    create(req: any, body: any): Promise<{
+    })[]>;
+    create(req: any, body: any): Promise<import("mongoose").Document<unknown, {}, import("../schemas").Customer, {}, import("mongoose").DefaultSchemaOptions> & import("../schemas").Customer & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        name: string;
-        address: string | null;
-        phone: string;
-        whatsapp: string | null;
-        notes: string | null;
-        whatsapp_consent: boolean;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
     }>;
 }

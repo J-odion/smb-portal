@@ -1,0 +1,1 @@
+{"version":3,"file":"tenant-context.js","sourceRoot":"","sources":["../../src/common/tenant-context.ts"],"names":[],"mappings":";;;AAIA,kCAGC;AAPD,6CAAgD;AAEnC,QAAA,aAAa,GAAG,IAAI,+BAAiB,EAAwB,CAAC;AAE3E,SAAgB,WAAW;IACzB,MAAM,KAAK,GAAG,qBAAa,CAAC,QAAQ,EAAE,CAAC;IACvC,OAAO,KAAK,EAAE,QAAQ,CAAC;AACzB,CAAC"}

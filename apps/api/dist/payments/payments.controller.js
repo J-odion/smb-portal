@@ -27,6 +27,9 @@ let PaymentsController = class PaymentsController {
     async create(req, body) {
         return this.paymentsService.create(req.user.tenantId, body);
     }
+    async createCheckoutSession(req) {
+        return this.paymentsService.createCheckoutSession(req.user.tenantId);
+    }
 };
 exports.PaymentsController = PaymentsController;
 __decorate([
@@ -44,6 +47,13 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], PaymentsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('checkout-session'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], PaymentsController.prototype, "createCheckoutSession", null);
 exports.PaymentsController = PaymentsController = __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Controller)('payments'),

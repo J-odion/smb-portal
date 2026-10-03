@@ -1,9 +1,11 @@
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
+import { Model } from 'mongoose';
+import { User, Tenant } from '../schemas/index.js';
 export declare class AuthService {
-    private prisma;
+    private userModel;
+    private tenantModel;
     private jwtService;
-    constructor(prisma: PrismaService, jwtService: JwtService);
+    constructor(userModel: Model<User>, tenantModel: Model<Tenant>, jwtService: JwtService);
     signup(email: string, passwordPlain: string, businessName: string): Promise<{
         access_token: string;
     }>;

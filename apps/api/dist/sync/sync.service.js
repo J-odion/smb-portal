@@ -8,14 +8,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SyncService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
+const index_js_1 = require("../schemas/index.js");
 let SyncService = class SyncService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    customerModel;
+    transactionModel;
+    transactionItemModel;
+    constructor(customerModel, transactionModel, transactionItemModel) {
+        this.customerModel = customerModel;
+        this.transactionModel = transactionModel;
+        this.transactionItemModel = transactionItemModel;
     }
     async syncOfflineData(tenantId, payload) {
         const results = {
@@ -26,22 +35,14 @@ let SyncService = class SyncService {
         if (payload.customers && Array.isArray(payload.customers)) {
             for (const customer of payload.customers) {
                 try {
-                    await this.prisma.customer.upsert({
-                        where: { id: customer.id || 'new-uuid-placeholder' },
-                        update: {
-                            name: customer.name,
-                            phone: customer.phone,
-                            whatsapp: customer.whatsapp,
-                            address: customer.address,
-                        },
-                        create: {
-                            tenant_id: tenantId,
-                            name: customer.name,
-                            phone: customer.phone,
-                            whatsapp: customer.whatsapp,
-                            address: customer.address,
-                        },
-                    });
+                    const updateData = {
+                        name: customer.name,
+                        phone: customer.phone,
+                        whatsapp: customer.whatsapp,
+                        address: customer.address,
+                        tenant_id: tenantId,
+                    };
+                    await this.customerModel.findOneAndUpdate({ tenant_id: tenantId, phone: customer.phone }, { $set: updateData }, { upsert: true, new: true }).exec();
                     results.customersSynced++;
                 }
                 catch (err) {
@@ -52,23 +53,32 @@ let SyncService = class SyncService {
         if (payload.transactions && Array.isArray(payload.transactions)) {
             for (const txn of payload.transactions) {
                 try {
-                    await this.prisma.transaction.create({
-                        data: {
-                            tenant_id: tenantId,
-                            customer_id: txn.customer_id,
-                            subtotal: txn.subtotal,
-                            vat: txn.vat || 0,
-                            total: txn.total,
-                            status: txn.status || 'Pending',
-                            items: {
-                                create: txn.items?.map((item) => ({
-                                    description: item.description,
-                                    quantity: item.quantity,
-                                    unit_price: item.unit_price,
-                                })) || [],
-                            },
-                        },
+                    const offlineId = txn.id || txn.offline_id;
+                    const existingTxn = await this.transactionModel.findOne({
+                        tenant_id: tenantId,
+                        'metadata.offline_id': offlineId
+                    }).exec();
+                    if (existingTxn) {
+                        continue;
+                    }
+                    const newTxn = await this.transactionModel.create({
+                        tenant_id: tenantId,
+                        customer_id: txn.customer_id,
+                        subtotal: txn.subtotal,
+                        vat: txn.vat || 0,
+                        total: txn.total,
+                        status: txn.status || 'Pending',
+                        metadata: { offline_id: offlineId, ...txn.metadata }
                     });
+                    if (txn.items && Array.isArray(txn.items) && txn.items.length > 0) {
+                        const itemsToInsert = txn.items.map((item) => ({
+                            transaction_id: newTxn._id,
+                            description: item.description,
+                            quantity: item.quantity,
+                            unit_price: item.unit_price,
+                        }));
+                        await this.transactionItemModel.insertMany(itemsToInsert);
+                    }
                     results.transactionsSynced++;
                 }
                 catch (err) {
@@ -82,6 +92,11 @@ let SyncService = class SyncService {
 exports.SyncService = SyncService;
 exports.SyncService = SyncService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, mongoose_1.InjectModel)(index_js_1.Customer.name)),
+    __param(1, (0, mongoose_1.InjectModel)(index_js_1.Transaction.name)),
+    __param(2, (0, mongoose_1.InjectModel)(index_js_1.TransactionItem.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model])
 ], SyncService);
 //# sourceMappingURL=sync.service.js.map

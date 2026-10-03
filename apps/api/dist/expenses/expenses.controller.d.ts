@@ -2,24 +2,18 @@ import { ExpensesService } from './expenses.service';
 export declare class ExpensesController {
     private readonly expensesService;
     constructor(expensesService: ExpensesService);
-    findAll(req: any): Promise<{
+    findAll(req: any): Promise<(import("mongoose").Document<unknown, {}, import("../schemas").Expense, {}, import("mongoose").DefaultSchemaOptions> & import("../schemas").Expense & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        branch_id: string | null;
-        category: string;
-        amount: import("@prisma/client/runtime/library").Decimal;
-        date: Date;
-        note: string | null;
-    }[]>;
-    create(req: any, body: any): Promise<{
+    })[]>;
+    create(req: any, body: any): Promise<import("mongoose").Document<unknown, {}, import("../schemas").Expense, {}, import("mongoose").DefaultSchemaOptions> & import("../schemas").Expense & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        branch_id: string | null;
-        category: string;
-        amount: import("@prisma/client/runtime/library").Decimal;
-        date: Date;
-        note: string | null;
     }>;
 }

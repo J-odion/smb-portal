@@ -13,6 +13,7 @@ export class TenantService {
   async getProfile(tenantId: string) {
     const tenant = await this.tenantModel.findById(tenantId).exec();
     const users = await this.userModel.find({ tenant_id: tenantId }).select('id email role').exec();
+    if (!tenant) throw new Error('Tenant not found');
     return { ...tenant.toObject(), users };
   }
 

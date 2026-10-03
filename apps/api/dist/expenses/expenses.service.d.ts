@@ -1,29 +1,24 @@
-import { PrismaService } from '../prisma/prisma.service';
+import { Model } from 'mongoose';
+import { Expense } from '../schemas/index.js';
 export declare class ExpensesService {
-    private prisma;
-    constructor(prisma: PrismaService);
-    findAll(tenantId: string): Promise<{
+    private expenseModel;
+    constructor(expenseModel: Model<Expense>);
+    findAll(tenantId: string): Promise<(import("mongoose").Document<unknown, {}, Expense, {}, import("mongoose").DefaultSchemaOptions> & Expense & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        branch_id: string | null;
-        category: string;
-        amount: import("@prisma/client/runtime/library").Decimal;
-        date: Date;
-        note: string | null;
-    }[]>;
+    })[]>;
     create(tenantId: string, data: {
         category: string;
         amount: number;
         note?: string;
-    }): Promise<{
+    }): Promise<import("mongoose").Document<unknown, {}, Expense, {}, import("mongoose").DefaultSchemaOptions> & Expense & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        branch_id: string | null;
-        category: string;
-        amount: import("@prisma/client/runtime/library").Decimal;
-        date: Date;
-        note: string | null;
     }>;
 }

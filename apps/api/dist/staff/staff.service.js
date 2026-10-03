@@ -8,32 +8,34 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StaffService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
+const index_js_1 = require("../schemas/index.js");
 let StaffService = class StaffService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    staffModel;
+    constructor(staffModel) {
+        this.staffModel = staffModel;
     }
     async findAll(tenantId) {
-        return this.prisma.staff.findMany({
-            where: { tenant_id: tenantId },
-        });
+        return this.staffModel.find({ tenant_id: tenantId }).exec();
     }
     async create(tenantId, data) {
-        return this.prisma.staff.create({
-            data: {
-                tenant_id: tenantId,
-                ...data,
-            },
+        return this.staffModel.create({
+            tenant_id: tenantId,
+            ...data,
         });
     }
 };
 exports.StaffService = StaffService;
 exports.StaffService = StaffService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, mongoose_1.InjectModel)(index_js_1.Staff.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model])
 ], StaffService);
 //# sourceMappingURL=staff.service.js.map

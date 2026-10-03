@@ -32,7 +32,7 @@ export class PaymentsService {
   }
 
   async createCheckoutSession(tenantId: string) {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock', { apiVersion: '2025-02-24.acacia' });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock', { apiVersion: '2026-09-30.endive' as any });
     
     // In production, we create a real session. For MVP, we'll return a mock URL
     // that just routes back to dashboard if Stripe is not fully configured
@@ -41,7 +41,7 @@ export class PaymentsService {
     }
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+
       line_items: [
         {
           price_data: {
@@ -62,12 +62,12 @@ export class PaymentsService {
   }
 
   async handleStripeWebhook(payload: any, signature: string) {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock', { apiVersion: '2025-02-24.acacia' });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock', { apiVersion: '2026-09-30.endive' as any });
     let event;
 
     try {
       event = stripe.webhooks.constructEvent(payload, signature, process.env.STRIPE_WEBHOOK_SECRET || 'whsec_mock');
-    } catch (err) {
+    } catch (err: any) {
       throw new BadRequestException(`Webhook Error: ${err.message}`);
     }
 

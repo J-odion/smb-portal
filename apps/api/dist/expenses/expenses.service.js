@@ -8,33 +8,34 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpensesService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
+const index_js_1 = require("../schemas/index.js");
 let ExpensesService = class ExpensesService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    expenseModel;
+    constructor(expenseModel) {
+        this.expenseModel = expenseModel;
     }
     async findAll(tenantId) {
-        return this.prisma.expense.findMany({
-            where: { tenant_id: tenantId },
-            orderBy: { date: 'desc' },
-        });
+        return this.expenseModel.find({ tenant_id: tenantId }).sort({ date: -1 }).exec();
     }
     async create(tenantId, data) {
-        return this.prisma.expense.create({
-            data: {
-                tenant_id: tenantId,
-                ...data,
-            },
+        return this.expenseModel.create({
+            tenant_id: tenantId,
+            ...data,
         });
     }
 };
 exports.ExpensesService = ExpensesService;
 exports.ExpensesService = ExpensesService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, mongoose_1.InjectModel)(index_js_1.Expense.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model])
 ], ExpensesService);
 //# sourceMappingURL=expenses.service.js.map

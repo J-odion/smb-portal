@@ -41,44 +41,49 @@ var __importStar = (this && this.__importStar) || (function () {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
-const prisma_service_1 = require("../prisma/prisma.service");
+const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = require("mongoose");
+const index_js_1 = require("../schemas/index.js");
 const bcrypt = __importStar(require("bcrypt"));
 let AuthService = class AuthService {
-    prisma;
+    userModel;
+    tenantModel;
     jwtService;
-    constructor(prisma, jwtService) {
-        this.prisma = prisma;
+    constructor(userModel, tenantModel, jwtService) {
+        this.userModel = userModel;
+        this.tenantModel = tenantModel;
         this.jwtService = jwtService;
     }
     async signup(email, passwordPlain, businessName) {
-        const existing = await this.prisma.user.findUnique({ where: { email } });
+        const existing = await this.userModel.findOne({ email }).exec();
         if (existing) {
             throw new common_1.ConflictException('User already exists');
         }
         const hashedPassword = await bcrypt.hash(passwordPlain, 10);
-        const tenant = await this.prisma.tenant.create({
-            data: {
-                name: businessName,
-                users: {
-                    create: {
-                        email,
-                        password_hash: hashedPassword
-                    }
-                }
-            },
-            include: {
-                users: true
-            }
+        const trialEnds = new Date();
+        trialEnds.setMonth(trialEnds.getMonth() + 4);
+        const tenant = await this.tenantModel.create({
+            name: businessName,
+            subscription_status: 'TRIAL',
+            trial_ends_at: trialEnds
         });
-        const user = tenant.users[0];
-        return this.generateTokens(user.id, user.email, user.tenant_id);
+        const user = await this.userModel.create({
+            email,
+            password_hash: hashedPassword,
+            tenant_id: tenant._id,
+            role: 'OWNER'
+        });
+        return this.generateTokens(user._id.toString(), user.email, tenant._id.toString(), user.role);
     }
     async login(email, passwordPlain) {
-        const user = await this.prisma.user.findUnique({ where: { email } });
+        const user = await this.userModel.findOne({ email }).exec();
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
@@ -86,10 +91,10 @@ let AuthService = class AuthService {
         if (!isMatch) {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
-        return this.generateTokens(user.id, user.email, user.tenant_id);
+        return this.generateTokens(user._id.toString(), user.email, user.tenant_id.toString(), user.role);
     }
-    generateTokens(userId, email, tenantId) {
-        const payload = { sub: userId, email, tenantId };
+    generateTokens(userId, email, tenantId, role) {
+        const payload = { sub: userId, email, tenantId, role };
         return {
             access_token: this.jwtService.sign(payload),
         };
@@ -98,7 +103,10 @@ let AuthService = class AuthService {
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+    __param(0, (0, mongoose_1.InjectModel)(index_js_1.User.name)),
+    __param(1, (0, mongoose_1.InjectModel)(index_js_1.Tenant.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
         jwt_1.JwtService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

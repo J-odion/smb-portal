@@ -1,31 +1,15 @@
-import { PrismaService } from '../prisma/prisma.service';
+import { Model } from 'mongoose';
+import { Transaction, TransactionItem } from '../schemas/index.js';
 export declare class TransactionsService {
-    private prisma;
-    constructor(prisma: PrismaService);
-    findAll(tenantId: string): Promise<({
-        customer: {
-            id: string;
-            tenant_id: string;
-            created_at: Date;
-            name: string;
-            address: string | null;
-            phone: string;
-            whatsapp: string | null;
-            notes: string | null;
-            whatsapp_consent: boolean;
-            metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        } | null;
+    private transactionModel;
+    private transactionItemModel;
+    constructor(transactionModel: Model<Transaction>, transactionItemModel: Model<TransactionItem>);
+    findAll(tenantId: string): Promise<(import("mongoose").Document<unknown, {}, Transaction, {}, import("mongoose").DefaultSchemaOptions> & Transaction & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
     } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        branch_id: string | null;
-        customer_id: string | null;
-        subtotal: import("@prisma/client/runtime/library").Decimal;
-        vat: import("@prisma/client/runtime/library").Decimal;
-        total: import("@prisma/client/runtime/library").Decimal;
-        status: string;
     })[]>;
     create(tenantId: string, data: {
         customer_id: string;
@@ -33,16 +17,11 @@ export declare class TransactionsService {
         vat: number;
         total: number;
         items: any[];
-    }): Promise<{
+    }): Promise<import("mongoose").Document<unknown, {}, Transaction, {}, import("mongoose").DefaultSchemaOptions> & Transaction & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
         id: string;
-        tenant_id: string;
-        created_at: Date;
-        metadata: import("@prisma/client/runtime/library").JsonValue | null;
-        branch_id: string | null;
-        customer_id: string | null;
-        subtotal: import("@prisma/client/runtime/library").Decimal;
-        vat: import("@prisma/client/runtime/library").Decimal;
-        total: import("@prisma/client/runtime/library").Decimal;
-        status: string;
     }>;
 }
