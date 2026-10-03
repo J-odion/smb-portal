@@ -19,31 +19,76 @@ const mongoose_2 = require("mongoose");
 const index_js_1 = require("../schemas/index.js");
 let TransactionsService = class TransactionsService {
     transactionModel;
-    transactionItemModel;
-    constructor(transactionModel, transactionItemModel) {
+    customerModel;
+    productModel;
+    constructor(transactionModel, customerModel, productModel) {
         this.transactionModel = transactionModel;
-        this.transactionItemModel = transactionItemModel;
+        this.customerModel = customerModel;
+        this.productModel = productModel;
     }
-    async findAll(tenantId) {
-        return this.transactionModel.find({ tenant_id: tenantId }).populate('customer_id').sort({ created_at: -1 }).exec();
+    async findAll(tenantId, page = 1, limit = 50) {
+        const skip = (page - 1) * limit;
+        const [data, total] = await Promise.all([
+            this.transactionModel
+                .find({ tenant_id: tenantId })
+                .populate('customer_id')
+                .sort({ created_at: -1 })
+                .skip(skip)
+                .limit(limit)
+                .exec(),
+            this.transactionModel.countDocuments({ tenant_id: tenantId }).exec()
+        ]);
+        return {
+            data,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        };
     }
     async create(tenantId, data) {
+        if (data.customer_id) {
+            const validCustomer = await this.customerModel.findOne({ _id: data.customer_id }).exec();
+            if (!validCustomer) {
+                throw new common_1.BadRequestException('Invalid customer ID');
+            }
+        }
+        let calculatedSubtotal = 0;
+        const finalItems = [];
+        if (data.items && data.items.length > 0) {
+            for (const item of data.items) {
+                let unit_price = item.unit_price;
+                if (item.product_id) {
+                    const product = await this.productModel.findOne({ _id: item.product_id }).exec();
+                    if (!product) {
+                        throw new common_1.BadRequestException(`Invalid product ID: ${item.product_id}`);
+                    }
+                    unit_price = product.price;
+                }
+                calculatedSubtotal += (item.quantity * unit_price);
+                finalItems.push({
+                    description: item.description,
+                    quantity: item.quantity,
+                    unit_price: unit_price,
+                    product_id: item.product_id,
+                });
+            }
+        }
+        else {
+            calculatedSubtotal = data.subtotal;
+        }
+        const calculatedVat = data.vat;
+        const calculatedTotal = calculatedSubtotal + calculatedVat;
         const transaction = await this.transactionModel.create({
             tenant_id: tenantId,
             customer_id: data.customer_id,
-            subtotal: data.subtotal,
-            vat: data.vat,
-            total: data.total,
+            subtotal: calculatedSubtotal,
+            vat: calculatedVat,
+            total: calculatedTotal,
+            items: finalItems,
         });
-        if (data.items && data.items.length > 0) {
-            const itemsToInsert = data.items.map(item => ({
-                transaction_id: transaction._id,
-                description: item.description,
-                quantity: item.quantity,
-                unit_price: item.unit_price,
-            }));
-            await this.transactionItemModel.insertMany(itemsToInsert);
-        }
         return transaction;
     }
 };
@@ -51,8 +96,10 @@ exports.TransactionsService = TransactionsService;
 exports.TransactionsService = TransactionsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(index_js_1.Transaction.name)),
-    __param(1, (0, mongoose_1.InjectModel)(index_js_1.TransactionItem.name)),
+    __param(1, (0, mongoose_1.InjectModel)(index_js_1.Customer.name)),
+    __param(2, (0, mongoose_1.InjectModel)(index_js_1.Product.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
         mongoose_2.Model])
 ], TransactionsService);
 //# sourceMappingURL=transactions.service.js.map

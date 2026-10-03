@@ -20,11 +20,9 @@ const index_js_1 = require("../schemas/index.js");
 let SyncService = class SyncService {
     customerModel;
     transactionModel;
-    transactionItemModel;
-    constructor(customerModel, transactionModel, transactionItemModel) {
+    constructor(customerModel, transactionModel) {
         this.customerModel = customerModel;
         this.transactionModel = transactionModel;
-        this.transactionItemModel = transactionItemModel;
     }
     async syncOfflineData(tenantId, payload) {
         const results = {
@@ -68,17 +66,14 @@ let SyncService = class SyncService {
                         vat: txn.vat || 0,
                         total: txn.total,
                         status: txn.status || 'Pending',
-                        metadata: { offline_id: offlineId, ...txn.metadata }
-                    });
-                    if (txn.items && Array.isArray(txn.items) && txn.items.length > 0) {
-                        const itemsToInsert = txn.items.map((item) => ({
-                            transaction_id: newTxn._id,
+                        metadata: { offline_id: offlineId, ...txn.metadata },
+                        items: (txn.items && Array.isArray(txn.items)) ? txn.items.map((item) => ({
                             description: item.description,
                             quantity: item.quantity,
                             unit_price: item.unit_price,
-                        }));
-                        await this.transactionItemModel.insertMany(itemsToInsert);
-                    }
+                            product_id: item.product_id,
+                        })) : [],
+                    });
                     results.transactionsSynced++;
                 }
                 catch (err) {
@@ -94,9 +89,7 @@ exports.SyncService = SyncService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(index_js_1.Customer.name)),
     __param(1, (0, mongoose_1.InjectModel)(index_js_1.Transaction.name)),
-    __param(2, (0, mongoose_1.InjectModel)(index_js_1.TransactionItem.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
-        mongoose_2.Model,
         mongoose_2.Model])
 ], SyncService);
 //# sourceMappingURL=sync.service.js.map

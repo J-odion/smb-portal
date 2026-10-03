@@ -1,10 +1,9 @@
 import { Model } from 'mongoose';
-import { Customer, Transaction, TransactionItem } from '../schemas/index.js';
+import { Customer, Transaction } from '../schemas/index.js';
 export declare class SyncService {
     private customerModel;
     private transactionModel;
-    private transactionItemModel;
-    constructor(customerModel: Model<Customer>, transactionModel: Model<Transaction>, transactionItemModel: Model<TransactionItem>);
+    constructor(customerModel: Model<Customer>, transactionModel: Model<Transaction>);
     syncOfflineData(tenantId: string, payload: any): Promise<{
         customersSynced: number;
         transactionsSynced: number;

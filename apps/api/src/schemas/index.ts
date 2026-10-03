@@ -63,6 +63,9 @@ export class User extends Document {
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Tenant', required: true })
   tenant_id: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Branch' })
+  branch_id?: Types.ObjectId;
 }
 export const UserSchema = SchemaFactory.createForClass(User);
 
@@ -117,6 +120,9 @@ export class Product extends Document {
   name: string;
 
   @Prop()
+  category?: string;
+
+  @Prop()
   sku?: string;
 
   @Prop({ required: true })
@@ -130,6 +136,53 @@ ProductSchema.index({ tenant_id: 1, sku: 1 }, { unique: true, sparse: true });
 ProductSchema.index({ tenant_id: 1, name: 1 }, { unique: true });
 
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+export class InventoryLog extends Document {
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Tenant', required: true })
+  tenant_id: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Product', required: true })
+  product_id: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Branch' })
+  branch_id?: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Transaction' })
+  transaction_id?: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Staff' })
+  staff_id?: Types.ObjectId;
+
+  @Prop({ required: true })
+  quantity_change: number;
+
+  @Prop({ required: true })
+  reason: string;
+}
+export const InventoryLogSchema = SchemaFactory.createForClass(InventoryLog);
+
+@Schema()
+export class TransactionItem {
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Product' })
+  product_id?: Types.ObjectId;
+
+  @Prop({ required: true })
+  description: string;
+
+  @Prop({ required: true })
+  quantity: number;
+
+  @Prop({ required: true })
+  unit_price: number;
+
+  @Prop({ default: 0 })
+  tax_rate?: number;
+
+  @Prop({ default: 0 })
+  tax_amount?: number;
+}
+export const TransactionItemSchema = SchemaFactory.createForClass(TransactionItem);
+
+@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class Transaction extends Document {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Tenant', required: true })
   tenant_id: Types.ObjectId;
@@ -140,6 +193,12 @@ export class Transaction extends Document {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Customer' })
   customer_id?: Types.ObjectId;
 
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Staff' })
+  staff_id?: Types.ObjectId;
+
+  @Prop({ type: [TransactionItemSchema], default: [] })
+  items: TransactionItem[];
+
   @Prop({ required: true })
   subtotal: number;
 
@@ -149,6 +208,18 @@ export class Transaction extends Document {
   @Prop({ required: true })
   total: number;
 
+  @Prop({ default: 'SALE', enum: ['SALE', 'REFUND', 'EXCHANGE'] })
+  type: string;
+
+  @Prop({ default: 0 })
+  discount_amount?: number;
+
+  @Prop()
+  due_date?: Date;
+
+  @Prop()
+  invoice_number?: string;
+
   @Prop({ default: 'Pending' })
   status: string;
 
@@ -157,22 +228,6 @@ export class Transaction extends Document {
 }
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
 
-@Schema()
-export class TransactionItem extends Document {
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Transaction', required: true })
-  transaction_id: Types.ObjectId;
-
-  @Prop({ required: true })
-  description: string;
-
-  @Prop({ required: true })
-  quantity: number;
-
-  @Prop({ required: true })
-  unit_price: number;
-}
-export const TransactionItemSchema = SchemaFactory.createForClass(TransactionItem);
-
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class Payment extends Document {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Tenant', required: true })
@@ -180,6 +235,9 @@ export class Payment extends Document {
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Transaction', required: true })
   transaction_id: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Staff' })
+  staff_id?: Types.ObjectId;
 
   @Prop({ required: true })
   amount: number;
@@ -218,6 +276,9 @@ export class Staff extends Document {
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Branch' })
   branch_id?: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  user_id?: Types.ObjectId;
 
   @Prop({ required: true })
   name: string;

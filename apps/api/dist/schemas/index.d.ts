@@ -157,6 +157,7 @@ export declare class User extends Document {
     is_verified: boolean;
     verification_token?: string;
     tenant_id: Types.ObjectId;
+    branch_id?: Types.ObjectId;
 }
 export declare const UserSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, any, any, User>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, User, Document<unknown, {}, User, {
     id: string;
@@ -222,6 +223,15 @@ export declare const UserSchema: import("mongoose").Schema<User, import("mongoos
         id: string;
     }>> | undefined;
     tenant_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId, User, Document<unknown, {}, User, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<User & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    branch_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, User, Document<unknown, {}, User, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<User & Required<{
         _id: Types.ObjectId;
@@ -386,6 +396,7 @@ export declare const CustomerSchema: import("mongoose").Schema<Customer, import(
 export declare class Product extends Document {
     tenant_id: Types.ObjectId;
     name: string;
+    category?: string;
     sku?: string;
     price: number;
     stock_level: number;
@@ -426,6 +437,15 @@ export declare const ProductSchema: import("mongoose").Schema<Product, import("m
     }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
     }>> | undefined;
+    category?: import("mongoose").SchemaDefinitionProperty<string | undefined, Product, Document<unknown, {}, Product, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Product & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
     sku?: import("mongoose").SchemaDefinitionProperty<string | undefined, Product, Document<unknown, {}, Product, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Product & Required<{
@@ -454,13 +474,161 @@ export declare const ProductSchema: import("mongoose").Schema<Product, import("m
         id: string;
     }>> | undefined;
 }, Product>;
+export declare class InventoryLog extends Document {
+    tenant_id: Types.ObjectId;
+    product_id: Types.ObjectId;
+    branch_id?: Types.ObjectId;
+    transaction_id?: Types.ObjectId;
+    staff_id?: Types.ObjectId;
+    quantity_change: number;
+    reason: string;
+}
+export declare const InventoryLogSchema: import("mongoose").Schema<InventoryLog, import("mongoose").Model<InventoryLog, any, any, any, any, any, InventoryLog>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, InventoryLog, Document<unknown, {}, InventoryLog, {
+    id: string;
+}, import("mongoose").DefaultSchemaOptions> & Omit<InventoryLog & Required<{
+    _id: Types.ObjectId;
+}> & {
+    __v: number;
+}, "id"> & import("mongoose").HydratedDocumentOverrides<{
+    id: string;
+}>, {
+    _id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId, InventoryLog, Document<unknown, {}, InventoryLog, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<InventoryLog & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    tenant_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId, InventoryLog, Document<unknown, {}, InventoryLog, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<InventoryLog & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    branch_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, InventoryLog, Document<unknown, {}, InventoryLog, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<InventoryLog & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    product_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId, InventoryLog, Document<unknown, {}, InventoryLog, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<InventoryLog & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    transaction_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, InventoryLog, Document<unknown, {}, InventoryLog, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<InventoryLog & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    staff_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, InventoryLog, Document<unknown, {}, InventoryLog, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<InventoryLog & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    quantity_change?: import("mongoose").SchemaDefinitionProperty<number, InventoryLog, Document<unknown, {}, InventoryLog, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<InventoryLog & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    reason?: import("mongoose").SchemaDefinitionProperty<string, InventoryLog, Document<unknown, {}, InventoryLog, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<InventoryLog & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+}, InventoryLog>;
+export declare class TransactionItem {
+    product_id?: Types.ObjectId;
+    description: string;
+    quantity: number;
+    unit_price: number;
+}
+export declare const TransactionItemSchema: import("mongoose").Schema<TransactionItem, import("mongoose").Model<TransactionItem, any, any, any, any, any, TransactionItem>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, TransactionItem, Document<unknown, {}, TransactionItem, {
+    id: string;
+}, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & {
+    _id: Types.ObjectId;
+} & {
+    __v: number;
+}, "id"> & import("mongoose").HydratedDocumentOverrides<{
+    id: string;
+}>, {
+    product_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, TransactionItem, Document<unknown, {}, TransactionItem, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & {
+        _id: Types.ObjectId;
+    } & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    description?: import("mongoose").SchemaDefinitionProperty<string, TransactionItem, Document<unknown, {}, TransactionItem, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & {
+        _id: Types.ObjectId;
+    } & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    quantity?: import("mongoose").SchemaDefinitionProperty<number, TransactionItem, Document<unknown, {}, TransactionItem, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & {
+        _id: Types.ObjectId;
+    } & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    unit_price?: import("mongoose").SchemaDefinitionProperty<number, TransactionItem, Document<unknown, {}, TransactionItem, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & {
+        _id: Types.ObjectId;
+    } & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+}, TransactionItem>;
 export declare class Transaction extends Document {
     tenant_id: Types.ObjectId;
     branch_id?: Types.ObjectId;
     customer_id?: Types.ObjectId;
+    staff_id?: Types.ObjectId;
+    items: TransactionItem[];
     subtotal: number;
     vat: number;
     total: number;
+    discount_amount?: number;
+    due_date?: Date;
+    invoice_number?: string;
     status: string;
     metadata?: any;
 }
@@ -491,15 +659,6 @@ export declare const TransactionSchema: import("mongoose").Schema<Transaction, i
     }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
     }>> | undefined;
-    metadata?: import("mongoose").SchemaDefinitionProperty<any, Transaction, Document<unknown, {}, Transaction, {
-        id: string;
-    }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
-        _id: Types.ObjectId;
-    }> & {
-        __v: number;
-    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
-        id: string;
-    }>> | undefined;
     branch_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, Transaction, Document<unknown, {}, Transaction, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
@@ -509,7 +668,34 @@ export declare const TransactionSchema: import("mongoose").Schema<Transaction, i
     }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
     }>> | undefined;
+    metadata?: import("mongoose").SchemaDefinitionProperty<any, Transaction, Document<unknown, {}, Transaction, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    staff_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, Transaction, Document<unknown, {}, Transaction, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
     customer_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, Transaction, Document<unknown, {}, Transaction, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    items?: import("mongoose").SchemaDefinitionProperty<TransactionItem[], Transaction, Document<unknown, {}, Transaction, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
         _id: Types.ObjectId;
@@ -545,6 +731,33 @@ export declare const TransactionSchema: import("mongoose").Schema<Transaction, i
     }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
     }>> | undefined;
+    discount_amount?: import("mongoose").SchemaDefinitionProperty<number | undefined, Transaction, Document<unknown, {}, Transaction, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    due_date?: import("mongoose").SchemaDefinitionProperty<Date | undefined, Transaction, Document<unknown, {}, Transaction, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    invoice_number?: import("mongoose").SchemaDefinitionProperty<string | undefined, Transaction, Document<unknown, {}, Transaction, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
     status?: import("mongoose").SchemaDefinitionProperty<string, Transaction, Document<unknown, {}, Transaction, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Transaction & Required<{
@@ -555,70 +768,10 @@ export declare const TransactionSchema: import("mongoose").Schema<Transaction, i
         id: string;
     }>> | undefined;
 }, Transaction>;
-export declare class TransactionItem extends Document {
-    transaction_id: Types.ObjectId;
-    description: string;
-    quantity: number;
-    unit_price: number;
-}
-export declare const TransactionItemSchema: import("mongoose").Schema<TransactionItem, import("mongoose").Model<TransactionItem, any, any, any, any, any, TransactionItem>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, TransactionItem, Document<unknown, {}, TransactionItem, {
-    id: string;
-}, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & Required<{
-    _id: Types.ObjectId;
-}> & {
-    __v: number;
-}, "id"> & import("mongoose").HydratedDocumentOverrides<{
-    id: string;
-}>, {
-    _id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId, TransactionItem, Document<unknown, {}, TransactionItem, {
-        id: string;
-    }, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & Required<{
-        _id: Types.ObjectId;
-    }> & {
-        __v: number;
-    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
-        id: string;
-    }>> | undefined;
-    description?: import("mongoose").SchemaDefinitionProperty<string, TransactionItem, Document<unknown, {}, TransactionItem, {
-        id: string;
-    }, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & Required<{
-        _id: Types.ObjectId;
-    }> & {
-        __v: number;
-    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
-        id: string;
-    }>> | undefined;
-    transaction_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId, TransactionItem, Document<unknown, {}, TransactionItem, {
-        id: string;
-    }, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & Required<{
-        _id: Types.ObjectId;
-    }> & {
-        __v: number;
-    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
-        id: string;
-    }>> | undefined;
-    quantity?: import("mongoose").SchemaDefinitionProperty<number, TransactionItem, Document<unknown, {}, TransactionItem, {
-        id: string;
-    }, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & Required<{
-        _id: Types.ObjectId;
-    }> & {
-        __v: number;
-    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
-        id: string;
-    }>> | undefined;
-    unit_price?: import("mongoose").SchemaDefinitionProperty<number, TransactionItem, Document<unknown, {}, TransactionItem, {
-        id: string;
-    }, import("mongoose").DefaultSchemaOptions> & Omit<TransactionItem & Required<{
-        _id: Types.ObjectId;
-    }> & {
-        __v: number;
-    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
-        id: string;
-    }>> | undefined;
-}, TransactionItem>;
 export declare class Payment extends Document {
     tenant_id: Types.ObjectId;
     transaction_id: Types.ObjectId;
+    staff_id?: Types.ObjectId;
     amount: number;
     method: string;
 }
@@ -659,6 +812,15 @@ export declare const PaymentSchema: import("mongoose").Schema<Payment, import("m
         id: string;
     }>> | undefined;
     transaction_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId, Payment, Document<unknown, {}, Payment, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Payment & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    staff_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, Payment, Document<unknown, {}, Payment, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Payment & Required<{
         _id: Types.ObjectId;
@@ -730,7 +892,7 @@ export declare const ExpenseSchema: import("mongoose").Schema<Expense, import("m
     }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
     }>> | undefined;
-    amount?: import("mongoose").SchemaDefinitionProperty<number, Expense, Document<unknown, {}, Expense, {
+    category?: import("mongoose").SchemaDefinitionProperty<string, Expense, Document<unknown, {}, Expense, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Expense & Required<{
         _id: Types.ObjectId;
@@ -739,7 +901,7 @@ export declare const ExpenseSchema: import("mongoose").Schema<Expense, import("m
     }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
     }>> | undefined;
-    category?: import("mongoose").SchemaDefinitionProperty<string, Expense, Document<unknown, {}, Expense, {
+    amount?: import("mongoose").SchemaDefinitionProperty<number, Expense, Document<unknown, {}, Expense, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Expense & Required<{
         _id: Types.ObjectId;
@@ -761,6 +923,7 @@ export declare const ExpenseSchema: import("mongoose").Schema<Expense, import("m
 export declare class Staff extends Document {
     tenant_id: Types.ObjectId;
     branch_id?: Types.ObjectId;
+    user_id?: Types.ObjectId;
     name: string;
     phone?: string;
     pay_type: string;
@@ -803,6 +966,15 @@ export declare const StaffSchema: import("mongoose").Schema<Staff, import("mongo
     }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
     }>> | undefined;
+    branch_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, Staff, Document<unknown, {}, Staff, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Staff & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
     phone?: import("mongoose").SchemaDefinitionProperty<string | undefined, Staff, Document<unknown, {}, Staff, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Staff & Required<{
@@ -812,7 +984,7 @@ export declare const StaffSchema: import("mongoose").Schema<Staff, import("mongo
     }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
     }>> | undefined;
-    branch_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, Staff, Document<unknown, {}, Staff, {
+    user_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, Staff, Document<unknown, {}, Staff, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Staff & Required<{
         _id: Types.ObjectId;
@@ -983,6 +1155,15 @@ export declare const AppointmentSchema: import("mongoose").Schema<Appointment, i
     }, "id"> & import("mongoose").HydratedDocumentOverrides<{
         id: string;
     }>> | undefined;
+    staff_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, Appointment, Document<unknown, {}, Appointment, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Appointment & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
     customer_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId, Appointment, Document<unknown, {}, Appointment, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Appointment & Required<{
@@ -993,15 +1174,6 @@ export declare const AppointmentSchema: import("mongoose").Schema<Appointment, i
         id: string;
     }>> | undefined;
     status?: import("mongoose").SchemaDefinitionProperty<string, Appointment, Document<unknown, {}, Appointment, {
-        id: string;
-    }, import("mongoose").DefaultSchemaOptions> & Omit<Appointment & Required<{
-        _id: Types.ObjectId;
-    }> & {
-        __v: number;
-    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
-        id: string;
-    }>> | undefined;
-    staff_id?: import("mongoose").SchemaDefinitionProperty<Types.ObjectId | undefined, Appointment, Document<unknown, {}, Appointment, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Appointment & Required<{
         _id: Types.ObjectId;

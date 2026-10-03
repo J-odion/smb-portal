@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TenantInterceptor = void 0;
 const common_1 = require("@nestjs/common");
 const rxjs_1 = require("rxjs");
-const tenant_context_js_1 = require("./tenant-context.js");
+const tenant_context_js_1 = require("../tenant-context.js");
 let TenantInterceptor = class TenantInterceptor {
     intercept(context, next) {
         const request = context.switchToHttp().getRequest();

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NotificationLogSchema = exports.NotificationLog = exports.MeasurementSchema = exports.Measurement = exports.AppointmentSchema = exports.Appointment = exports.AuditLogSchema = exports.AuditLog = exports.StaffSchema = exports.Staff = exports.ExpenseSchema = exports.Expense = exports.PaymentSchema = exports.Payment = exports.TransactionItemSchema = exports.TransactionItem = exports.TransactionSchema = exports.Transaction = exports.ProductSchema = exports.Product = exports.CustomerSchema = exports.Customer = exports.BranchSchema = exports.Branch = exports.UserSchema = exports.User = exports.TenantSchema = exports.Tenant = void 0;
+exports.NotificationLogSchema = exports.NotificationLog = exports.MeasurementSchema = exports.Measurement = exports.AppointmentSchema = exports.Appointment = exports.AuditLogSchema = exports.AuditLog = exports.StaffSchema = exports.Staff = exports.ExpenseSchema = exports.Expense = exports.PaymentSchema = exports.Payment = exports.TransactionSchema = exports.Transaction = exports.TransactionItemSchema = exports.TransactionItem = exports.InventoryLogSchema = exports.InventoryLog = exports.ProductSchema = exports.Product = exports.CustomerSchema = exports.Customer = exports.BranchSchema = exports.Branch = exports.UserSchema = exports.User = exports.TenantSchema = exports.Tenant = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let Tenant = class Tenant extends mongoose_2.Document {
@@ -91,6 +91,7 @@ let User = class User extends mongoose_2.Document {
     is_verified;
     verification_token;
     tenant_id;
+    branch_id;
 };
 exports.User = User;
 __decorate([
@@ -117,6 +118,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Tenant', required: true }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], User.prototype, "tenant_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Branch' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], User.prototype, "branch_id", void 0);
 exports.User = User = __decorate([
     (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 ], User);
@@ -194,6 +199,7 @@ exports.CustomerSchema.index({ tenant_id: 1, phone: 1 }, { unique: true });
 let Product = class Product extends mongoose_2.Document {
     tenant_id;
     name;
+    category;
     sku;
     price;
     stock_level;
@@ -207,6 +213,10 @@ __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
 ], Product.prototype, "name", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Product.prototype, "category", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
@@ -225,13 +235,87 @@ exports.Product = Product = __decorate([
 exports.ProductSchema = mongoose_1.SchemaFactory.createForClass(Product);
 exports.ProductSchema.index({ tenant_id: 1, sku: 1 }, { unique: true, sparse: true });
 exports.ProductSchema.index({ tenant_id: 1, name: 1 }, { unique: true });
+let InventoryLog = class InventoryLog extends mongoose_2.Document {
+    tenant_id;
+    product_id;
+    branch_id;
+    transaction_id;
+    staff_id;
+    quantity_change;
+    reason;
+};
+exports.InventoryLog = InventoryLog;
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Tenant', required: true }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], InventoryLog.prototype, "tenant_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Product', required: true }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], InventoryLog.prototype, "product_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Branch' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], InventoryLog.prototype, "branch_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Transaction' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], InventoryLog.prototype, "transaction_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Staff' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], InventoryLog.prototype, "staff_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], InventoryLog.prototype, "quantity_change", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], InventoryLog.prototype, "reason", void 0);
+exports.InventoryLog = InventoryLog = __decorate([
+    (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+], InventoryLog);
+exports.InventoryLogSchema = mongoose_1.SchemaFactory.createForClass(InventoryLog);
+let TransactionItem = class TransactionItem {
+    product_id;
+    description;
+    quantity;
+    unit_price;
+};
+exports.TransactionItem = TransactionItem;
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Product' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], TransactionItem.prototype, "product_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], TransactionItem.prototype, "description", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], TransactionItem.prototype, "quantity", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], TransactionItem.prototype, "unit_price", void 0);
+exports.TransactionItem = TransactionItem = __decorate([
+    (0, mongoose_1.Schema)()
+], TransactionItem);
+exports.TransactionItemSchema = mongoose_1.SchemaFactory.createForClass(TransactionItem);
 let Transaction = class Transaction extends mongoose_2.Document {
     tenant_id;
     branch_id;
     customer_id;
+    staff_id;
+    items;
     subtotal;
     vat;
     total;
+    discount_amount;
+    due_date;
+    invoice_number;
     status;
     metadata;
 };
@@ -249,6 +333,14 @@ __decorate([
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Transaction.prototype, "customer_id", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Staff' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Transaction.prototype, "staff_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [exports.TransactionItemSchema], default: [] }),
+    __metadata("design:type", Array)
+], Transaction.prototype, "items", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", Number)
 ], Transaction.prototype, "subtotal", void 0);
@@ -261,6 +353,18 @@ __decorate([
     __metadata("design:type", Number)
 ], Transaction.prototype, "total", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], Transaction.prototype, "discount_amount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Date)
+], Transaction.prototype, "due_date", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Transaction.prototype, "invoice_number", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ default: 'Pending' }),
     __metadata("design:type", String)
 ], Transaction.prototype, "status", void 0);
@@ -272,36 +376,10 @@ exports.Transaction = Transaction = __decorate([
     (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 ], Transaction);
 exports.TransactionSchema = mongoose_1.SchemaFactory.createForClass(Transaction);
-let TransactionItem = class TransactionItem extends mongoose_2.Document {
-    transaction_id;
-    description;
-    quantity;
-    unit_price;
-};
-exports.TransactionItem = TransactionItem;
-__decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Transaction', required: true }),
-    __metadata("design:type", mongoose_2.Types.ObjectId)
-], TransactionItem.prototype, "transaction_id", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], TransactionItem.prototype, "description", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", Number)
-], TransactionItem.prototype, "quantity", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", Number)
-], TransactionItem.prototype, "unit_price", void 0);
-exports.TransactionItem = TransactionItem = __decorate([
-    (0, mongoose_1.Schema)()
-], TransactionItem);
-exports.TransactionItemSchema = mongoose_1.SchemaFactory.createForClass(TransactionItem);
 let Payment = class Payment extends mongoose_2.Document {
     tenant_id;
     transaction_id;
+    staff_id;
     amount;
     method;
 };
@@ -314,6 +392,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Transaction', required: true }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Payment.prototype, "transaction_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Staff' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Payment.prototype, "staff_id", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", Number)
@@ -366,6 +448,7 @@ exports.ExpenseSchema = mongoose_1.SchemaFactory.createForClass(Expense);
 let Staff = class Staff extends mongoose_2.Document {
     tenant_id;
     branch_id;
+    user_id;
     name;
     phone;
     pay_type;
@@ -381,6 +464,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'Branch' }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Staff.prototype, "branch_id", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.ObjectId, ref: 'User' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Staff.prototype, "user_id", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)

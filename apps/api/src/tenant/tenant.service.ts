@@ -31,10 +31,15 @@ export class TenantService {
       throw new Error('User already exists in the system.');
     }
     
+    const crypto = await import('crypto');
+    const bcrypt = await import('bcrypt');
+    const tempPassword = crypto.randomBytes(16).toString('hex');
+    const password_hash = await bcrypt.hash(tempPassword, 10);
+
     // In a real app we'd send an email with a setup link instead of a default password
     return this.userModel.create({
       email,
-      password_hash: 'DEFAULT_PASSWORD_SHOULD_CHANGE', 
+      password_hash, 
       role,
       tenant_id: tenantId
     });

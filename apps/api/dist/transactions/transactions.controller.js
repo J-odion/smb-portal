@@ -16,13 +16,14 @@ exports.TransactionsController = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const transactions_service_1 = require("./transactions.service");
+const transaction_dto_js_1 = require("./dto/transaction.dto.js");
 let TransactionsController = class TransactionsController {
     transactionsService;
     constructor(transactionsService) {
         this.transactionsService = transactionsService;
     }
-    async findAll(req) {
-        return this.transactionsService.findAll(req.user.tenantId);
+    async findAll(req, page = '1', limit = '50') {
+        return this.transactionsService.findAll(req.user.tenantId, parseInt(page, 10), parseInt(limit, 10));
     }
     async create(req, body) {
         return this.transactionsService.create(req.user.tenantId, body);
@@ -32,8 +33,10 @@ exports.TransactionsController = TransactionsController;
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", Promise)
 ], TransactionsController.prototype, "findAll", null);
 __decorate([
@@ -41,7 +44,7 @@ __decorate([
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, transaction_dto_js_1.CreateTransactionDto]),
     __metadata("design:returntype", Promise)
 ], TransactionsController.prototype, "create", null);
 exports.TransactionsController = TransactionsController = __decorate([

@@ -6,8 +6,9 @@ import {
   Branch, BranchSchema,
   Customer, CustomerSchema,
   Product, ProductSchema,
+  InventoryLog, InventoryLogSchema,
   Transaction, TransactionSchema,
-  TransactionItem, TransactionItemSchema,
+
   Payment, PaymentSchema,
   Expense, ExpenseSchema,
   Staff, StaffSchema,
@@ -23,8 +24,9 @@ const mongooseModels = MongooseModule.forFeature([
   { name: Branch.name, schema: BranchSchema },
   { name: Customer.name, schema: CustomerSchema },
   { name: Product.name, schema: ProductSchema },
+  { name: InventoryLog.name, schema: InventoryLogSchema },
   { name: Transaction.name, schema: TransactionSchema },
-  { name: TransactionItem.name, schema: TransactionItemSchema },
+
   { name: Payment.name, schema: PaymentSchema },
   { name: Expense.name, schema: ExpenseSchema },
   { name: Staff.name, schema: StaffSchema },

@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Customer, Transaction, TransactionItem } from '../schemas/index.js';
+import { Customer, Transaction } from '../schemas/index.js';
 
 @Injectable()
 export class SyncService {
   constructor(
     @InjectModel(Customer.name) private customerModel: Model<Customer>,
     @InjectModel(Transaction.name) private transactionModel: Model<Transaction>,
-    @InjectModel(TransactionItem.name) private transactionItemModel: Model<TransactionItem>,
   ) {}
 
   async syncOfflineData(tenantId: string, payload: any) {
@@ -69,18 +68,14 @@ export class SyncService {
             vat: txn.vat || 0,
             total: txn.total,
             status: txn.status || 'Pending',
-            metadata: { offline_id: offlineId, ...txn.metadata }
-          });
-
-          if (txn.items && Array.isArray(txn.items) && txn.items.length > 0) {
-            const itemsToInsert = txn.items.map((item: any) => ({
-              transaction_id: newTxn._id,
+            metadata: { offline_id: offlineId, ...txn.metadata },
+            items: (txn.items && Array.isArray(txn.items)) ? txn.items.map((item: any) => ({
               description: item.description,
               quantity: item.quantity,
               unit_price: item.unit_price,
-            }));
-            await this.transactionItemModel.insertMany(itemsToInsert);
-          }
+              product_id: item.product_id,
+            })) : [],
+          });
           
           results.transactionsSynced++;
         } catch (err: any) {
