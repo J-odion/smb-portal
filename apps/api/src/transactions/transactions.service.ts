@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Transaction, Customer, Product } from '../schemas/index.js';
+import { Transaction, Customer, Product, InventoryLog } from '../schemas/index.js';
 
 @Injectable()
 export class TransactionsService {
@@ -9,6 +9,7 @@ export class TransactionsService {
     @InjectModel(Transaction.name) private transactionModel: Model<Transaction>,
     @InjectModel(Customer.name) private customerModel: Model<Customer>,
     @InjectModel(Product.name) private productModel: Model<Product>,
+    @InjectModel(InventoryLog.name) private inventoryLogModel: Model<InventoryLog>,
   ) {}
 
   async findAll(tenantId: string, page: number = 1, limit: number = 50) {
@@ -36,7 +37,7 @@ export class TransactionsService {
     };
   }
 
-  async create(tenantId: string, data: { customer_id?: string; subtotal: number; vat: number; total: number; items?: any[] }) {
+  async create(tenantId: string, data: { customer_id?: string; branch_id?: string; type?: string; subtotal: number; vat: number; total: number; items?: any[] }) {
     if (data.customer_id) {
       const validCustomer = await this.customerModel.findOne({ _id: data.customer_id }).exec();
       if (!validCustomer) {
@@ -46,6 +47,9 @@ export class TransactionsService {
 
     let calculatedSubtotal = 0;
     const finalItems = [];
+    const isRefund = data.type === 'REFUND';
+    const inventoryLogs = [];
+    const productUpdates = [];
 
     if (data.items && data.items.length > 0) {
       for (const item of data.items) {
@@ -56,6 +60,23 @@ export class TransactionsService {
             throw new BadRequestException(`Invalid product ID: ${item.product_id}`);
           }
           unit_price = product.price; // Server overrides client price to prevent fraud
+          
+          // Inventory stock calculation
+          const quantityChange = isRefund ? item.quantity : -item.quantity;
+          inventoryLogs.push({
+            tenant_id: tenantId,
+            product_id: item.product_id,
+            branch_id: data.branch_id,
+            quantity_change: quantityChange,
+            reason: isRefund ? 'Customer Refund' : 'POS Sale'
+          });
+          
+          productUpdates.push(
+            this.productModel.updateOne(
+              { _id: item.product_id },
+              { $inc: { stock_level: quantityChange } }
+            ).exec()
+          );
         }
         calculatedSubtotal += (item.quantity * unit_price);
         finalItems.push({
@@ -75,12 +96,20 @@ export class TransactionsService {
 
     const transaction = await this.transactionModel.create({
       tenant_id: tenantId,
+      branch_id: data.branch_id,
       customer_id: data.customer_id,
+      type: data.type || 'SALE',
       subtotal: calculatedSubtotal,
       vat: calculatedVat,
       total: calculatedTotal,
       items: finalItems,
     });
+
+    if (inventoryLogs.length > 0) {
+      const logsWithTxn = inventoryLogs.map(log => ({ ...log, transaction_id: transaction._id }));
+      await this.inventoryLogModel.insertMany(logsWithTxn);
+      await Promise.all(productUpdates);
+    }
 
     return transaction;
   }

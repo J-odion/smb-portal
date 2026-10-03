@@ -282,6 +282,8 @@ let TransactionItem = class TransactionItem {
     description;
     quantity;
     unit_price;
+    tax_rate;
+    tax_amount;
 };
 exports.TransactionItem = TransactionItem;
 __decorate([
@@ -300,6 +302,14 @@ __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", Number)
 ], TransactionItem.prototype, "unit_price", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], TransactionItem.prototype, "tax_rate", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: 0 }),
+    __metadata("design:type", Number)
+], TransactionItem.prototype, "tax_amount", void 0);
 exports.TransactionItem = TransactionItem = __decorate([
     (0, mongoose_1.Schema)()
 ], TransactionItem);
@@ -313,6 +323,7 @@ let Transaction = class Transaction extends mongoose_2.Document {
     subtotal;
     vat;
     total;
+    type;
     discount_amount;
     due_date;
     invoice_number;
@@ -352,6 +363,10 @@ __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", Number)
 ], Transaction.prototype, "total", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: 'SALE', enum: ['SALE', 'REFUND', 'EXCHANGE'] }),
+    __metadata("design:type", String)
+], Transaction.prototype, "type", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: 0 }),
     __metadata("design:type", Number)

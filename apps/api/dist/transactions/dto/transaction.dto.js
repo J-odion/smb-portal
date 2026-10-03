@@ -38,6 +38,8 @@ __decorate([
 ], TransactionItemDto.prototype, "unit_price", void 0);
 class CreateTransactionDto {
     customer_id;
+    branch_id;
+    type;
     subtotal;
     vat;
     total;
@@ -49,6 +51,16 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateTransactionDto.prototype, "customer_id", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateTransactionDto.prototype, "branch_id", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateTransactionDto.prototype, "type", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)

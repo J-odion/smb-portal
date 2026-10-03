@@ -6,6 +6,8 @@ declare class TransactionItemDto {
 }
 export declare class CreateTransactionDto {
     customer_id?: string;
+    branch_id?: string;
+    type?: string;
     subtotal: number;
     vat: number;
     total: number;

@@ -21,10 +21,12 @@ let TransactionsService = class TransactionsService {
     transactionModel;
     customerModel;
     productModel;
-    constructor(transactionModel, customerModel, productModel) {
+    inventoryLogModel;
+    constructor(transactionModel, customerModel, productModel, inventoryLogModel) {
         this.transactionModel = transactionModel;
         this.customerModel = customerModel;
         this.productModel = productModel;
+        this.inventoryLogModel = inventoryLogModel;
     }
     async findAll(tenantId, page = 1, limit = 50) {
         const skip = (page - 1) * limit;
@@ -57,6 +59,9 @@ let TransactionsService = class TransactionsService {
         }
         let calculatedSubtotal = 0;
         const finalItems = [];
+        const isRefund = data.type === 'REFUND';
+        const inventoryLogs = [];
+        const productUpdates = [];
         if (data.items && data.items.length > 0) {
             for (const item of data.items) {
                 let unit_price = item.unit_price;
@@ -66,6 +71,15 @@ let TransactionsService = class TransactionsService {
                         throw new common_1.BadRequestException(`Invalid product ID: ${item.product_id}`);
                     }
                     unit_price = product.price;
+                    const quantityChange = isRefund ? item.quantity : -item.quantity;
+                    inventoryLogs.push({
+                        tenant_id: tenantId,
+                        product_id: item.product_id,
+                        branch_id: data.branch_id,
+                        quantity_change: quantityChange,
+                        reason: isRefund ? 'Customer Refund' : 'POS Sale'
+                    });
+                    productUpdates.push(this.productModel.updateOne({ _id: item.product_id }, { $inc: { stock_level: quantityChange } }).exec());
                 }
                 calculatedSubtotal += (item.quantity * unit_price);
                 finalItems.push({
@@ -83,12 +97,19 @@ let TransactionsService = class TransactionsService {
         const calculatedTotal = calculatedSubtotal + calculatedVat;
         const transaction = await this.transactionModel.create({
             tenant_id: tenantId,
+            branch_id: data.branch_id,
             customer_id: data.customer_id,
+            type: data.type || 'SALE',
             subtotal: calculatedSubtotal,
             vat: calculatedVat,
             total: calculatedTotal,
             items: finalItems,
         });
+        if (inventoryLogs.length > 0) {
+            const logsWithTxn = inventoryLogs.map(log => ({ ...log, transaction_id: transaction._id }));
+            await this.inventoryLogModel.insertMany(logsWithTxn);
+            await Promise.all(productUpdates);
+        }
         return transaction;
     }
 };
@@ -98,7 +119,9 @@ exports.TransactionsService = TransactionsService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)(index_js_1.Transaction.name)),
     __param(1, (0, mongoose_1.InjectModel)(index_js_1.Customer.name)),
     __param(2, (0, mongoose_1.InjectModel)(index_js_1.Product.name)),
+    __param(3, (0, mongoose_1.InjectModel)(index_js_1.InventoryLog.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model])
 ], TransactionsService);

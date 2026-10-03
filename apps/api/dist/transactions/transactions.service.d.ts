@@ -1,10 +1,11 @@
 import { Model } from 'mongoose';
-import { Transaction, Customer, Product } from '../schemas/index.js';
+import { Transaction, Customer, Product, InventoryLog } from '../schemas/index.js';
 export declare class TransactionsService {
     private transactionModel;
     private customerModel;
     private productModel;
-    constructor(transactionModel: Model<Transaction>, customerModel: Model<Customer>, productModel: Model<Product>);
+    private inventoryLogModel;
+    constructor(transactionModel: Model<Transaction>, customerModel: Model<Customer>, productModel: Model<Product>, inventoryLogModel: Model<InventoryLog>);
     findAll(tenantId: string, page?: number, limit?: number): Promise<{
         data: (import("mongoose").Document<unknown, {}, Transaction, {}, import("mongoose").DefaultSchemaOptions> & Transaction & Required<{
             _id: import("mongoose").Types.ObjectId;
@@ -22,6 +23,8 @@ export declare class TransactionsService {
     }>;
     create(tenantId: string, data: {
         customer_id?: string;
+        branch_id?: string;
+        type?: string;
         subtotal: number;
         vat: number;
         total: number;

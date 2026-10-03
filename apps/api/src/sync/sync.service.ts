@@ -18,69 +18,58 @@ export class SyncService {
     };
 
     // 1. Sync Customers
-    if (payload.customers && Array.isArray(payload.customers)) {
-      for (const customer of payload.customers) {
-        try {
-          const updateData = {
-            name: customer.name,
-            phone: customer.phone,
-            whatsapp: customer.whatsapp,
-            address: customer.address,
-            tenant_id: tenantId,
-          };
-          
-          // Use phone + tenant_id as the unique identifier to prevent duplicates
-          // since mobile devices might not generate valid ObjectIds for new offline customers
-          await this.customerModel.findOneAndUpdate(
-            { tenant_id: tenantId, phone: customer.phone },
-            { $set: updateData },
-            { upsert: true, new: true }
-          ).exec();
-          
-          results.customersSynced++;
-        } catch (err: any) {
-          results.errors.push({ type: 'customer', id: customer.id, error: err.message });
-        }
+    if (payload.customers && Array.isArray(payload.customers) && payload.customers.length > 0) {
+      try {
+        const customerOps = payload.customers.map((c: any) => ({
+          updateOne: {
+            filter: { tenant_id: tenantId, phone: c.phone },
+            update: { $set: { name: c.name, phone: c.phone, whatsapp: c.whatsapp, address: c.address, tenant_id: tenantId } },
+            upsert: true
+          }
+        }));
+        const result = await this.customerModel.bulkWrite(customerOps, { ordered: false });
+        results.customersSynced = result.upsertedCount + result.modifiedCount;
+      } catch(err: any) {
+        results.errors.push({ type: 'customers_bulk', error: err.message });
       }
     }
 
     // 2. Sync Transactions
-    if (payload.transactions && Array.isArray(payload.transactions)) {
-      for (const txn of payload.transactions) {
-        try {
-          // Use offline ID stored in metadata or the provided ID to prevent duplicate transactions
+    if (payload.transactions && Array.isArray(payload.transactions) && payload.transactions.length > 0) {
+      try {
+        const transactionOps = payload.transactions.map((txn: any) => {
           const offlineId = txn.id || txn.offline_id;
-          
-          const existingTxn = await this.transactionModel.findOne({
-            tenant_id: tenantId,
-            'metadata.offline_id': offlineId
-          }).exec();
-
-          if (existingTxn) {
-            // Already synced, skip to prevent duplicates
-            continue;
-          }
-
-          const newTxn = await this.transactionModel.create({
-            tenant_id: tenantId,
-            customer_id: txn.customer_id,
-            subtotal: txn.subtotal,
-            vat: txn.vat || 0,
-            total: txn.total,
-            status: txn.status || 'Pending',
-            metadata: { offline_id: offlineId, ...txn.metadata },
-            items: (txn.items && Array.isArray(txn.items)) ? txn.items.map((item: any) => ({
-              description: item.description,
-              quantity: item.quantity,
-              unit_price: item.unit_price,
-              product_id: item.product_id,
-            })) : [],
-          });
-          
-          results.transactionsSynced++;
-        } catch (err: any) {
-          results.errors.push({ type: 'transaction', id: txn.id, error: err.message });
-        }
+          return {
+            updateOne: {
+              filter: { tenant_id: tenantId, 'metadata.offline_id': offlineId },
+              update: { 
+                $setOnInsert: {
+                  tenant_id: tenantId,
+                  customer_id: txn.customer_id,
+                  type: txn.type || 'SALE',
+                  subtotal: txn.subtotal,
+                  vat: txn.vat || 0,
+                  total: txn.total,
+                  status: txn.status || 'Pending',
+                  metadata: { offline_id: offlineId, ...txn.metadata },
+                  items: (txn.items && Array.isArray(txn.items)) ? txn.items.map((item: any) => ({
+                    description: item.description,
+                    quantity: item.quantity,
+                    unit_price: item.unit_price,
+                    product_id: item.product_id,
+                  })) : []
+                }
+              },
+              upsert: true
+            }
+          };
+        });
+        
+        const result = await this.transactionModel.bulkWrite(transactionOps, { ordered: false });
+        // upsertedCount tracks genuinely new offline transactions inserted
+        results.transactionsSynced = result.upsertedCount;
+      } catch (err: any) {
+        results.errors.push({ type: 'transactions_bulk', error: err.message });
       }
     }
 
