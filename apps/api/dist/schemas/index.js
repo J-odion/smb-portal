@@ -277,6 +277,7 @@ exports.InventoryLog = InventoryLog = __decorate([
     (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 ], InventoryLog);
 exports.InventoryLogSchema = mongoose_1.SchemaFactory.createForClass(InventoryLog);
+exports.InventoryLogSchema.index({ tenant_id: 1, product_id: 1, created_at: -1 });
 let TransactionItem = class TransactionItem {
     product_id;
     description;
@@ -391,6 +392,8 @@ exports.Transaction = Transaction = __decorate([
     (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 ], Transaction);
 exports.TransactionSchema = mongoose_1.SchemaFactory.createForClass(Transaction);
+exports.TransactionSchema.index({ tenant_id: 1, created_at: -1 });
+exports.TransactionSchema.index({ tenant_id: 1, customer_id: 1 });
 let Payment = class Payment extends mongoose_2.Document {
     tenant_id;
     transaction_id;
@@ -423,6 +426,7 @@ exports.Payment = Payment = __decorate([
     (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 ], Payment);
 exports.PaymentSchema = mongoose_1.SchemaFactory.createForClass(Payment);
+exports.PaymentSchema.index({ tenant_id: 1, transaction_id: 1 });
 let Expense = class Expense extends mongoose_2.Document {
     tenant_id;
     branch_id;
@@ -460,6 +464,7 @@ exports.Expense = Expense = __decorate([
     (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 ], Expense);
 exports.ExpenseSchema = mongoose_1.SchemaFactory.createForClass(Expense);
+exports.ExpenseSchema.index({ tenant_id: 1, date: -1 });
 let Staff = class Staff extends mongoose_2.Document {
     tenant_id;
     branch_id;

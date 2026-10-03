@@ -159,6 +159,7 @@ export class InventoryLog extends Document {
   reason: string;
 }
 export const InventoryLogSchema = SchemaFactory.createForClass(InventoryLog);
+InventoryLogSchema.index({ tenant_id: 1, product_id: 1, created_at: -1 });
 
 @Schema()
 export class TransactionItem {
@@ -227,6 +228,8 @@ export class Transaction extends Document {
   metadata?: any;
 }
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
+TransactionSchema.index({ tenant_id: 1, created_at: -1 });
+TransactionSchema.index({ tenant_id: 1, customer_id: 1 });
 
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class Payment extends Document {
@@ -246,6 +249,7 @@ export class Payment extends Document {
   method: string;
 }
 export const PaymentSchema = SchemaFactory.createForClass(Payment);
+PaymentSchema.index({ tenant_id: 1, transaction_id: 1 });
 
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class Expense extends Document {
@@ -268,6 +272,7 @@ export class Expense extends Document {
   note?: string;
 }
 export const ExpenseSchema = SchemaFactory.createForClass(Expense);
+ExpenseSchema.index({ tenant_id: 1, date: -1 });
 
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class Staff extends Document {

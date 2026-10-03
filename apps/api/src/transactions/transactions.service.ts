@@ -49,13 +49,20 @@ export class TransactionsService {
     const finalItems = [];
     const isRefund = data.type === 'REFUND';
     const inventoryLogs = [];
-    const productUpdates = [];
+    const productOps = [];
 
+    let productsMap = new Map();
     if (data.items && data.items.length > 0) {
+      const productIds = data.items.map(item => item.product_id).filter(id => !!id);
+      if (productIds.length > 0) {
+        const products = await this.productModel.find({ _id: { $in: productIds } }).exec();
+        productsMap = new Map(products.map(p => [p._id.toString(), p]));
+      }
+      
       for (const item of data.items) {
         let unit_price = item.unit_price;
         if (item.product_id) {
-          const product = await this.productModel.findOne({ _id: item.product_id }).exec();
+          const product = productsMap.get(item.product_id.toString());
           if (!product) {
             throw new BadRequestException(`Invalid product ID: ${item.product_id}`);
           }
@@ -71,12 +78,12 @@ export class TransactionsService {
             reason: isRefund ? 'Customer Refund' : 'POS Sale'
           });
           
-          productUpdates.push(
-            this.productModel.updateOne(
-              { _id: item.product_id },
-              { $inc: { stock_level: quantityChange } }
-            ).exec()
-          );
+          productOps.push({
+            updateOne: {
+              filter: { _id: item.product_id },
+              update: { $inc: { stock_level: quantityChange } }
+            }
+          });
         }
         calculatedSubtotal += (item.quantity * unit_price);
         finalItems.push({
@@ -108,7 +115,9 @@ export class TransactionsService {
     if (inventoryLogs.length > 0) {
       const logsWithTxn = inventoryLogs.map(log => ({ ...log, transaction_id: transaction._id }));
       await this.inventoryLogModel.insertMany(logsWithTxn);
-      await Promise.all(productUpdates);
+      if (productOps.length > 0) {
+        await this.productModel.bulkWrite(productOps, { ordered: false });
+      }
     }
 
     return transaction;
