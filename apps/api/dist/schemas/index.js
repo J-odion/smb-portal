@@ -156,6 +156,8 @@ let Customer = class Customer extends mongoose_2.Document {
     address;
     notes;
     whatsapp_consent;
+    is_deleted;
+    deleted_at;
     metadata;
 };
 exports.Customer = Customer;
@@ -188,6 +190,14 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Customer.prototype, "whatsapp_consent", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], Customer.prototype, "is_deleted", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Date)
+], Customer.prototype, "deleted_at", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.SchemaTypes.Mixed }),
     __metadata("design:type", Object)
 ], Customer.prototype, "metadata", void 0);
@@ -196,6 +206,8 @@ exports.Customer = Customer = __decorate([
 ], Customer);
 exports.CustomerSchema = mongoose_1.SchemaFactory.createForClass(Customer);
 exports.CustomerSchema.index({ tenant_id: 1, phone: 1 }, { unique: true });
+exports.CustomerSchema.index({ tenant_id: 1, is_deleted: 1 });
+exports.CustomerSchema.index({ tenant_id: 1, 'metadata.offline_id': 1 });
 let Product = class Product extends mongoose_2.Document {
     tenant_id;
     name;
@@ -650,4 +662,91 @@ exports.NotificationLog = NotificationLog = __decorate([
     (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 ], NotificationLog);
 exports.NotificationLogSchema = mongoose_1.SchemaFactory.createForClass(NotificationLog);
+exports.TenantSchema.pre(['findOneAndDelete', 'deleteOne'], async function () {
+    try {
+        const doc = await this.model.findOne(this.getQuery()).select('_id');
+        if (!doc)
+            return;
+        const tenantId = doc._id;
+        const db = this.model.db;
+        await Promise.all([
+            db.model('User').deleteMany({ tenant_id: tenantId }),
+            db.model('Branch').deleteMany({ tenant_id: tenantId }),
+            db.model('Customer').deleteMany({ tenant_id: tenantId }),
+            db.model('Product').deleteMany({ tenant_id: tenantId }),
+            db.model('InventoryLog').deleteMany({ tenant_id: tenantId }),
+            db.model('Transaction').deleteMany({ tenant_id: tenantId }),
+            db.model('Payment').deleteMany({ tenant_id: tenantId }),
+            db.model('Expense').deleteMany({ tenant_id: tenantId }),
+            db.model('Staff').deleteMany({ tenant_id: tenantId }),
+            db.model('AuditLog').deleteMany({ tenant_id: tenantId }),
+            db.model('Appointment').deleteMany({ tenant_id: tenantId }),
+            db.model('Measurement').deleteMany({ tenant_id: tenantId }),
+            db.model('NotificationLog').deleteMany({ tenant_id: tenantId }),
+        ]);
+    }
+    catch (err) {
+        console.error('Error during Tenant cascade deletion:', err);
+    }
+});
+exports.TransactionSchema.pre(['findOneAndDelete', 'deleteOne'], async function () {
+    try {
+        const doc = await this.model.findOne(this.getQuery()).select('_id');
+        if (!doc)
+            return;
+        const db = this.model.db;
+        await Promise.all([
+            db.model('Payment').deleteMany({ transaction_id: doc._id }),
+            db.model('InventoryLog').deleteMany({ transaction_id: doc._id }),
+        ]);
+    }
+    catch (err) {
+        console.error('Error during Transaction cascade deletion:', err);
+    }
+});
+exports.UserSchema.pre(['findOneAndDelete', 'deleteOne'], async function () {
+    try {
+        const doc = await this.model.findOne(this.getQuery()).select('_id');
+        if (!doc)
+            return;
+        const db = this.model.db;
+        await db.model('Staff').updateMany({ user_id: doc._id }, { $unset: { user_id: 1 } });
+    }
+    catch (err) {
+        console.error('Error during User disassociation cleanup:', err);
+    }
+});
+exports.BranchSchema.pre(['findOneAndDelete', 'deleteOne'], async function () {
+    try {
+        const doc = await this.model.findOne(this.getQuery()).select('_id');
+        if (!doc)
+            return;
+        const db = this.model.db;
+        await Promise.all([
+            db.model('User').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+            db.model('Staff').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+            db.model('Transaction').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+            db.model('Expense').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+            db.model('InventoryLog').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+        ]);
+    }
+    catch (err) {
+        console.error('Error during Branch disassociation cleanup:', err);
+    }
+});
+exports.CustomerSchema.pre(['findOneAndDelete', 'deleteOne'], async function () {
+    try {
+        const doc = await this.model.findOne(this.getQuery()).select('_id');
+        if (!doc)
+            return;
+        const db = this.model.db;
+        await Promise.all([
+            db.model('Appointment').deleteMany({ customer_id: doc._id }),
+            db.model('Measurement').deleteMany({ customer_id: doc._id }),
+        ]);
+    }
+    catch (err) {
+        console.error('Error during Customer non-financial cascade cleanup:', err);
+    }
+});
 //# sourceMappingURL=index.js.map

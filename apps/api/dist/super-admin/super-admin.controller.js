@@ -38,6 +38,12 @@ let SuperAdminController = class SuperAdminController {
     overrideSubscription(tenantId, timeline) {
         return this.adminService.overrideSubscription(tenantId, timeline);
     }
+    auditIntegrity(tenantId) {
+        return this.adminService.auditIntegrity(tenantId);
+    }
+    cleanupIntegrity(tenantId) {
+        return this.adminService.cleanupIntegrity(tenantId);
+    }
 };
 exports.SuperAdminController = SuperAdminController;
 __decorate([
@@ -74,6 +80,20 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], SuperAdminController.prototype, "overrideSubscription", null);
+__decorate([
+    (0, common_1.Get)('integrity/audit'),
+    __param(0, (0, common_1.Query)('tenantId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], SuperAdminController.prototype, "auditIntegrity", null);
+__decorate([
+    (0, common_1.Post)('integrity/cleanup'),
+    __param(0, (0, common_1.Body)('tenantId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], SuperAdminController.prototype, "cleanupIntegrity", null);
 exports.SuperAdminController = SuperAdminController = __decorate([
     (0, common_1.Controller)('admin'),
     (0, common_1.UseGuards)(jwt_auth_guard_js_1.JwtAuthGuard, roles_guard_js_1.RolesGuard),

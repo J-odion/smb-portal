@@ -17,12 +17,15 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const index_js_1 = require("../schemas/index.js");
+const data_integrity_service_js_1 = require("../database/data-integrity.service.js");
 let SuperAdminService = class SuperAdminService {
     tenantModel;
     userModel;
-    constructor(tenantModel, userModel) {
+    dataIntegrityService;
+    constructor(tenantModel, userModel, dataIntegrityService) {
         this.tenantModel = tenantModel;
         this.userModel = userModel;
+        this.dataIntegrityService = dataIntegrityService;
     }
     async getGlobalMetrics() {
         const totalTenants = await this.tenantModel.countDocuments();
@@ -76,6 +79,12 @@ let SuperAdminService = class SuperAdminService {
         await tenant.save();
         return { message: `Subscription overridden for ${timeline}`, tenant };
     }
+    async auditIntegrity(tenantId) {
+        return this.dataIntegrityService.auditOrphanedData(tenantId);
+    }
+    async cleanupIntegrity(tenantId) {
+        return this.dataIntegrityService.cleanupOrphanedData(tenantId);
+    }
 };
 exports.SuperAdminService = SuperAdminService;
 exports.SuperAdminService = SuperAdminService = __decorate([
@@ -83,6 +92,7 @@ exports.SuperAdminService = SuperAdminService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)(index_js_1.Tenant.name)),
     __param(1, (0, mongoose_1.InjectModel)(index_js_1.User.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
-        mongoose_2.Model])
+        mongoose_2.Model,
+        data_integrity_service_js_1.DataIntegrityService])
 ], SuperAdminService);
 //# sourceMappingURL=super-admin.service.js.map

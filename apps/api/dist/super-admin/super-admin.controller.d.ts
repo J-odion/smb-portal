@@ -43,4 +43,9 @@ export declare class SuperAdminController {
             id: string;
         };
     }>;
+    auditIntegrity(tenantId?: string): Promise<import("../database/data-integrity.service.js").IntegrityAuditReport>;
+    cleanupIntegrity(tenantId?: string): Promise<{
+        cleanedCount: number;
+        summary: Record<string, number>;
+    }>;
 }

@@ -2,12 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Tenant, User } from '../schemas/index.js';
+import { DataIntegrityService } from '../database/data-integrity.service.js';
 
 @Injectable()
 export class SuperAdminService {
   constructor(
     @InjectModel(Tenant.name) private tenantModel: Model<Tenant>,
-    @InjectModel(User.name) private userModel: Model<User>
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly dataIntegrityService: DataIntegrityService,
   ) {}
 
   async getGlobalMetrics() {
@@ -77,4 +79,13 @@ export class SuperAdminService {
 
     return { message: `Subscription overridden for ${timeline}`, tenant };
   }
+
+  async auditIntegrity(tenantId?: string) {
+    return this.dataIntegrityService.auditOrphanedData(tenantId);
+  }
+
+  async cleanupIntegrity(tenantId?: string) {
+    return this.dataIntegrityService.cleanupOrphanedData(tenantId);
+  }
 }
+

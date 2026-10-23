@@ -300,6 +300,8 @@ export declare class Customer extends Document {
     address?: string;
     notes?: string;
     whatsapp_consent: boolean;
+    is_deleted: boolean;
+    deleted_at?: Date;
     metadata?: any;
 }
 export declare const CustomerSchema: import("mongoose").Schema<Customer, import("mongoose").Model<Customer, any, any, any, any, any, Customer>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, Customer, Document<unknown, {}, Customer, {
@@ -375,6 +377,24 @@ export declare const CustomerSchema: import("mongoose").Schema<Customer, import(
         id: string;
     }>> | undefined;
     whatsapp_consent?: import("mongoose").SchemaDefinitionProperty<boolean, Customer, Document<unknown, {}, Customer, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Customer & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    is_deleted?: import("mongoose").SchemaDefinitionProperty<boolean, Customer, Document<unknown, {}, Customer, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Customer & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }, "id"> & import("mongoose").HydratedDocumentOverrides<{
+        id: string;
+    }>> | undefined;
+    deleted_at?: import("mongoose").SchemaDefinitionProperty<Date | undefined, Customer, Document<unknown, {}, Customer, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Customer & Required<{
         _id: Types.ObjectId;

@@ -10,6 +10,7 @@ exports.DatabaseModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const index_js_1 = require("../schemas/index.js");
+const data_integrity_service_js_1 = require("./data-integrity.service.js");
 const mongooseModels = mongoose_1.MongooseModule.forFeature([
     { name: index_js_1.Tenant.name, schema: index_js_1.TenantSchema },
     { name: index_js_1.User.name, schema: index_js_1.UserSchema },
@@ -33,7 +34,8 @@ exports.DatabaseModule = DatabaseModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports: [mongooseModels],
-        exports: [mongooseModels],
+        providers: [data_integrity_service_js_1.DataIntegrityService],
+        exports: [mongooseModels, data_integrity_service_js_1.DataIntegrityService],
     })
 ], DatabaseModule);
 //# sourceMappingURL=database.module.js.map

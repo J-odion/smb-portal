@@ -13,13 +13,32 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Mock successful login
-    document.cookie = `token=mock_token_123; path=/; max-age=86400`;
-    router.push("/dashboard");
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const email = formData.get("email") as string;
+      const password = formData.get("password") as string;
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Invalid credentials");
+      }
+
+      const token = data.access_token;
+      document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Lax`;
+      localStorage.setItem("token", token);
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Login failed. Please verify your credentials.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

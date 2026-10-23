@@ -30,7 +30,7 @@ import { APP_GUARD } from '@nestjs/core';
       ttl: 60000,
       limit: 100, // Security: max 100 requests per minute per IP
     }]),
-    MongooseModule.forRoot(process.env.DATABASE_URL || 'mongodb://localhost:27017/smb-portal', {
+    MongooseModule.forRoot(process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/smb-portal', {
       connectionFactory: (connection) => {
         connection.plugin((schema: any) => {
           // Do not apply to Tenant and User models as they might need cross-tenant logic for auth

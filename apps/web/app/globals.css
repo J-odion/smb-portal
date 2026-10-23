@@ -14,12 +14,12 @@
   --color-warning-500: var(--warning-500);
 }
 
-@utility bg-primary { background-color: var(--bg-primary); }
-@utility bg-secondary { background-color: var(--bg-secondary); }
-@utility bg-tertiary { background-color: var(--bg-tertiary); }
-@utility text-primary { color: var(--text-primary); }
-@utility text-secondary { color: var(--text-secondary); }
-@utility text-tertiary { color: var(--text-tertiary); }
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
 
 :root {
   /* Highly Polished Dark Theme (High Contrast) */
@@ -52,7 +52,53 @@
   --shadow-md: 0 8px 16px rgba(0,0,0,0.3);
   --shadow-lg: 0 16px 32px rgba(0,0,0,0.4);
   --shadow-glow: 0 0 20px rgba(97, 97, 255, 0.4);
+
+  /* Monday.com signature color tokens */
+  --monday-done: #00c875;
+  --monday-working: #fdab3d;
+  --monday-stuck: #e2445c;
+  --monday-review: #a25ddc;
+  --monday-info: #579bfc;
+  --monday-blue: #0073ea;
+  --monday-gray: #4b4f6b;
 }
+
+/* Monday.com Signature Status Pills */
+.monday-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  color: #ffffff !important;
+  text-align: center;
+  min-width: 85px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.monday-pill:hover {
+  filter: brightness(1.1);
+  transform: scale(1.03);
+}
+.monday-pill-done { background-color: #00c875; }
+.monday-pill-working { background-color: #fdab3d; }
+.monday-pill-stuck { background-color: #e2445c; }
+.monday-pill-review { background-color: #a25ddc; }
+.monday-pill-info { background-color: #579bfc; }
+.monday-pill-empty { background-color: #4b4f6b; }
+
+/* Monday.com Battery / Progress Bar */
+.monday-battery {
+  display: flex;
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
 
 * {
   box-sizing: border-box;
@@ -200,3 +246,17 @@ button {
 .mt-4 { margin-top: 1rem; }
 .mt-8 { margin-top: 2rem; }
 .w-full { width: 100%; }
+
+/* Mobile-Specific UX & Ergonomics */
+@media (max-width: 768px) {
+  /* Prevent iOS Safari from automatically zooming into inputs when focused */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Safe area padding for mobile notches and gesture indicators */
+  body {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+

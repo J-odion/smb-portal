@@ -12,6 +12,13 @@ let AppService = class AppService {
     getHello() {
         return 'Hello World!';
     }
+    getHealth() {
+        return {
+            status: 'ok',
+            service: 'smb-portal-api',
+            timestamp: new Date().toISOString(),
+        };
+    }
 };
 exports.AppService = AppService;
 exports.AppService = AppService = __decorate([

@@ -13,10 +13,12 @@ const nextConfig: NextConfig = {
   },
   turbopack: {},
   async rewrites() {
+    const rawTarget = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://smb-portal-1.onrender.com';
+    const apiTarget = rawTarget.replace(/\/$/, '');
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:3001/:path*',
+        destination: `${apiTarget}/:path*`,
       },
     ];
   },

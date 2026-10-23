@@ -105,11 +105,19 @@ export class Customer extends Document {
   @Prop({ default: false })
   whatsapp_consent: boolean;
 
+  @Prop({ default: false })
+  is_deleted: boolean;
+
+  @Prop()
+  deleted_at?: Date;
+
   @Prop({ type: SchemaTypes.Mixed })
   metadata?: any;
 }
 export const CustomerSchema = SchemaFactory.createForClass(Customer);
 CustomerSchema.index({ tenant_id: 1, phone: 1 }, { unique: true });
+CustomerSchema.index({ tenant_id: 1, is_deleted: 1 });
+CustomerSchema.index({ tenant_id: 1, 'metadata.offline_id': 1 });
 
 @Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class Product extends Document {
@@ -383,3 +391,95 @@ export class NotificationLog extends Document {
   sent_at: Date;
 }
 export const NotificationLogSchema = SchemaFactory.createForClass(NotificationLog);
+
+// -----------------------------------------------------------------------------
+// REFERENTIAL INTEGRITY & CASCADE DELETION HOOKS
+// -----------------------------------------------------------------------------
+
+// 1. Tenant Cascade Deletion: cleans up all child entities when a tenant is removed
+TenantSchema.pre(['findOneAndDelete', 'deleteOne'] as any, async function (this: any) {
+  try {
+    const doc = await this.model.findOne(this.getQuery()).select('_id');
+    if (!doc) return;
+    const tenantId = doc._id;
+    const db = this.model.db;
+    await Promise.all([
+      db.model('User').deleteMany({ tenant_id: tenantId }),
+      db.model('Branch').deleteMany({ tenant_id: tenantId }),
+      db.model('Customer').deleteMany({ tenant_id: tenantId }),
+      db.model('Product').deleteMany({ tenant_id: tenantId }),
+      db.model('InventoryLog').deleteMany({ tenant_id: tenantId }),
+      db.model('Transaction').deleteMany({ tenant_id: tenantId }),
+      db.model('Payment').deleteMany({ tenant_id: tenantId }),
+      db.model('Expense').deleteMany({ tenant_id: tenantId }),
+      db.model('Staff').deleteMany({ tenant_id: tenantId }),
+      db.model('AuditLog').deleteMany({ tenant_id: tenantId }),
+      db.model('Appointment').deleteMany({ tenant_id: tenantId }),
+      db.model('Measurement').deleteMany({ tenant_id: tenantId }),
+      db.model('NotificationLog').deleteMany({ tenant_id: tenantId }),
+    ]);
+  } catch (err) {
+    console.error('Error during Tenant cascade deletion:', err);
+  }
+});
+
+// 2. Transaction Cascade Deletion: cleans up related Payments and InventoryLogs
+TransactionSchema.pre(['findOneAndDelete', 'deleteOne'] as any, async function (this: any) {
+  try {
+    const doc = await this.model.findOne(this.getQuery()).select('_id');
+    if (!doc) return;
+    const db = this.model.db;
+    await Promise.all([
+      db.model('Payment').deleteMany({ transaction_id: doc._id }),
+      db.model('InventoryLog').deleteMany({ transaction_id: doc._id }),
+    ]);
+  } catch (err) {
+    console.error('Error during Transaction cascade deletion:', err);
+  }
+});
+
+// 3. User Deletion: disassociate Staff.user_id to prevent dangling reference while preserving staff payroll history
+UserSchema.pre(['findOneAndDelete', 'deleteOne'] as any, async function (this: any) {
+  try {
+    const doc = await this.model.findOne(this.getQuery()).select('_id');
+    if (!doc) return;
+    const db = this.model.db;
+    await db.model('Staff').updateMany({ user_id: doc._id }, { $unset: { user_id: 1 } });
+  } catch (err) {
+    console.error('Error during User disassociation cleanup:', err);
+  }
+});
+
+// 4. Branch Deletion: disassociate branch_id from dependent documents safely
+BranchSchema.pre(['findOneAndDelete', 'deleteOne'] as any, async function (this: any) {
+  try {
+    const doc = await this.model.findOne(this.getQuery()).select('_id');
+    if (!doc) return;
+    const db = this.model.db;
+    await Promise.all([
+      db.model('User').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+      db.model('Staff').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+      db.model('Transaction').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+      db.model('Expense').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+      db.model('InventoryLog').updateMany({ branch_id: doc._id }, { $unset: { branch_id: 1 } }),
+    ]);
+  } catch (err) {
+    console.error('Error during Branch disassociation cleanup:', err);
+  }
+});
+
+// 5. Customer Deletion: cleans up non-financial customer records
+CustomerSchema.pre(['findOneAndDelete', 'deleteOne'] as any, async function (this: any) {
+  try {
+    const doc = await this.model.findOne(this.getQuery()).select('_id');
+    if (!doc) return;
+    const db = this.model.db;
+    await Promise.all([
+      db.model('Appointment').deleteMany({ customer_id: doc._id }),
+      db.model('Measurement').deleteMany({ customer_id: doc._id }),
+    ]);
+  } catch (err) {
+    console.error('Error during Customer non-financial cascade cleanup:', err);
+  }
+});
+

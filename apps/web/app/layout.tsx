@@ -1,15 +1,22 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SyncProvider } from "../components/SyncProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  themeColor: "#6161ff",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: "African SMB Portal",
   description: "Business management platform for SMBs",
   manifest: "/manifest.json",
-  themeColor: "#a855f7"
 };
 
 export default function RootLayout({

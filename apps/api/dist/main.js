@@ -36,11 +36,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = require("fs");
+const path_1 = require("path");
 const core_1 = require("@nestjs/core");
 const app_module_js_1 = require("./app.module.js");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
 const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
+for (const envCandidate of ['.env.local', '.env']) {
+    const envPath = (0, path_1.resolve)(process.cwd(), envCandidate);
+    if ((0, fs_1.existsSync)(envPath) && typeof process.loadEnvFile === 'function') {
+        try {
+            process.loadEnvFile(envPath);
+            break;
+        }
+        catch {
+        }
+    }
+}
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_js_1.AppModule);
     app.use((0, helmet_1.default)());
@@ -48,9 +61,26 @@ async function bootstrap() {
     const express = await Promise.resolve().then(() => __importStar(require('express')));
     app.use(express.json({ limit: '5mb' }));
     app.use(express.urlencoded({ limit: '5mb', extended: true }));
+    const configuredOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
+        .split(',')
+        .map((o) => o.trim())
+        .filter(Boolean);
     app.enableCors({
-        origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        origin: (requestOrigin, callback) => {
+            if (!requestOrigin) {
+                return callback(null, true);
+            }
+            const isAllowed = configuredOrigins.includes(requestOrigin) ||
+                requestOrigin.includes('localhost') ||
+                /\.vercel\.app$/.test(new URL(requestOrigin).hostname);
+            if (isAllowed) {
+                callback(null, true);
+            }
+            else {
+                callback(new Error(`CORS blocked request from origin: ${requestOrigin}`));
+            }
+        },
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
     });
     app.useGlobalPipes(new common_1.ValidationPipe({
@@ -58,7 +88,8 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
         transform: true,
     }));
-    await app.listen(process.env.PORT ?? 3001);
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
+    await app.listen(port, '0.0.0.0');
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

@@ -1,0 +1,34 @@
+# ==============================================================================
+# RENDER BLUEPRINT SPECIFICATION (render.yaml)
+#
+# Deploy the API backend as a Web Service on Render from this monorepo.
+# ==============================================================================
+services:
+  - type: web
+    name: smb-portal-api
+    runtime: node
+    plan: starter
+    region: frankfurt
+    rootDir: .
+    buildCommand: npm install && npx turbo run build --filter=api
+    startCommand: node apps/api/dist/main.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: FRONTEND_URL
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false

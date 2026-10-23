@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Query, UseGuards } from '@nestjs/common';
 import { SuperAdminService } from './super-admin.service.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -33,5 +33,15 @@ export class SuperAdminController {
   @Post('tenants/:id/subscription-override')
   overrideSubscription(@Param('id') tenantId: string, @Body('timeline') timeline: '1Y' | '2Y' | 'LIFETIME') {
     return this.adminService.overrideSubscription(tenantId, timeline);
+  }
+
+  @Get('integrity/audit')
+  auditIntegrity(@Query('tenantId') tenantId?: string) {
+    return this.adminService.auditIntegrity(tenantId);
+  }
+
+  @Post('integrity/cleanup')
+  cleanupIntegrity(@Body('tenantId') tenantId?: string) {
+    return this.adminService.cleanupIntegrity(tenantId);
   }
 }

@@ -40,7 +40,7 @@ exports.AppModule = AppModule = __decorate([
                     ttl: 60000,
                     limit: 100,
                 }]),
-            mongoose_1.MongooseModule.forRoot(process.env.DATABASE_URL || 'mongodb://localhost:27017/smb-portal', {
+            mongoose_1.MongooseModule.forRoot(process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/smb-portal', {
                 connectionFactory: (connection) => {
                     connection.plugin((schema) => {
                         if (schema.options.collection === 'tenants' || schema.options.collection === 'users')

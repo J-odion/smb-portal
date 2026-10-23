@@ -18,6 +18,8 @@ import {
   NotificationLog, NotificationLogSchema,
 } from '../schemas/index.js';
 
+import { DataIntegrityService } from './data-integrity.service.js';
+
 const mongooseModels = MongooseModule.forFeature([
   { name: Tenant.name, schema: TenantSchema },
   { name: User.name, schema: UserSchema },
@@ -39,6 +41,8 @@ const mongooseModels = MongooseModule.forFeature([
 @Global()
 @Module({
   imports: [mongooseModels],
-  exports: [mongooseModels],
+  providers: [DataIntegrityService],
+  exports: [mongooseModels, DataIntegrityService],
 })
 export class DatabaseModule {}
+
