@@ -81,7 +81,7 @@ __decorate([
     __metadata("design:type", String)
 ], Tenant.prototype, "stripe_subscription_id", void 0);
 exports.Tenant = Tenant = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+    (0, mongoose_1.Schema)({ collection: 'tenants', timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 ], Tenant);
 exports.TenantSchema = mongoose_1.SchemaFactory.createForClass(Tenant);
 let User = class User extends mongoose_2.Document {
@@ -123,7 +123,7 @@ __decorate([
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], User.prototype, "branch_id", void 0);
 exports.User = User = __decorate([
-    (0, mongoose_1.Schema)({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+    (0, mongoose_1.Schema)({ collection: 'users', timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 ], User);
 exports.UserSchema = mongoose_1.SchemaFactory.createForClass(User);
 let Branch = class Branch extends mongoose_2.Document {

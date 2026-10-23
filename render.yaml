@@ -19,9 +19,9 @@ services:
       - key: PORT
         value: 10000
       - key: DATABASE_URL
-        sync: false
+        value: mongodb+srv://jafaruemmanuel48_db_user:cjw1fUyWU64wenvC@cluster0.b3mtupu.mongodb.net/smb_portal?retryWrites=true&w=majority
       - key: MONGODB_URI
-        sync: false
+        value: mongodb+srv://jafaruemmanuel48_db_user:cjw1fUyWU64wenvC@cluster0.b3mtupu.mongodb.net/smb_portal?retryWrites=true&w=majority
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN

@@ -40,10 +40,14 @@ exports.AppModule = AppModule = __decorate([
                     ttl: 60000,
                     limit: 100,
                 }]),
-            mongoose_1.MongooseModule.forRoot(process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/smb-portal', {
+            mongoose_1.MongooseModule.forRoot(process.env.DATABASE_URL ||
+                process.env.MONGODB_URI ||
+                'mongodb+srv://jafaruemmanuel48_db_user:cjw1fUyWU64wenvC@cluster0.b3mtupu.mongodb.net/smb_portal?retryWrites=true&w=majority', {
+                serverSelectionTimeoutMS: 7000,
                 connectionFactory: (connection) => {
                     connection.plugin((schema) => {
-                        if (schema.options.collection === 'tenants' || schema.options.collection === 'users')
+                        const col = schema.options?.collection || schema.collection?.name;
+                        if (col === 'tenants' || col === 'users')
                             return;
                         ['find', 'findOne', 'countDocuments', 'update', 'updateOne', 'updateMany', 'findOneAndUpdate'].forEach((method) => {
                             schema.pre(method, function (next) {

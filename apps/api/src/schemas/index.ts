@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes, Types } from 'mongoose';
 
-@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+@Schema({ collection: 'tenants', timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class Tenant extends Document {
   @Prop({ required: true })
   name: string;
@@ -44,7 +44,7 @@ export class Tenant extends Document {
 }
 export const TenantSchema = SchemaFactory.createForClass(Tenant);
 
-@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+@Schema({ collection: 'users', timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 export class User extends Document {
   @Prop({ required: true, unique: true })
   email: string;

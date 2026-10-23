@@ -30,21 +30,27 @@ import { APP_GUARD } from '@nestjs/core';
       ttl: 60000,
       limit: 100, // Security: max 100 requests per minute per IP
     }]),
-    MongooseModule.forRoot(process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/smb-portal', {
-      connectionFactory: (connection) => {
-        connection.plugin((schema: any) => {
-          // Do not apply to Tenant and User models as they might need cross-tenant logic for auth
-          if (schema.options.collection === 'tenants' || schema.options.collection === 'users') return;
-          
-          ['find', 'findOne', 'countDocuments', 'update', 'updateOne', 'updateMany', 'findOneAndUpdate'].forEach((method) => {
-            schema.pre(method, function (this: any, next: Function) {
-              const tenantId = getTenantId();
-              if (tenantId) {
-                this.where({ tenant_id: tenantId });
-              }
-              next();
+    MongooseModule.forRoot(
+      process.env.DATABASE_URL ||
+      process.env.MONGODB_URI ||
+      'mongodb+srv://jafaruemmanuel48_db_user:cjw1fUyWU64wenvC@cluster0.b3mtupu.mongodb.net/smb_portal?retryWrites=true&w=majority',
+      {
+        serverSelectionTimeoutMS: 7000,
+        connectionFactory: (connection) => {
+          connection.plugin((schema: any) => {
+            // Do not apply tenant filters to Tenant and User models
+            const col = schema.options?.collection || (schema as any).collection?.name;
+            if (col === 'tenants' || col === 'users') return;
+            
+            ['find', 'findOne', 'countDocuments', 'update', 'updateOne', 'updateMany', 'findOneAndUpdate'].forEach((method) => {
+              schema.pre(method, function (this: any, next: Function) {
+                const tenantId = getTenantId();
+                if (tenantId) {
+                  this.where({ tenant_id: tenantId });
+                }
+                next();
+              });
             });
-          });
 
           // Pre-save hook to ensure tenant_id is set on creation
           schema.pre('save', function (this: any, next: Function) {

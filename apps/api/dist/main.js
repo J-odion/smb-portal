@@ -42,6 +42,7 @@ const core_1 = require("@nestjs/core");
 const app_module_js_1 = require("./app.module.js");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
+const all_exceptions_filter_js_1 = require("./common/filters/all-exceptions.filter.js");
 for (const envCandidate of ['.env.local', '.env']) {
     const envPath = (0, path_1.resolve)(process.cwd(), envCandidate);
     if ((0, fs_1.existsSync)(envPath) && typeof process.loadEnvFile === 'function') {
@@ -101,6 +102,7 @@ async function bootstrap() {
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
     });
+    app.useGlobalFilters(new all_exceptions_filter_js_1.AllExceptionsFilter());
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
         forbidNonWhitelisted: true,

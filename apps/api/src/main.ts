@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
 
 // Load scoped environment variables for apps/api
 for (const envCandidate of ['.env.local', '.env']) {
@@ -75,6 +76,9 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
+
+  // Log and handle all exceptions cleanly
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // Security: Global input validation to strip unwhitelisted fields and prevent injection
   app.useGlobalPipes(new ValidationPipe({
