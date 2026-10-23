@@ -15,6 +15,7 @@ class SignupDto {
     email;
     password;
     businessName;
+    industry;
 }
 exports.SignupDto = SignupDto;
 __decorate([
@@ -31,6 +32,11 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignupDto.prototype, "businessName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SignupDto.prototype, "industry", void 0);
 class LoginDto {
     email;
     password;

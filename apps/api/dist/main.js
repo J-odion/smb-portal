@@ -42,7 +42,6 @@ const core_1 = require("@nestjs/core");
 const app_module_js_1 = require("./app.module.js");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
-const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 for (const envCandidate of ['.env.local', '.env']) {
     const envPath = (0, path_1.resolve)(process.cwd(), envCandidate);
     if ((0, fs_1.existsSync)(envPath) && typeof process.loadEnvFile === 'function') {
@@ -54,10 +53,29 @@ for (const envCandidate of ['.env.local', '.env']) {
         }
     }
 }
+function sanitizeObject(obj) {
+    if (!obj || typeof obj !== 'object')
+        return obj;
+    for (const key of Object.keys(obj)) {
+        if (key.startsWith('$') || key.includes('.')) {
+            delete obj[key];
+        }
+        else if (typeof obj[key] === 'object') {
+            sanitizeObject(obj[key]);
+        }
+    }
+    return obj;
+}
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_js_1.AppModule);
     app.use((0, helmet_1.default)());
-    app.use((0, express_mongo_sanitize_1.default)());
+    app.use((req, _res, next) => {
+        if (req.body)
+            sanitizeObject(req.body);
+        if (req.params)
+            sanitizeObject(req.params);
+        next();
+    });
     const express = await Promise.resolve().then(() => __importStar(require('express')));
     app.use(express.json({ limit: '5mb' }));
     app.use(express.urlencoded({ limit: '5mb', extended: true }));

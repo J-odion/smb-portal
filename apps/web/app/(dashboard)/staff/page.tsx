@@ -153,7 +153,7 @@ export default function StaffPage() {
       {/* Toast Notification */}
       {notification && (
         <div
-          className={`p-4 rounded-xl flex items-center gap-3 border shadow-lg animate-fade-in ${
+          className={`p-4 rounded-xl flex items-center gap-3 border shadow-sm animate-fade-in ${
             notification.type === "success"
               ? "bg-[#00c875]/10 border-[#00c875]/40 text-[#00c875]"
               : "bg-[#e2445c]/10 border-[#e2445c]/40 text-[#e2445c]"
@@ -165,22 +165,22 @@ export default function StaffPage() {
       )}
 
       {/* Monday Board Breadcrumb & Top Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200/80 pb-5">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-secondary uppercase tracking-wider mb-1">
             <span>Workspaces</span>
             <span>&rsaquo;</span>
-            <span className="text-brand-400">Staff & Payroll</span>
+            <span className="text-brand-600">Staff & Payroll</span>
           </div>
-          <h1 className="h2 gradient-text">Staff & Compensation Board</h1>
-          <p className="text-secondary text-sm">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Staff & Compensation Board</h1>
+          <p className="text-slate-500 text-sm mt-0.5">
             Manage your store associates, salary tiers, and commission percentages.
           </p>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="btn btn-primary flex items-center gap-2 w-full md:w-auto justify-center shadow-lg shadow-brand-500/20 text-sm font-bold py-3 px-5"
+          className="btn btn-primary flex items-center gap-2 w-full md:w-auto justify-center shadow-md shadow-brand-500/20 text-sm font-bold py-2.5 px-5"
         >
           <UserPlus size={18} />
           <span>+ Add Staff Member</span>
@@ -188,13 +188,13 @@ export default function StaffPage() {
       </div>
 
       {/* Monday Progress Battery Bar */}
-      <div className="glass p-5 rounded-2xl border border-white/5 space-y-3">
+      <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-3">
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-secondary">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
               Payroll Structure Battery
             </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-white font-medium">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold border border-slate-200">
               {totalStaffCount} Employees
             </span>
           </div>
@@ -211,7 +211,7 @@ export default function StaffPage() {
         </div>
 
         {/* Segmented Battery */}
-        <div className="monday-battery w-full h-3 rounded-full overflow-hidden flex bg-white/5">
+        <div className="monday-battery w-full h-3 rounded-full overflow-hidden flex bg-slate-100">
           <div
             style={{ width: `${flatPercentage}%` }}
             className="bg-[#00c875] transition-all duration-500 hover:brightness-110"
@@ -226,19 +226,19 @@ export default function StaffPage() {
 
         {/* Monday KPI summary cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 border-l-4 border-l-[#00c875]">
-            <span className="text-xs text-secondary font-medium block">Monthly Fixed Commitment</span>
-            <span className="text-lg font-extrabold text-white">
+          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 border-l-4 border-l-[#00c875]">
+            <span className="text-xs text-slate-500 font-medium block">Monthly Fixed Commitment</span>
+            <span className="text-lg font-extrabold text-slate-900">
               ₦{totalMonthlyCommitment.toLocaleString()}
             </span>
           </div>
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 border-l-4 border-l-[#fdab3d]">
-            <span className="text-xs text-secondary font-medium block">Commission Associates</span>
-            <span className="text-lg font-extrabold text-white">{commissionCount} Members</span>
+          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 border-l-4 border-l-[#fdab3d]">
+            <span className="text-xs text-slate-500 font-medium block">Commission Associates</span>
+            <span className="text-lg font-extrabold text-slate-900">{commissionCount} Members</span>
           </div>
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 border-l-4 border-l-[#a25ddc]">
-            <span className="text-xs text-secondary font-medium block">Total Active Roster</span>
-            <span className="text-lg font-extrabold text-white">{totalStaffCount} Onboarded</span>
+          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 border-l-4 border-l-[#0073ea]">
+            <span className="text-xs text-slate-500 font-medium block">Total Active Roster</span>
+            <span className="text-lg font-extrabold text-slate-900">{totalStaffCount} Onboarded</span>
           </div>
         </div>
       </div>
@@ -247,18 +247,18 @@ export default function StaffPage() {
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
         {/* Search Input */}
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             placeholder="Search staff by name or phone..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-secondary/80 border border-white/10 text-white placeholder-secondary text-sm focus:border-brand-500 outline-none transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:border-brand-500 outline-none transition-colors shadow-xs"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
             >
               <X size={14} />
             </button>
@@ -267,11 +267,11 @@ export default function StaffPage() {
 
         {/* Filter Pills + View Mode */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-          <div className="flex items-center gap-1 bg-secondary/80 p-1 rounded-xl border border-white/10 text-xs">
+          <div className="flex items-center gap-1 bg-slate-100/90 p-1 rounded-xl border border-slate-200 text-xs">
             <button
               onClick={() => setPayFilter("ALL")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                payFilter === "ALL" ? "bg-brand-500 text-white" : "text-secondary hover:text-white"
+                payFilter === "ALL" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               All ({staffMembers.length})
@@ -279,7 +279,7 @@ export default function StaffPage() {
             <button
               onClick={() => setPayFilter("flat")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                payFilter === "flat" ? "bg-[#00c875] text-white" : "text-secondary hover:text-white"
+                payFilter === "flat" ? "bg-[#00c875] text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Fixed ({flatCount})
@@ -287,7 +287,7 @@ export default function StaffPage() {
             <button
               onClick={() => setPayFilter("commission")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                payFilter === "commission" ? "bg-[#fdab3d] text-white" : "text-secondary hover:text-white"
+                payFilter === "commission" ? "bg-[#fdab3d] text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Commission ({commissionCount})
@@ -295,11 +295,11 @@ export default function StaffPage() {
           </div>
 
           {/* View Switcher (Cards vs Table) */}
-          <div className="flex items-center bg-secondary/80 p-1 rounded-xl border border-white/10 text-xs">
+          <div className="flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200 text-xs">
             <button
               onClick={() => setViewMode("cards")}
               className={`p-2 rounded-lg transition-colors ${
-                viewMode === "cards" ? "bg-white/10 text-white" : "text-secondary hover:text-white"
+                viewMode === "cards" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
               }`}
               title="Cards View"
             >
@@ -308,7 +308,7 @@ export default function StaffPage() {
             <button
               onClick={() => setViewMode("table")}
               className={`p-2 rounded-lg transition-colors ${
-                viewMode === "table" ? "bg-white/10 text-white" : "text-secondary hover:text-white"
+                viewMode === "table" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
               }`}
               title="Table View"
             >
@@ -320,22 +320,22 @@ export default function StaffPage() {
 
       {/* Main Board Content */}
       {loading ? (
-        <div className="p-12 text-center text-secondary glass rounded-2xl border border-white/5">
+        <div className="p-12 text-center text-secondary bg-white rounded-2xl border border-slate-200">
           <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm">Loading staff members from board...</p>
+          <p className="text-sm font-medium">Loading staff members from board...</p>
         </div>
       ) : filteredStaff.length === 0 ? (
-        <div className="p-12 text-center glass rounded-2xl border border-white/5 space-y-3">
-          <Users size={40} className="mx-auto text-secondary/50" />
-          <h3 className="text-base font-bold text-white">No Staff Members Found</h3>
-          <p className="text-xs text-secondary max-w-sm mx-auto">
+        <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <Users size={40} className="mx-auto text-slate-300" />
+          <h3 className="text-base font-bold text-slate-900">No Staff Members Found</h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto">
             {searchQuery
               ? "No staff matching your search query. Clear search to see all records."
               : "You haven't added any staff members yet. Click the button below to onboard your team."}
           </p>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="btn btn-primary text-xs py-2 px-4 inline-flex items-center gap-1.5"
+            className="btn btn-primary text-xs py-2 px-4 inline-flex items-center gap-1.5 font-bold"
           >
             <UserPlus size={14} />
             <span>Add First Staff Member</span>
@@ -350,11 +350,11 @@ export default function StaffPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded bg-[#00c875]"></span>
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
                     Fixed Salary Staff ({fixedStaffGroup.length})
                   </h3>
                 </div>
-                <span className="text-xs text-secondary font-medium">
+                <span className="text-xs text-slate-500 font-medium">
                   Subtotal: ₦
                   {fixedStaffGroup
                     .reduce((acc, curr) => acc + (curr.flat_amount || 0), 0)
@@ -366,11 +366,11 @@ export default function StaffPage() {
                 {fixedStaffGroup.map((staff) => (
                   <div
                     key={staff._id || staff.id}
-                    className="glass rounded-2xl p-5 border border-white/5 border-l-4 border-l-[#00c875] space-y-4 hover:border-white/20 transition-all shadow-sm"
+                    className="bg-white rounded-2xl p-5 border border-slate-200/90 border-l-4 border-l-[#00c875] space-y-4 hover:border-brand-300 hover:shadow-md transition-all shadow-xs"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-full bg-[#00c875]/20 text-[#00c875] font-bold flex items-center justify-center text-sm border border-[#00c875]/30">
+                        <div className="w-11 h-11 rounded-full bg-[#00c875]/15 text-[#00c875] font-bold flex items-center justify-center text-sm border border-[#00c875]/30">
                           {staff.name
                             .split(" ")
                             .map((n) => n[0])
@@ -379,8 +379,8 @@ export default function StaffPage() {
                             .toUpperCase()}
                         </div>
                         <div>
-                          <h4 className="font-bold text-white text-base leading-tight">{staff.name}</h4>
-                          <span className="text-xs text-secondary flex items-center gap-1 mt-0.5">
+                          <h4 className="font-bold text-slate-900 text-base leading-tight">{staff.name}</h4>
+                          <span className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
                             <Phone size={11} /> {staff.phone}
                           </span>
                         </div>
@@ -391,12 +391,12 @@ export default function StaffPage() {
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs text-secondary">
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
                       <span className="flex items-center gap-1">
-                        <Briefcase size={12} className="text-brand-400" />
+                        <Briefcase size={12} className="text-brand-600" />
                         Fixed Monthly Salary
                       </span>
-                      <span className="text-white font-semibold">Active</span>
+                      <span className="text-slate-900 font-semibold">Active</span>
                     </div>
 
                     {/* Touch Ergonomic 1-Tap Action Buttons */}
@@ -405,16 +405,16 @@ export default function StaffPage() {
                         href={formatWhatsAppUrl(staff.phone, staff.name)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                        className="py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                       >
                         <MessageSquare size={14} className="text-[#00c875]" />
                         <span>WhatsApp</span>
                       </a>
                       <a
                         href={`tel:${staff.phone}`}
-                        className="py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                        className="py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                       >
-                        <Phone size={14} className="text-brand-400" />
+                        <Phone size={14} className="text-brand-600" />
                         <span>Call Staff</span>
                       </a>
                     </div>
@@ -430,22 +430,22 @@ export default function StaffPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded bg-[#fdab3d]"></span>
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
                     Commission-Based Staff ({commissionStaffGroup.length})
                   </h3>
                 </div>
-                <span className="text-xs text-secondary font-medium">Performance Payouts</span>
+                <span className="text-xs text-slate-500 font-medium">Performance Payouts</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {commissionStaffGroup.map((staff) => (
                   <div
                     key={staff._id || staff.id}
-                    className="glass rounded-2xl p-5 border border-white/5 border-l-4 border-l-[#fdab3d] space-y-4 hover:border-white/20 transition-all shadow-sm"
+                    className="bg-white rounded-2xl p-5 border border-slate-200/90 border-l-4 border-l-[#fdab3d] space-y-4 hover:border-brand-300 hover:shadow-md transition-all shadow-xs"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-full bg-[#fdab3d]/20 text-[#fdab3d] font-bold flex items-center justify-center text-sm border border-[#fdab3d]/30">
+                        <div className="w-11 h-11 rounded-full bg-[#fdab3d]/15 text-[#fdab3d] font-bold flex items-center justify-center text-sm border border-[#fdab3d]/30">
                           {staff.name
                             .split(" ")
                             .map((n) => n[0])
@@ -454,8 +454,8 @@ export default function StaffPage() {
                             .toUpperCase()}
                         </div>
                         <div>
-                          <h4 className="font-bold text-white text-base leading-tight">{staff.name}</h4>
-                          <span className="text-xs text-secondary flex items-center gap-1 mt-0.5">
+                          <h4 className="font-bold text-slate-900 text-base leading-tight">{staff.name}</h4>
+                          <span className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
                             <Phone size={11} /> {staff.phone}
                           </span>
                         </div>
@@ -466,12 +466,12 @@ export default function StaffPage() {
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs text-secondary">
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
                       <span className="flex items-center gap-1">
                         <TrendingUp size={12} className="text-[#fdab3d]" />
                         Per Sale Commission
                       </span>
-                      <span className="text-white font-semibold">Active</span>
+                      <span className="text-slate-900 font-semibold">Active</span>
                     </div>
 
                     {/* Touch Ergonomic 1-Tap Action Buttons */}
@@ -480,16 +480,16 @@ export default function StaffPage() {
                         href={formatWhatsAppUrl(staff.phone, staff.name)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                        className="py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                       >
                         <MessageSquare size={14} className="text-[#00c875]" />
                         <span>WhatsApp</span>
                       </a>
                       <a
                         href={`tel:${staff.phone}`}
-                        className="py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                        className="py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                       >
-                        <Phone size={14} className="text-brand-400" />
+                        <Phone size={14} className="text-brand-600" />
                         <span>Call Staff</span>
                       </a>
                     </div>
@@ -501,10 +501,10 @@ export default function StaffPage() {
         </div>
       ) : (
         /* Monday Table View */
-        <div className="glass rounded-2xl border border-white/5 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-white/[0.03] border-b border-white/10 text-xs font-bold text-secondary uppercase tracking-wider">
+              <thead className="bg-slate-50/80 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
                 <tr>
                   <th className="p-4">Staff Name</th>
                   <th className="p-4">Contact Phone</th>
@@ -513,22 +513,22 @@ export default function StaffPage() {
                   <th className="p-4 text-right">Quick Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-slate-100">
                 {filteredStaff.map((staff) => (
-                  <tr key={staff._id || staff.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="p-4 font-semibold text-white flex items-center gap-3">
+                  <tr key={staff._id || staff.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="p-4 font-semibold text-slate-900 flex items-center gap-3">
                       <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
                           staff.pay_type === "flat"
-                            ? "bg-[#00c875]/20 text-[#00c875]"
-                            : "bg-[#fdab3d]/20 text-[#fdab3d]"
+                            ? "bg-[#00c875]/15 text-[#00c875]"
+                            : "bg-[#fdab3d]/15 text-[#fdab3d]"
                         }`}
                       >
                         {staff.name.charAt(0).toUpperCase()}
                       </div>
                       <span>{staff.name}</span>
                     </td>
-                    <td className="p-4 text-secondary">{staff.phone}</td>
+                    <td className="p-4 text-slate-600">{staff.phone}</td>
                     <td className="p-4">
                       <span
                         className={`monday-pill ${
@@ -538,7 +538,7 @@ export default function StaffPage() {
                         {staff.pay_type === "flat" ? "Fixed Salary" : "Commission"}
                       </span>
                     </td>
-                    <td className="p-4 font-bold text-white">
+                    <td className="p-4 font-bold text-slate-900">
                       {staff.pay_type === "flat"
                         ? `₦${Number(staff.flat_amount || 0).toLocaleString()}`
                         : `${staff.commission_percent}%`}
@@ -549,14 +549,14 @@ export default function StaffPage() {
                           href={formatWhatsAppUrl(staff.phone, staff.name)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-[#00c875]"
+                          className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#00c875]"
                           title="WhatsApp"
                         >
                           <MessageSquare size={16} />
                         </a>
                         <a
                           href={`tel:${staff.phone}`}
-                          className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-brand-400"
+                          className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-brand-600"
                           title="Call"
                         >
                           <Phone size={16} />
@@ -573,19 +573,19 @@ export default function StaffPage() {
 
       {/* Slide-up Bottom Sheet (Mobile) / Centered Modal (Desktop) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
-          <div className="glass w-full max-w-lg bg-secondary border border-white/10 rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto space-y-5">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white w-full max-w-lg border border-slate-200 rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto space-y-5 shadow-2xl">
             {/* Modal Header */}
-            <div className="flex justify-between items-center pb-4 border-b border-white/10">
+            <div className="flex justify-between items-center pb-4 border-b border-slate-200">
               <div>
-                <h3 className="text-lg font-bold text-white">Onboard Staff Member</h3>
-                <p className="text-xs text-secondary">
+                <h3 className="text-lg font-bold text-slate-900">Onboard Staff Member</h3>
+                <p className="text-xs text-slate-500">
                   Set up employee details, contact info, and compensation structure.
                 </p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 text-secondary hover:text-white rounded-full bg-white/5"
+                className="p-2 text-slate-500 hover:text-slate-800 rounded-full bg-slate-100"
               >
                 <X size={18} />
               </button>
@@ -594,7 +594,7 @@ export default function StaffPage() {
             {/* Modal Form */}
             <form onSubmit={handleAddStaff} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Full Name
                 </label>
                 <input
@@ -602,12 +602,12 @@ export default function StaffPage() {
                   name="name"
                   required
                   placeholder="e.g. Samuel Adekunle"
-                  className="w-full p-3 rounded-xl bg-primary border border-white/10 text-white placeholder-secondary text-base focus:border-brand-500 outline-none"
+                  className="w-full p-3 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-base focus:border-brand-500 outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Phone Number
                 </label>
                 <input
@@ -615,12 +615,12 @@ export default function StaffPage() {
                   name="phone"
                   required
                   placeholder="e.g. 08012345678"
-                  className="w-full p-3 rounded-xl bg-primary border border-white/10 text-white placeholder-secondary text-base focus:border-brand-500 outline-none"
+                  className="w-full p-3 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-base focus:border-brand-500 outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Compensation Model
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -629,8 +629,8 @@ export default function StaffPage() {
                     onClick={() => setPayType("flat")}
                     className={`py-3 px-4 rounded-xl border text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
                       payType === "flat"
-                        ? "bg-[#00c875]/20 border-[#00c875] text-[#00c875]"
-                        : "bg-primary border-white/10 text-secondary hover:text-white"
+                        ? "bg-[#00c875]/15 border-[#00c875] text-[#00c875]"
+                        : "bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900"
                     }`}
                   >
                     <DollarSign size={16} />
@@ -641,8 +641,8 @@ export default function StaffPage() {
                     onClick={() => setPayType("commission")}
                     className={`py-3 px-4 rounded-xl border text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
                       payType === "commission"
-                        ? "bg-[#fdab3d]/20 border-[#fdab3d] text-[#fdab3d]"
-                        : "bg-primary border-white/10 text-secondary hover:text-white"
+                        ? "bg-[#fdab3d]/15 border-[#fdab3d] text-[#fdab3d]"
+                        : "bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900"
                     }`}
                   >
                     <TrendingUp size={16} />
@@ -654,7 +654,7 @@ export default function StaffPage() {
 
               {payType === "flat" ? (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                  <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Monthly Salary Amount (₦)
                   </label>
                   <input
@@ -663,12 +663,12 @@ export default function StaffPage() {
                     name="flat_amount"
                     required
                     placeholder="e.g. 75000"
-                    className="w-full p-3 rounded-xl bg-primary border border-white/10 text-white placeholder-secondary text-base focus:border-brand-500 outline-none"
+                    className="w-full p-3 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-base focus:border-brand-500 outline-none"
                   />
                 </div>
               ) : (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                  <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Commission Percentage (%)
                   </label>
                   <input
@@ -678,13 +678,13 @@ export default function StaffPage() {
                     name="commission_percent"
                     required
                     placeholder="e.g. 15"
-                    className="w-full p-3 rounded-xl bg-primary border border-white/10 text-white placeholder-secondary text-base focus:border-brand-500 outline-none"
+                    className="w-full p-3 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-base focus:border-brand-500 outline-none"
                   />
                 </div>
               )}
 
               {/* Form Action Buttons */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
@@ -695,7 +695,7 @@ export default function StaffPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn btn-primary w-full py-3.5 text-sm font-semibold flex items-center justify-center gap-2"
+                  className="btn btn-primary w-full py-3.5 text-sm font-bold flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>

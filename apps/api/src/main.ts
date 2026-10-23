@@ -4,7 +4,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
-import mongoSanitize from 'express-mongo-sanitize';
 
 // Load scoped environment variables for apps/api
 for (const envCandidate of ['.env.local', '.env']) {
@@ -19,14 +18,30 @@ for (const envCandidate of ['.env.local', '.env']) {
   }
 }
 
+function sanitizeObject(obj: any): any {
+  if (!obj || typeof obj !== 'object') return obj;
+  for (const key of Object.keys(obj)) {
+    if (key.startsWith('$') || key.includes('.')) {
+      delete obj[key];
+    } else if (typeof obj[key] === 'object') {
+      sanitizeObject(obj[key]);
+    }
+  }
+  return obj;
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
   // Security: HTTP headers protection
   app.use(helmet());
 
-  // Security: Prevent NoSQL Injection
-  app.use(mongoSanitize());
+  // Security: Prevent NoSQL Injection safely without mutating Express 5 read-only query getters
+  app.use((req: any, _res: any, next: any) => {
+    if (req.body) sanitizeObject(req.body);
+    if (req.params) sanitizeObject(req.params);
+    next();
+  });
 
   // Security: Prevent DoS via large payloads by explicitly setting body parser limits
   const express = await import('express');

@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
-const auth_service_1 = require("./auth.service");
+const auth_service_js_1 = require("./auth.service.js");
 const auth_dto_js_1 = require("./dto/auth.dto.js");
 const throttler_1 = require("@nestjs/throttler");
 let AuthController = class AuthController {
@@ -23,7 +23,7 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     async signup(body) {
-        return this.authService.signup(body.email, body.password, body.businessName);
+        return this.authService.signup(body.email, body.password, body.businessName, body.industry);
     }
     async login(body) {
         return this.authService.login(body.email, body.password);
@@ -39,7 +39,7 @@ __decorate([
 ], AuthController.prototype, "signup", null);
 __decorate([
     (0, common_1.UseGuards)(throttler_1.ThrottlerGuard),
-    (0, throttler_1.Throttle)({ default: { limit: 5, ttl: 60000 } }),
+    (0, throttler_1.Throttle)({ default: { limit: 15, ttl: 60000 } }),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, common_1.Post)('login'),
     __param(0, (0, common_1.Body)()),
@@ -49,6 +49,6 @@ __decorate([
 ], AuthController.prototype, "login", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    __metadata("design:paramtypes", [auth_service_js_1.AuthService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

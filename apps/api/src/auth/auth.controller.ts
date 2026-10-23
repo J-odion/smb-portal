@@ -1,5 +1,5 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth.service.js';
 import { SignupDto, LoginDto } from './dto/auth.dto.js';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
@@ -9,11 +9,11 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body() body: SignupDto) {
-    return this.authService.signup(body.email, body.password, body.businessName);
+    return this.authService.signup(body.email, body.password, body.businessName, body.industry);
   }
 
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Throttle({ default: { limit: 15, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() body: LoginDto) {

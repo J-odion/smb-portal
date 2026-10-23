@@ -176,16 +176,16 @@ export default function InvoicesPage() {
   return (
     <div className="animate-fade-in relative space-y-6 pb-24 md:pb-8">
       {/* Monday.com Board Header Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-5">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200/80 pb-5">
         <div>
           <div className="flex items-center gap-2 text-xs text-secondary mb-1">
             <span>Workspaces</span>
             <span>&rsaquo;</span>
-            <span className="text-brand-400 font-medium">Sales Pipeline</span>
+            <span className="text-brand-600 font-semibold">Sales Pipeline</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 flex items-center gap-2">
             <span>Transactions & Invoices</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-secondary">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold border border-slate-200">
               {filteredInvoices.length} items
             </span>
           </h1>
@@ -193,19 +193,19 @@ export default function InvoicesPage() {
 
         <div className="flex items-center gap-3 w-full md:w-auto">
           {/* View Mode Switcher (Monday.com pattern) */}
-          <div className="bg-white/[0.05] p-1 rounded-lg border border-white/10 flex text-xs">
+          <div className="bg-slate-100/90 p-1 rounded-xl border border-slate-200 flex text-xs">
             <button
               onClick={() => setViewMode("table")}
-              className={`px-3 py-1.5 rounded-md font-medium transition-all ${
-                viewMode === "table" ? "bg-brand-500 text-white shadow-sm" : "text-secondary hover:text-white"
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                viewMode === "table" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               📋 Table
             </button>
             <button
               onClick={() => setViewMode("cards")}
-              className={`px-3 py-1.5 rounded-md font-medium transition-all ${
-                viewMode === "cards" ? "bg-brand-500 text-white shadow-sm" : "text-secondary hover:text-white"
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                viewMode === "cards" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               🃏 Cards
@@ -214,7 +214,7 @@ export default function InvoicesPage() {
 
           <button
             onClick={() => setIsModalOpen(true)}
-            className="btn btn-primary flex-1 md:flex-none text-sm px-4 py-2 gap-1.5 shadow-md shadow-brand-500/20"
+            className="btn btn-primary flex-1 md:flex-none text-sm px-4 py-2 gap-1.5 shadow-md shadow-brand-500/20 font-bold"
           >
             <span className="text-base font-bold">+</span>
             <span>New Item</span>
@@ -224,16 +224,16 @@ export default function InvoicesPage() {
 
       {/* Monday.com Battery Progress Bar */}
       {totalCount > 0 && (
-        <div className="bg-white/[0.03] p-4 rounded-xl border border-white/5 space-y-2">
+        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-2.5">
           <div className="flex justify-between items-center text-xs">
-            <span className="text-secondary font-medium">Board Settlement Progress</span>
-            <span className="text-white font-bold">{Math.round(paidPercent)}% Settled</span>
+            <span className="text-slate-600 font-semibold">Board Settlement Progress</span>
+            <span className="text-slate-900 font-bold">{Math.round(paidPercent)}% Settled</span>
           </div>
           <div className="monday-battery w-full">
             <div style={{ width: `${paidPercent}%` }} className="bg-[#00c875] h-full transition-all duration-500"></div>
             <div style={{ width: `${pendingPercent}%` }} className="bg-[#fdab3d] h-full transition-all duration-500"></div>
           </div>
-          <div className="flex items-center gap-4 text-xs text-secondary pt-1">
+          <div className="flex items-center gap-4 text-xs text-slate-600 pt-1 font-medium">
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#00c875]"></span> Paid ({paidCount})
             </span>
@@ -245,14 +245,14 @@ export default function InvoicesPage() {
       )}
 
       {/* Monday.com Search & Filter Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/[0.02] p-3 rounded-xl border border-white/5">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/90 p-3 rounded-2xl border border-slate-200/80 shadow-xs">
         <div className="flex-1 min-w-[240px]">
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="🔍 Search items, customers, or amounts..."
-            className="w-full bg-primary/60 border border-white/10 rounded-lg px-3.5 py-2 text-sm text-white placeholder-secondary focus:border-brand-500 outline-none"
+            className="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none transition-all"
           />
         </div>
 
@@ -262,10 +262,10 @@ export default function InvoicesPage() {
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-full font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-full font-semibold transition-all ${
                 statusFilter === st
-                  ? "bg-white/20 text-white border border-white/30"
-                  : "bg-white/[0.04] text-secondary hover:text-white border border-transparent"
+                  ? "bg-brand-50 text-brand-600 border border-brand-200 shadow-xs"
+                  : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-transparent"
               }`}
             >
               {st}
@@ -277,14 +277,14 @@ export default function InvoicesPage() {
       {loading ? (
         <div className="text-center py-12 text-secondary">
           <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-sm">Loading board items...</p>
+          <p className="text-sm font-medium">Loading board items...</p>
         </div>
       ) : filteredInvoices.length === 0 ? (
-        <div className="glass p-12 text-center rounded-2xl border border-white/5">
+        <div className="bg-white p-12 text-center rounded-2xl border border-slate-200 shadow-sm">
           <p className="text-4xl mb-3">📋</p>
-          <h3 className="text-lg font-bold text-white mb-1">No items found</h3>
-          <p className="text-sm text-secondary mb-4">Get started by creating your first invoice or transaction.</p>
-          <button onClick={() => setIsModalOpen(true)} className="btn btn-primary text-sm">
+          <h3 className="text-lg font-bold text-slate-900 mb-1">No items found</h3>
+          <p className="text-sm text-slate-500 mb-4">Get started by creating your first invoice or transaction.</p>
+          <button onClick={() => setIsModalOpen(true)} className="btn btn-primary text-sm font-bold">
             + Add New Transaction
           </button>
         </div>
@@ -301,19 +301,19 @@ export default function InvoicesPage() {
             return (
               <div
                 key={inv._id || inv.id}
-                className={`glass p-4 rounded-xl border border-white/5 relative overflow-hidden transition-all hover:border-white/20 shadow-sm flex flex-col justify-between border-l-4 ${
+                className={`bg-white p-4 rounded-xl border border-slate-200/90 relative overflow-hidden transition-all hover:border-brand-300 hover:shadow-md shadow-xs flex flex-col justify-between border-l-4 ${
                   isPaid ? "border-l-[#00c875]" : "border-l-[#fdab3d]"
                 }`}
               >
                 <div>
                   <div className="flex justify-between items-start mb-2.5">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-brand-500/20 text-brand-300 flex items-center justify-center font-bold text-xs border border-brand-500/30">
+                      <div className="w-8 h-8 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-xs border border-brand-200">
                         {initial}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-white text-sm leading-tight">{cust}</h4>
-                        <span className="text-[11px] text-secondary">
+                        <h4 className="font-semibold text-slate-900 text-sm leading-tight">{cust}</h4>
+                        <span className="text-[11px] text-slate-500">
                           {new Date(inv.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                         </span>
                       </div>
@@ -321,20 +321,20 @@ export default function InvoicesPage() {
                     {getStatusBadge(inv.status)}
                   </div>
 
-                  <p className="text-xs text-secondary line-clamp-1 mb-3">
+                  <p className="text-xs text-slate-600 line-clamp-1 mb-3">
                     {inv.items?.[0]?.description || "Retail POS Sale"}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-white/5 mt-auto">
-                  <span className="text-base font-bold text-white">
+                <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
+                  <span className="text-base font-bold text-slate-900">
                     ₦{Number(inv.total).toLocaleString()}
                   </span>
 
                   <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => shareViaWhatsApp(inv)}
-                      className="px-2.5 py-1.5 rounded-lg bg-success-500/10 text-success-400 hover:bg-success-500/20 text-xs font-medium flex items-center gap-1 border border-success-500/20"
+                      className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-semibold flex items-center gap-1 border border-emerald-200"
                       title="Share Receipt on WhatsApp"
                     >
                       <span>💬</span>
@@ -342,7 +342,7 @@ export default function InvoicesPage() {
                     </button>
                     <button
                       onClick={() => setSelectedInvoice(inv)}
-                      className="px-2.5 py-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20 text-xs font-medium"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold"
                     >
                       View
                     </button>
@@ -356,10 +356,10 @@ export default function InvoicesPage() {
         /* ========================================================== */
         /* MONDAY.COM BOARD TABLE VIEW                                */
         /* ========================================================== */
-        <div className="glass rounded-xl border border-white/5 overflow-hidden shadow-lg">
+        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[700px]">
-              <thead className="bg-white/[0.03] text-xs text-secondary uppercase tracking-wider border-b border-white/10">
+              <thead className="bg-slate-50/80 text-xs text-slate-500 uppercase tracking-wider border-b border-slate-200">
                 <tr>
                   <th className="p-3.5 pl-4 font-semibold">Item / Description</th>
                   <th className="p-3.5 font-semibold">Customer</th>
@@ -369,46 +369,46 @@ export default function InvoicesPage() {
                   <th className="p-3.5 pr-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-sm">
+              <tbody className="divide-y divide-slate-100 text-sm">
                 {filteredInvoices.map((inv) => {
                   const cust = inv.customer_id?.name || inv.customer?.name || "Walk-in Customer";
                   const initial = cust.charAt(0).toUpperCase();
 
                   return (
-                    <tr key={inv._id || inv.id} className="hover:bg-white/[0.02] transition-colors">
+                    <tr key={inv._id || inv.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="p-3.5 pl-4">
-                        <span className="font-medium text-white">
+                        <span className="font-semibold text-slate-900">
                           {inv.items?.[0]?.description || "Retail Transaction"}
                         </span>
                       </td>
                       <td className="p-3.5">
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-brand-500/20 text-brand-300 flex items-center justify-center font-bold text-[10px]">
+                          <div className="w-6 h-6 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-[10px] border border-brand-200">
                             {initial}
                           </div>
-                          <span className="text-secondary">{cust}</span>
+                          <span className="text-slate-600 font-medium">{cust}</span>
                         </div>
                       </td>
-                      <td className="p-3.5 text-secondary text-xs">
+                      <td className="p-3.5 text-slate-500 text-xs">
                         {new Date(inv.created_at).toLocaleDateString()}
                       </td>
                       <td className="p-3.5 text-center">
                         {getStatusBadge(inv.status)}
                       </td>
-                      <td className="p-3.5 font-bold text-white text-right">
+                      <td className="p-3.5 font-bold text-slate-900 text-right">
                         ₦{Number(inv.total).toLocaleString()}
                       </td>
                       <td className="p-3.5 pr-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => shareViaWhatsApp(inv)}
-                            className="text-xs text-success-400 hover:text-success-300 font-medium"
+                            className="text-xs text-emerald-600 hover:text-emerald-700 font-semibold"
                           >
                             WhatsApp
                           </button>
                           <button
                             onClick={() => setSelectedInvoice(inv)}
-                            className="text-xs text-brand-400 hover:text-brand-300 font-medium"
+                            className="text-xs text-brand-600 hover:text-brand-700 font-semibold"
                           >
                             Details
                           </button>
@@ -427,19 +427,19 @@ export default function InvoicesPage() {
       {/* MONDAY.COM BOTTOM-SHEET / MODAL FOR CREATION               */}
       {/* ========================================================== */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 animate-fade-in">
-          <div className="glass rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl p-6 sm:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl">
             {/* Sheet Handle for Mobile */}
-            <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-4 sm:hidden"></div>
+            <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-4 sm:hidden"></div>
 
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="text-xl font-bold text-white">Create New Item</h2>
-                <p className="text-xs text-secondary">Record a sale or issue an invoice</p>
+                <h2 className="text-xl font-bold text-slate-900">Create New Item</h2>
+                <p className="text-xs text-slate-500">Record a sale or issue an invoice</p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20"
+                className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200"
               >
                 &times;
               </button>
@@ -447,12 +447,12 @@ export default function InvoicesPage() {
 
             <form className="flex flex-col gap-4" onSubmit={handleCreateInvoice}>
               <div>
-                <label className="text-xs font-semibold text-secondary uppercase tracking-wider block mb-1">
+                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
                   Customer
                 </label>
                 <select
                   name="customer_id"
-                  className="w-full p-3 rounded-xl border border-white/10 bg-primary text-white outline-none focus:border-brand-500"
+                  className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
                 >
                   <option value="">Walk-in Customer (General)</option>
                   {customers.map((c) => (
@@ -464,7 +464,7 @@ export default function InvoicesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-secondary uppercase tracking-wider block mb-1">
+                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
                   Item / Service Description
                 </label>
                 <input
@@ -472,13 +472,13 @@ export default function InvoicesPage() {
                   name="description"
                   required
                   placeholder="e.g. Consultation, Retail items, Service fee"
-                  className="w-full p-3 rounded-xl border border-white/10 bg-primary text-white outline-none focus:border-brand-500"
+                  className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-secondary uppercase tracking-wider block mb-1">
+                  <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
                     Amount (₦)
                   </label>
                   <input
@@ -487,17 +487,17 @@ export default function InvoicesPage() {
                     name="amount"
                     required
                     placeholder="0.00"
-                    className="w-full p-3 rounded-xl border border-white/10 bg-primary text-white outline-none focus:border-brand-500"
+                    className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-secondary uppercase tracking-wider block mb-1">
+                  <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
                     Initial Status
                   </label>
                   <select
                     name="status"
                     defaultValue="Pending"
-                    className="w-full p-3 rounded-xl border border-white/10 bg-primary text-white outline-none focus:border-brand-500"
+                    className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
                   >
                     <option value="Paid">Paid (Done)</option>
                     <option value="Pending">Pending (Working)</option>
@@ -506,18 +506,18 @@ export default function InvoicesPage() {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-3 mt-2 border-t border-white/10">
+              <div className="flex gap-3 pt-3 mt-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="btn btn-secondary flex-1 p-3 text-sm"
+                  className="btn btn-secondary flex-1 p-3 text-sm font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn btn-primary flex-1 p-3 text-sm shadow-lg shadow-brand-500/20"
+                  className="btn btn-primary flex-1 p-3 text-sm font-bold shadow-lg shadow-brand-500/20"
                 >
                   {isSubmitting ? "Saving..." : "Create Item"}
                 </button>
@@ -531,18 +531,18 @@ export default function InvoicesPage() {
       {/* ITEM DETAIL SLIDE-OVER / RECEIPT MODAL                     */}
       {/* ========================================================== */}
       {selectedInvoice && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 animate-fade-in">
-          <div className="glass rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 max-w-md w-full border border-white/10 shadow-2xl">
-            <div className="flex justify-between items-center mb-5 pb-3 border-b border-white/10">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl p-6 sm:p-8 max-w-md w-full border border-slate-200 shadow-2xl">
+            <div className="flex justify-between items-center mb-5 pb-3 border-b border-slate-200">
               <div>
-                <h3 className="font-bold text-lg text-white">Item Details</h3>
-                <span className="text-xs text-secondary">
+                <h3 className="font-bold text-lg text-slate-900">Item Details</h3>
+                <span className="text-xs text-slate-500">
                   {new Date(selectedInvoice.created_at).toLocaleString()}
                 </span>
               </div>
               <button
                 onClick={() => setSelectedInvoice(null)}
-                className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20"
+                className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200"
               >
                 &times;
               </button>
@@ -550,29 +550,29 @@ export default function InvoicesPage() {
 
             <div className="space-y-4 text-sm mb-6">
               <div className="flex justify-between items-center">
-                <span className="text-secondary">Customer</span>
-                <span className="font-semibold text-white">
+                <span className="text-slate-500 font-medium">Customer</span>
+                <span className="font-semibold text-slate-900">
                   {selectedInvoice.customer_id?.name || selectedInvoice.customer?.name || "Walk-in Customer"}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-secondary">Status</span>
+                <span className="text-slate-500 font-medium">Status</span>
                 <div>{getStatusBadge(selectedInvoice.status)}</div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-secondary">Item</span>
-                <span className="text-white">{selectedInvoice.items?.[0]?.description || "Retail item"}</span>
+                <span className="text-slate-500 font-medium">Item</span>
+                <span className="text-slate-900 font-medium">{selectedInvoice.items?.[0]?.description || "Retail item"}</span>
               </div>
-              <div className="flex justify-between items-center pt-2 border-t border-white/10 text-base font-bold">
-                <span className="text-white">Total Amount</span>
-                <span className="text-brand-400">₦{Number(selectedInvoice.total).toLocaleString()}</span>
+              <div className="flex justify-between items-center pt-3 border-t border-slate-200 text-base font-bold">
+                <span className="text-slate-900">Total Amount</span>
+                <span className="text-brand-600">₦{Number(selectedInvoice.total).toLocaleString()}</span>
               </div>
             </div>
 
             <div className="flex gap-2">
               <button
                 onClick={() => shareViaWhatsApp(selectedInvoice)}
-                className="btn btn-primary w-full p-3 text-sm flex items-center justify-center gap-2"
+                className="btn btn-primary w-full p-3 text-sm font-bold flex items-center justify-center gap-2"
               >
                 <span>💬</span>
                 <span>Send WhatsApp Receipt</span>

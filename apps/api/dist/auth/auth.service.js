@@ -61,7 +61,7 @@ let AuthService = class AuthService {
         this.tenantModel = tenantModel;
         this.jwtService = jwtService;
     }
-    async signup(email, passwordPlain, businessName) {
+    async signup(email, passwordPlain, businessName, industry) {
         const existing = await this.userModel.findOne({ email }).exec();
         if (existing) {
             throw new common_1.ConflictException('User already exists');
@@ -71,6 +71,7 @@ let AuthService = class AuthService {
         trialEnds.setMonth(trialEnds.getMonth() + 4);
         const tenant = await this.tenantModel.create({
             name: businessName,
+            industry: industry || 'RETAIL',
             subscription_status: 'TRIAL',
             trial_ends_at: trialEnds
         });

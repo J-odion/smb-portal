@@ -204,9 +204,9 @@ export default function SettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="p-12 text-center text-secondary glass rounded-2xl border border-white/5">
+      <div className="p-12 text-center text-secondary bg-white rounded-2xl border border-slate-200">
         <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-sm">Loading workspace settings...</p>
+        <p className="text-sm font-medium">Loading workspace settings...</p>
       </div>
     );
   }
@@ -218,7 +218,7 @@ export default function SettingsPage() {
       {/* Toast Notification */}
       {notification && (
         <div
-          className={`p-4 rounded-xl flex items-center gap-3 border shadow-lg animate-fade-in ${
+          className={`p-4 rounded-xl flex items-center gap-3 border shadow-sm animate-fade-in ${
             notification.type === "success"
               ? "bg-[#00c875]/10 border-[#00c875]/40 text-[#00c875]"
               : "bg-[#e2445c]/10 border-[#e2445c]/40 text-[#e2445c]"
@@ -230,15 +230,15 @@ export default function SettingsPage() {
       )}
 
       {/* Monday Board Breadcrumb & Top Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200/80 pb-5">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-secondary uppercase tracking-wider mb-1">
             <span>Workspaces</span>
             <span>&rsaquo;</span>
-            <span className="text-brand-400">Settings & Modules</span>
+            <span className="text-brand-600">Settings & Modules</span>
           </div>
-          <h1 className="h2 gradient-text">Workspace Settings</h1>
-          <p className="text-secondary text-sm">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Workspace Settings</h1>
+          <p className="text-slate-500 text-sm mt-0.5">
             Customize industry modules, subscription billing, and cloud backend configurations.
           </p>
         </div>
@@ -250,13 +250,13 @@ export default function SettingsPage() {
       </div>
 
       {/* Monday Style Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-white/10 pb-2 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
         <button
           onClick={() => setActiveTab("industry")}
           className={`px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shrink-0 ${
             activeTab === "industry"
-              ? "bg-brand-500 text-white shadow-lg shadow-brand-500/20"
-              : "text-secondary hover:text-white hover:bg-white/5"
+              ? "bg-brand-500 text-white shadow-md shadow-brand-500/20"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           }`}
         >
           <Building2 size={16} />
@@ -267,8 +267,8 @@ export default function SettingsPage() {
           onClick={() => setActiveTab("billing")}
           className={`px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shrink-0 ${
             activeTab === "billing"
-              ? "bg-brand-500 text-white shadow-lg shadow-brand-500/20"
-              : "text-secondary hover:text-white hover:bg-white/5"
+              ? "bg-brand-500 text-white shadow-md shadow-brand-500/20"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           }`}
         >
           <CreditCard size={16} />
@@ -279,8 +279,8 @@ export default function SettingsPage() {
           onClick={() => setActiveTab("system")}
           className={`px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shrink-0 ${
             activeTab === "system"
-              ? "bg-brand-500 text-white shadow-lg shadow-brand-500/20"
-              : "text-secondary hover:text-white hover:bg-white/5"
+              ? "bg-brand-500 text-white shadow-md shadow-brand-500/20"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           }`}
         >
           <Server size={16} />
@@ -292,27 +292,27 @@ export default function SettingsPage() {
       {activeTab === "industry" && (
         <div className="space-y-6 animate-fade-in">
           {/* Current Active Banner */}
-          <div className="glass p-5 rounded-2xl border border-white/5 border-l-4 border-l-[#a25ddc] flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200/90 border-l-4 border-l-[#a25ddc] flex flex-col sm:flex-row justify-between sm:items-center gap-4 shadow-xs">
             <div className="flex items-center gap-3">
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0 shadow-md"
+                className="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
                 style={{ backgroundColor: selectedIndustryObj.color }}
               >
                 <selectedIndustryObj.icon size={22} />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-white text-base">{selectedIndustryObj.label}</h3>
+                  <h3 className="font-bold text-slate-900 text-base">{selectedIndustryObj.label}</h3>
                   <span className="monday-pill monday-pill-done text-[11px] py-0.5">Active Mode</span>
                 </div>
-                <p className="text-xs text-secondary mt-0.5">{selectedIndustryObj.desc}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{selectedIndustryObj.desc}</p>
               </div>
             </div>
 
             <button
               onClick={handleSaveIndustry}
               disabled={isSaving}
-              className="btn btn-primary text-sm font-bold py-2.5 px-5 self-end sm:self-auto shrink-0"
+              className="btn btn-primary text-sm font-bold py-2.5 px-5 self-end sm:self-auto shrink-0 shadow-md shadow-brand-500/20"
             >
               {isSaving ? "Saving..." : "Save Preferences"}
             </button>
@@ -320,7 +320,7 @@ export default function SettingsPage() {
 
           {/* Industry Cards Grid */}
           <div className="space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-secondary">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">
               Select Business Template
             </h3>
 
@@ -332,15 +332,15 @@ export default function SettingsPage() {
                   <div
                     key={ind.id}
                     onClick={() => setIndustry(ind.id)}
-                    className={`glass p-4 rounded-2xl border transition-all cursor-pointer relative space-y-3 ${
+                    className={`p-4 rounded-2xl border transition-all cursor-pointer relative space-y-3 ${
                       isSelected
-                        ? "border-brand-500 bg-brand-500/10 shadow-lg shadow-brand-500/10"
-                        : "border-white/5 hover:border-white/20 bg-secondary/50"
+                        ? "border-brand-500 bg-brand-50 shadow-md shadow-brand-500/10"
+                        : "border-slate-200/90 hover:border-brand-300 hover:shadow-md bg-white shadow-xs"
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-xs"
                         style={{ backgroundColor: ind.color }}
                       >
                         <IconComp size={18} />
@@ -350,22 +350,22 @@ export default function SettingsPage() {
                           Selected
                         </span>
                       ) : (
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/5 text-secondary border border-white/5">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium border border-slate-200">
                           {ind.featureBadge}
                         </span>
                       )}
                     </div>
 
                     <div>
-                      <h4 className="font-bold text-white text-sm">{ind.label}</h4>
-                      <p className="text-xs text-secondary mt-1 line-clamp-2 leading-relaxed">
+                      <h4 className="font-bold text-slate-900 text-sm">{ind.label}</h4>
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
                         {ind.desc}
                       </p>
                     </div>
 
-                    <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px]">
-                      <span className="text-secondary">Feature Tag:</span>
-                      <span className="text-white font-medium">{ind.featureBadge}</span>
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-500 font-medium">Feature Tag:</span>
+                      <span className="text-slate-900 font-semibold">{ind.featureBadge}</span>
                     </div>
                   </div>
                 );
@@ -380,13 +380,13 @@ export default function SettingsPage() {
         <div className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left: Current Active Plan */}
-            <div className="glass p-6 rounded-2xl border border-white/5 border-l-4 border-l-[#00c875] space-y-5">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/90 border-l-4 border-l-[#00c875] space-y-5 shadow-xs">
               <div className="flex justify-between items-start">
                 <div>
-                  <span className="text-xs font-semibold text-secondary uppercase tracking-wider block">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
                     Active Subscription
                   </span>
-                  <h3 className="text-2xl font-black text-white mt-0.5">Enterprise Pro Trial</h3>
+                  <h3 className="text-2xl font-black text-slate-900 mt-0.5">Enterprise Pro Trial</h3>
                 </div>
                 <span className="monday-pill monday-pill-done text-xs">Active</span>
               </div>
@@ -395,31 +395,31 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-semibold">
                   <span className="text-[#00c875]">120 Days Remaining</span>
-                  <span className="text-secondary">4 Months Included</span>
+                  <span className="text-slate-500">4 Months Included</span>
                 </div>
-                <div className="monday-battery h-2.5 rounded-full bg-white/5 overflow-hidden">
+                <div className="monday-battery h-2.5 rounded-full bg-slate-100 overflow-hidden">
                   <div className="bg-[#00c875] h-full w-[25%]" />
                 </div>
               </div>
 
-              <div className="space-y-2.5 pt-2 border-t border-white/5">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-secondary">
+              <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600">
                   Included Enterprise Features
                 </h4>
-                <ul className="text-sm space-y-2 text-secondary">
-                  <li className="flex items-center gap-2 text-white">
+                <ul className="text-sm space-y-2 text-slate-600">
+                  <li className="flex items-center gap-2 text-slate-700 font-medium">
                     <CheckCircle2 size={15} className="text-[#00c875]" />
                     <span>Multi-Branch Inventory & Outlets (Up to 10 Branches)</span>
                   </li>
-                  <li className="flex items-center gap-2 text-white">
+                  <li className="flex items-center gap-2 text-slate-700 font-medium">
                     <CheckCircle2 size={15} className="text-[#00c875]" />
                     <span>Zero Data Orphan Protection (Cascading Foreign Keys)</span>
                   </li>
-                  <li className="flex items-center gap-2 text-white">
+                  <li className="flex items-center gap-2 text-slate-700 font-medium">
                     <CheckCircle2 size={15} className="text-[#00c875]" />
                     <span>Offline PWA Sync with IndexedDB & UUID Reconciliation</span>
                   </li>
-                  <li className="flex items-center gap-2 text-white">
+                  <li className="flex items-center gap-2 text-slate-700 font-medium">
                     <CheckCircle2 size={15} className="text-[#00c875]" />
                     <span>Automated WhatsApp Receipts & Payment Inflow Tracking</span>
                   </li>
@@ -428,21 +428,21 @@ export default function SettingsPage() {
             </div>
 
             {/* Right: Plan Upgrade & Payment Gateway */}
-            <div className="glass p-6 rounded-2xl border border-brand-500/30 space-y-5 flex flex-col justify-between relative overflow-hidden">
+            <div className="bg-white p-6 rounded-2xl border border-brand-200 space-y-5 flex flex-col justify-between relative overflow-hidden shadow-xs">
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Zap size={18} className="text-brand-400" />
-                  <h3 className="text-lg font-bold text-white">Extend or Upgrade Subscription</h3>
+                  <Zap size={18} className="text-brand-600" />
+                  <h3 className="text-lg font-bold text-slate-900">Extend or Upgrade Subscription</h3>
                 </div>
-                <p className="text-xs text-secondary leading-relaxed">
+                <p className="text-xs text-slate-500 leading-relaxed">
                   Support unlimited transactions, staff accounts, multi-branch synchronization, and dedicated SLA support.
                 </p>
 
-                <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-1">
-                  <span className="text-xs text-secondary block font-medium">Standard SMB Plan</span>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-xs text-slate-500 block font-medium">Standard SMB Plan</span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-black text-white">₦15,000</span>
-                    <span className="text-xs text-secondary">/ month</span>
+                    <span className="text-2xl font-black text-slate-900">₦15,000</span>
+                    <span className="text-xs text-slate-500 font-medium">/ month</span>
                   </div>
                   <span className="text-[11px] text-[#00c875] block font-semibold">
                     Instant Paystack Checkout & Automated Invoicing
@@ -474,7 +474,7 @@ export default function SettingsPage() {
                   <CreditCard size={16} />
                   <span>Upgrade via Paystack Gateway</span>
                 </button>
-                <p className="text-center text-[11px] text-secondary">
+                <p className="text-center text-[11px] text-slate-400">
                   Secured 256-bit SSL Paystack payment. Cancel or modify anytime.
                 </p>
               </div>
@@ -487,15 +487,15 @@ export default function SettingsPage() {
       {activeTab === "system" && (
         <div className="space-y-6 animate-fade-in">
           {/* Cloud API Card */}
-          <div className="glass p-6 rounded-2xl border border-white/5 border-l-4 border-l-[#0073ea] space-y-5">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/90 border-l-4 border-l-[#0073ea] space-y-5 shadow-xs">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-[#0073ea]/20 text-[#0073ea] flex items-center justify-center border border-[#0073ea]/30">
+                <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200">
                   <Server size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-base">Production Cloud Backend</h3>
-                  <span className="text-xs text-secondary">Render Managed Microservice</span>
+                  <h3 className="font-bold text-slate-900 text-base">Production Cloud Backend</h3>
+                  <span className="text-xs text-slate-500">Render Managed Microservice</span>
                 </div>
               </div>
 
@@ -503,7 +503,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleTestApi}
                   disabled={apiPingStatus === "checking"}
-                  className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
                 >
                   <RefreshCw
                     size={13}
@@ -515,7 +515,7 @@ export default function SettingsPage() {
                   href="https://smb-portal-1.onrender.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3.5 py-2 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 text-brand-400 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  className="px-3.5 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 border border-brand-200 text-brand-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
                 >
                   <span>Open API</span>
                   <ExternalLink size={13} />
@@ -525,15 +525,15 @@ export default function SettingsPage() {
 
             {/* Status Details */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
-                <span className="text-[11px] text-secondary block font-medium">Configured Endpoint</span>
-                <span className="text-xs font-mono text-white truncate block">
+              <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 space-y-1">
+                <span className="text-[11px] text-slate-500 block font-semibold">Configured Endpoint</span>
+                <span className="text-xs font-mono text-slate-900 truncate block">
                   https://smb-portal-1.onrender.com
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
-                <span className="text-[11px] text-secondary block font-medium">Heartbeat Status</span>
+              <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 space-y-1">
+                <span className="text-[11px] text-slate-500 block font-semibold">Heartbeat Status</span>
                 <div className="flex items-center gap-1.5">
                   <span
                     className={`w-2 h-2 rounded-full ${
@@ -544,7 +544,7 @@ export default function SettingsPage() {
                         : "bg-[#fdab3d]"
                     }`}
                   />
-                  <span className="text-xs font-bold text-white">
+                  <span className="text-xs font-bold text-slate-900">
                     {apiPingStatus === "online"
                       ? "Healthy & Reachable"
                       : apiPingStatus === "offline"
@@ -556,9 +556,9 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
-                <span className="text-[11px] text-secondary block font-medium">Roundtrip Latency</span>
-                <span className="text-xs font-bold text-white">
+              <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 space-y-1">
+                <span className="text-[11px] text-slate-500 block font-semibold">Roundtrip Latency</span>
+                <span className="text-xs font-bold text-slate-900">
                   {apiLatency !== null ? `${apiLatency} ms` : "—"}
                 </span>
               </div>
@@ -566,14 +566,14 @@ export default function SettingsPage() {
           </div>
 
           {/* Architecture & Integrity Info Card */}
-          <div className="glass p-6 rounded-2xl border border-white/5 space-y-4">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/90 space-y-4 shadow-xs">
             <div className="flex items-center gap-2">
               <ShieldCheck size={18} className="text-[#00c875]" />
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
                 Zero Orphan Data Architecture
               </h3>
             </div>
-            <p className="text-xs text-secondary leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               Every customer invoice, payment record, staff commission, and inventory deduction is bound
               by cascading database foreign keys and MongoDB middleware triggers. Offline POS transactions
               generated on mobile devices use deterministic client-side UUIDs that are idempotently
@@ -581,13 +581,13 @@ export default function SettingsPage() {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
-              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
-                <span className="text-secondary">Client Database Cache</span>
-                <span className="text-[#00c875] font-semibold">IndexedDB Ready</span>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <span className="text-slate-600 font-medium">Client Database Cache</span>
+                <span className="text-[#00c875] font-bold">IndexedDB Ready</span>
               </div>
-              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
-                <span className="text-secondary">PWA Service Worker</span>
-                <span className="text-[#00c875] font-semibold">Active & Caching</span>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <span className="text-slate-600 font-medium">PWA Service Worker</span>
+                <span className="text-[#00c875] font-bold">Active & Caching</span>
               </div>
             </div>
           </div>

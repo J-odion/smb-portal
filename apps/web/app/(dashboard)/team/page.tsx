@@ -172,7 +172,7 @@ export default function TeamManagement() {
       {/* Toast Notification */}
       {notification && (
         <div
-          className={`p-4 rounded-xl flex items-center gap-3 border shadow-lg animate-fade-in ${
+          className={`p-4 rounded-xl flex items-center gap-3 border shadow-sm animate-fade-in ${
             notification.type === "success"
               ? "bg-[#00c875]/10 border-[#00c875]/40 text-[#00c875]"
               : "bg-[#e2445c]/10 border-[#e2445c]/40 text-[#e2445c]"
@@ -184,22 +184,22 @@ export default function TeamManagement() {
       )}
 
       {/* Monday Board Breadcrumb & Top Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200/80 pb-5">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-secondary uppercase tracking-wider mb-1">
             <span>Workspaces</span>
             <span>&rsaquo;</span>
-            <span className="text-brand-400">Team Governance</span>
+            <span className="text-brand-600">Team Governance</span>
           </div>
-          <h1 className="h2 gradient-text">Team & Access Control</h1>
-          <p className="text-secondary text-sm">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Team & Access Control</h1>
+          <p className="text-slate-500 text-sm mt-0.5">
             Manage authorized staff logins, roles, and administrative security privileges.
           </p>
         </div>
 
         <button
           onClick={() => setShowInviteModal(true)}
-          className="btn btn-primary flex items-center gap-2 w-full md:w-auto justify-center shadow-lg shadow-brand-500/20 text-sm font-bold py-3 px-5"
+          className="btn btn-primary flex items-center gap-2 w-full md:w-auto justify-center shadow-md shadow-brand-500/20 text-sm font-bold py-2.5 px-5"
         >
           <UserPlus size={18} />
           <span>+ Invite Member</span>
@@ -207,13 +207,13 @@ export default function TeamManagement() {
       </div>
 
       {/* Monday Progress Battery Bar */}
-      <div className="glass p-5 rounded-2xl border border-white/5 space-y-3">
+      <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-3">
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-secondary">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
               Role Allocation Battery
             </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-white font-medium">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold border border-slate-200">
               {totalUsers} Active Logins
             </span>
           </div>
@@ -230,7 +230,7 @@ export default function TeamManagement() {
         </div>
 
         {/* Segmented Battery */}
-        <div className="monday-battery w-full h-3 rounded-full overflow-hidden flex bg-white/5">
+        <div className="monday-battery w-full h-3 rounded-full overflow-hidden flex bg-slate-100">
           <div
             style={{ width: `${adminPercent}%` }}
             className="bg-[#a25ddc] transition-all duration-500 hover:brightness-110"
@@ -245,17 +245,17 @@ export default function TeamManagement() {
 
         {/* Monday KPI summary cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 border-l-4 border-l-[#a25ddc]">
-            <span className="text-xs text-secondary font-medium block">Workspace Governance</span>
-            <span className="text-lg font-extrabold text-white">{adminCount} Administrators</span>
+          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 border-l-4 border-l-[#a25ddc]">
+            <span className="text-xs text-slate-500 font-medium block">Workspace Governance</span>
+            <span className="text-lg font-extrabold text-slate-900">{adminCount} Administrators</span>
           </div>
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 border-l-4 border-l-[#00c875]">
-            <span className="text-xs text-secondary font-medium block">Store Floor Operators</span>
-            <span className="text-lg font-extrabold text-white">{staffCount} Cashier Logins</span>
+          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 border-l-4 border-l-[#00c875]">
+            <span className="text-xs text-slate-500 font-medium block">Store Floor Operators</span>
+            <span className="text-lg font-extrabold text-slate-900">{staffCount} Cashier Logins</span>
           </div>
-          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 border-l-4 border-l-[#0073ea]">
-            <span className="text-xs text-secondary font-medium block">Seat Quota Usage</span>
-            <span className="text-lg font-extrabold text-white">{totalUsers} / 10 Pro Seats</span>
+          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 border-l-4 border-l-[#0073ea]">
+            <span className="text-xs text-slate-500 font-medium block">Seat Quota Usage</span>
+            <span className="text-lg font-extrabold text-slate-900">{totalUsers} / 10 Pro Seats</span>
           </div>
         </div>
       </div>
@@ -264,18 +264,18 @@ export default function TeamManagement() {
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
         {/* Search Input */}
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             placeholder="Search team member by email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-secondary/80 border border-white/10 text-white placeholder-secondary text-sm focus:border-brand-500 outline-none transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:border-brand-500 outline-none transition-colors shadow-xs"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
             >
               <X size={14} />
             </button>
@@ -284,11 +284,11 @@ export default function TeamManagement() {
 
         {/* Role Filters + View Mode */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-          <div className="flex items-center gap-1 bg-secondary/80 p-1 rounded-xl border border-white/10 text-xs">
+          <div className="flex items-center gap-1 bg-slate-100/90 p-1 rounded-xl border border-slate-200 text-xs">
             <button
               onClick={() => setRoleFilter("ALL")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                roleFilter === "ALL" ? "bg-brand-500 text-white" : "text-secondary hover:text-white"
+                roleFilter === "ALL" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               All ({users.length})
@@ -296,7 +296,7 @@ export default function TeamManagement() {
             <button
               onClick={() => setRoleFilter("OWNER")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                roleFilter === "OWNER" ? "bg-[#a25ddc] text-white" : "text-secondary hover:text-white"
+                roleFilter === "OWNER" ? "bg-[#a25ddc] text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Owner
@@ -304,7 +304,7 @@ export default function TeamManagement() {
             <button
               onClick={() => setRoleFilter("MANAGER")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                roleFilter === "MANAGER" ? "bg-[#0073ea] text-white" : "text-secondary hover:text-white"
+                roleFilter === "MANAGER" ? "bg-[#0073ea] text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Manager
@@ -312,7 +312,7 @@ export default function TeamManagement() {
             <button
               onClick={() => setRoleFilter("STAFF")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                roleFilter === "STAFF" ? "bg-[#00c875] text-white" : "text-secondary hover:text-white"
+                roleFilter === "STAFF" ? "bg-[#00c875] text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Staff
@@ -320,11 +320,11 @@ export default function TeamManagement() {
           </div>
 
           {/* View Switcher */}
-          <div className="flex items-center bg-secondary/80 p-1 rounded-xl border border-white/10 text-xs">
+          <div className="flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200 text-xs">
             <button
               onClick={() => setViewMode("cards")}
               className={`p-2 rounded-lg transition-colors ${
-                viewMode === "cards" ? "bg-white/10 text-white" : "text-secondary hover:text-white"
+                viewMode === "cards" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
               }`}
               title="Cards View"
             >
@@ -333,7 +333,7 @@ export default function TeamManagement() {
             <button
               onClick={() => setViewMode("table")}
               className={`p-2 rounded-lg transition-colors ${
-                viewMode === "table" ? "bg-white/10 text-white" : "text-secondary hover:text-white"
+                viewMode === "table" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
               }`}
               title="Table View"
             >
@@ -345,15 +345,15 @@ export default function TeamManagement() {
 
       {/* Main Board Content */}
       {loading ? (
-        <div className="p-12 text-center text-secondary glass rounded-2xl border border-white/5">
+        <div className="p-12 text-center text-secondary bg-white rounded-2xl border border-slate-200">
           <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm">Loading workspace team members...</p>
+          <p className="text-sm font-medium">Loading workspace team members...</p>
         </div>
       ) : filteredUsers.length === 0 ? (
-        <div className="p-12 text-center glass rounded-2xl border border-white/5 space-y-3">
-          <Users size={40} className="mx-auto text-secondary/50" />
-          <h3 className="text-base font-bold text-white">No Members Match Search</h3>
-          <p className="text-xs text-secondary max-w-sm mx-auto">
+        <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <Users size={40} className="mx-auto text-slate-300" />
+          <h3 className="text-base font-bold text-slate-900">No Members Match Search</h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto">
             Try adjusting your query or filter to view active credentials.
           </p>
         </div>
@@ -367,11 +367,11 @@ export default function TeamManagement() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded bg-[#a25ddc]"></span>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
                       Workspace Administrators ({adminGroup.length})
                     </h3>
                   </div>
-                  <span className="text-xs text-secondary font-medium">Full Access & Billing</span>
+                  <span className="text-xs text-slate-500 font-medium">Full Access & Billing</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -381,18 +381,18 @@ export default function TeamManagement() {
                     return (
                       <div
                         key={uid}
-                        className="glass rounded-2xl p-5 border border-white/5 border-l-4 border-l-[#a25ddc] space-y-4 hover:border-white/20 transition-all shadow-sm"
+                        className="bg-white rounded-2xl p-5 border border-slate-200/90 border-l-4 border-l-[#a25ddc] space-y-4 hover:border-brand-300 hover:shadow-md transition-all shadow-xs"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-full bg-[#a25ddc]/20 text-[#a25ddc] font-bold flex items-center justify-center text-sm border border-[#a25ddc]/30">
+                            <div className="w-11 h-11 rounded-full bg-[#a25ddc]/15 text-[#a25ddc] font-bold flex items-center justify-center text-sm border border-[#a25ddc]/30">
                               {user.email.slice(0, 2).toUpperCase()}
                             </div>
                             <div className="min-w-0">
-                              <h4 className="font-bold text-white text-base leading-tight truncate max-w-[160px] sm:max-w-[180px]">
+                              <h4 className="font-bold text-slate-900 text-base leading-tight truncate max-w-[160px] sm:max-w-[180px]">
                                 {user.email.split("@")[0]}
                               </h4>
-                              <span className="text-xs text-secondary truncate max-w-[160px] sm:max-w-[180px] block">
+                              <span className="text-xs text-slate-500 truncate max-w-[160px] sm:max-w-[180px] block">
                                 {user.email}
                               </span>
                             </div>
@@ -407,12 +407,12 @@ export default function TeamManagement() {
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs text-secondary">
-                          <span className="flex items-center gap-1.5 text-white">
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
+                          <span className="flex items-center gap-1.5 text-slate-700 font-medium">
                             <Shield size={13} className="text-[#a25ddc]" />
                             {isOwner ? "Master Account" : "Store Admin"}
                           </span>
-                          <span className="flex items-center gap-1 text-[#00c875]">
+                          <span className="flex items-center gap-1 text-[#00c875] font-semibold">
                             <UserCheck size={13} />
                             Active
                           </span>
@@ -421,13 +421,13 @@ export default function TeamManagement() {
                         {/* Quick Actions */}
                         <div className="pt-1">
                           {isOwner ? (
-                            <div className="py-2.5 px-3 rounded-xl bg-white/[0.02] border border-white/5 text-center text-xs text-secondary">
+                            <div className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-500 font-medium">
                               Protected System Owner
                             </div>
                           ) : (
                             <button
                               onClick={() => handleRemove(uid, user.role, user.email)}
-                              className="w-full py-2.5 px-3 rounded-xl bg-[#e2445c]/10 hover:bg-[#e2445c]/20 border border-[#e2445c]/30 text-[#e2445c] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                              className="w-full py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                             >
                               <Trash2 size={14} />
                               <span>Revoke Access</span>
@@ -447,11 +447,11 @@ export default function TeamManagement() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded bg-[#00c875]"></span>
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
                     Operational Team & Cashiers ({staffGroup.length})
                   </h3>
                 </div>
-                <span className="text-xs text-secondary font-medium">POS Terminal & Orders</span>
+                <span className="text-xs text-slate-500 font-medium">POS Terminal & Orders</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -460,18 +460,18 @@ export default function TeamManagement() {
                   return (
                     <div
                       key={uid}
-                      className="glass rounded-2xl p-5 border border-white/5 border-l-4 border-l-[#00c875] space-y-4 hover:border-white/20 transition-all shadow-sm"
+                      className="bg-white rounded-2xl p-5 border border-slate-200/90 border-l-4 border-l-[#00c875] space-y-4 hover:border-brand-300 hover:shadow-md transition-all shadow-xs"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-full bg-[#00c875]/20 text-[#00c875] font-bold flex items-center justify-center text-sm border border-[#00c875]/30">
+                          <div className="w-11 h-11 rounded-full bg-[#00c875]/15 text-[#00c875] font-bold flex items-center justify-center text-sm border border-[#00c875]/30">
                             {user.email.slice(0, 2).toUpperCase()}
                           </div>
                           <div className="min-w-0">
-                            <h4 className="font-bold text-white text-base leading-tight truncate max-w-[160px] sm:max-w-[180px]">
+                            <h4 className="font-bold text-slate-900 text-base leading-tight truncate max-w-[160px] sm:max-w-[180px]">
                               {user.email.split("@")[0]}
                             </h4>
-                            <span className="text-xs text-secondary truncate max-w-[160px] sm:max-w-[180px] block">
+                            <span className="text-xs text-slate-500 truncate max-w-[160px] sm:max-w-[180px] block">
                               {user.email}
                             </span>
                           </div>
@@ -480,12 +480,12 @@ export default function TeamManagement() {
                         <span className="monday-pill monday-pill-done text-xs">Staff</span>
                       </div>
 
-                      <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs text-secondary">
-                        <span className="flex items-center gap-1.5 text-white">
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
+                        <span className="flex items-center gap-1.5 text-slate-700 font-medium">
                           <KeyRound size={13} className="text-[#00c875]" />
                           Terminal Access
                         </span>
-                        <span className="flex items-center gap-1 text-[#00c875]">
+                        <span className="flex items-center gap-1 text-[#00c875] font-semibold">
                           <UserCheck size={13} />
                           Active
                         </span>
@@ -494,7 +494,7 @@ export default function TeamManagement() {
                       <div className="pt-1">
                         <button
                           onClick={() => handleRemove(uid, user.role, user.email)}
-                          className="w-full py-2.5 px-3 rounded-xl bg-[#e2445c]/10 hover:bg-[#e2445c]/20 border border-[#e2445c]/30 text-[#e2445c] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                          className="w-full py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                         >
                           <Trash2 size={14} />
                           <span>Revoke Access</span>
@@ -509,10 +509,10 @@ export default function TeamManagement() {
         </div>
       ) : (
         /* Monday Table View */
-        <div className="glass rounded-2xl border border-white/5 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-white/[0.03] border-b border-white/10 text-xs font-bold text-secondary uppercase tracking-wider">
+              <thead className="bg-slate-50/80 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
                 <tr>
                   <th className="p-4">User Email</th>
                   <th className="p-4">Access Role</th>
@@ -520,20 +520,20 @@ export default function TeamManagement() {
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-slate-100">
                 {filteredUsers.map((user) => {
                   const uid = user._id || user.id || "";
                   const isOwner = user.role === "OWNER";
                   return (
-                    <tr key={uid} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="p-4 font-semibold text-white flex items-center gap-3">
+                    <tr key={uid} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="p-4 font-semibold text-slate-900 flex items-center gap-3">
                         <div
                           className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
                             isOwner
-                              ? "bg-[#a25ddc]/20 text-[#a25ddc]"
+                              ? "bg-[#a25ddc]/15 text-[#a25ddc]"
                               : user.role === "MANAGER"
-                              ? "bg-[#0073ea]/20 text-[#0073ea]"
-                              : "bg-[#00c875]/20 text-[#00c875]"
+                              ? "bg-[#0073ea]/15 text-[#0073ea]"
+                              : "bg-[#00c875]/15 text-[#00c875]"
                           }`}
                         >
                           {user.email.charAt(0).toUpperCase()}
@@ -563,7 +563,7 @@ export default function TeamManagement() {
                         {!isOwner && (
                           <button
                             onClick={() => handleRemove(uid, user.role, user.email)}
-                            className="p-2 rounded-lg bg-[#e2445c]/10 hover:bg-[#e2445c]/20 text-[#e2445c] transition-colors"
+                            className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors"
                             title="Revoke Access"
                           >
                             <Trash2 size={16} />
@@ -581,19 +581,19 @@ export default function TeamManagement() {
 
       {/* Slide-up Bottom Sheet (Mobile) / Centered Modal (Desktop) for Invite */}
       {showInviteModal && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
-          <div className="glass w-full max-w-lg bg-secondary border border-white/10 rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto space-y-5">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white w-full max-w-lg border border-slate-200 rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto space-y-5 shadow-2xl">
             {/* Modal Header */}
-            <div className="flex justify-between items-center pb-4 border-b border-white/10">
+            <div className="flex justify-between items-center pb-4 border-b border-slate-200">
               <div>
-                <h3 className="text-lg font-bold text-white">Invite Team Member</h3>
-                <p className="text-xs text-secondary">
+                <h3 className="text-lg font-bold text-slate-900">Invite Team Member</h3>
+                <p className="text-xs text-slate-500">
                   Grant secure dashboard or POS access to an employee.
                 </p>
               </div>
               <button
                 onClick={() => setShowInviteModal(false)}
-                className="p-2 text-secondary hover:text-white rounded-full bg-white/5"
+                className="p-2 text-slate-500 hover:text-slate-800 rounded-full bg-slate-100"
               >
                 <X size={18} />
               </button>
@@ -602,24 +602,24 @@ export default function TeamManagement() {
             {/* Modal Form */}
             <form onSubmit={handleInvite} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Employee Email Address
                 </label>
                 <div className="relative">
-                  <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary" />
+                  <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="email"
                     required
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                     placeholder="staff@yourbusiness.com"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-primary border border-white/10 text-white placeholder-secondary text-base focus:border-brand-500 outline-none"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-base focus:border-brand-500 outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Select Permission Role
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -628,15 +628,15 @@ export default function TeamManagement() {
                     onClick={() => setInviteRole("STAFF")}
                     className={`p-3.5 rounded-xl border text-left transition-all ${
                       inviteRole === "STAFF"
-                        ? "bg-[#00c875]/15 border-[#00c875] text-white"
-                        : "bg-primary border-white/10 text-secondary hover:text-white"
+                        ? "bg-emerald-50 border-[#00c875] text-slate-900"
+                        : "bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900"
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#00c875]" />
-                      <span className="font-bold text-sm text-white">Staff Member</span>
+                      <span className="font-bold text-sm text-slate-900">Staff Member</span>
                     </div>
-                    <p className="text-xs text-secondary">Cashier POS & Sales order terminal access only.</p>
+                    <p className="text-xs text-slate-500">Cashier POS & Sales order terminal access only.</p>
                   </button>
 
                   <button
@@ -644,15 +644,15 @@ export default function TeamManagement() {
                     onClick={() => setInviteRole("MANAGER")}
                     className={`p-3.5 rounded-xl border text-left transition-all ${
                       inviteRole === "MANAGER"
-                        ? "bg-[#0073ea]/15 border-[#0073ea] text-white"
-                        : "bg-primary border-white/10 text-secondary hover:text-white"
+                        ? "bg-blue-50 border-[#0073ea] text-slate-900"
+                        : "bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900"
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#0073ea]" />
-                      <span className="font-bold text-sm text-white">Store Manager</span>
+                      <span className="font-bold text-sm text-slate-900">Store Manager</span>
                     </div>
-                    <p className="text-xs text-secondary">
+                    <p className="text-xs text-slate-500">
                       Access to analytics, inventory, and staff rosters.
                     </p>
                   </button>
@@ -660,7 +660,7 @@ export default function TeamManagement() {
               </div>
 
               {/* Form Action Buttons */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setShowInviteModal(false)}
@@ -671,7 +671,7 @@ export default function TeamManagement() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn btn-primary w-full py-3.5 text-sm font-semibold flex items-center justify-center gap-2"
+                  className="btn btn-primary w-full py-3.5 text-sm font-bold flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>

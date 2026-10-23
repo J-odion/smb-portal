@@ -3,11 +3,11 @@
 @theme {
   --color-brand-50: var(--brand-50);
   --color-brand-100: var(--brand-100);
-  --color-brand-400: #818cf8;
+  --color-brand-400: #60a5fa;
   --color-brand-500: var(--brand-500);
   --color-brand-600: var(--brand-600);
   --color-brand-700: var(--brand-700);
-  --color-brand-900: #1e1b4b;
+  --color-brand-900: #1e3a8a;
   --color-danger-400: #f87171;
   --color-danger-500: var(--danger-500);
   --color-success-500: var(--success-500);
@@ -22,25 +22,25 @@
 .text-tertiary { color: var(--text-tertiary); }
 
 :root {
-  /* Monday.com Rich Workspace Dark Palette */
-  --bg-primary: #0f121d;
-  --bg-secondary: #181d2f;
-  --bg-tertiary: #242b45;
-  --bg-elevated: #2d3656;
+  /* Smooth Gradient Light Theme Tokens */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-elevated: #ffffff;
   
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
+  --text-primary: #0f172a;   /* Rich slate-900 */
+  --text-secondary: #475569; /* Clear slate-600 */
+  --text-tertiary: #94a3b8;  /* Slate-400 */
   
-  --brand-50: #1e2238;
-  --brand-100: #2c3358;
-  --brand-400: #707eff;
-  --brand-500: #0073ea; /* Monday Signature Primary Blue */
+  --brand-50: #eff6ff;
+  --brand-100: #dbeafe;
+  --brand-400: #60a5fa;
+  --brand-500: #0073ea; /* Monday.com Signature Royal Blue */
   --brand-600: #0060c4;
   --brand-700: #004ea3;
-  --brand-900: #0e2040;
+  --brand-900: #1e3a8a;
   
-  --success-500: #00c875; /* Monday Done Green */
+  --success-500: #00c875; /* Monday Done Emerald */
   --danger-500: #e2445c;  /* Monday Stuck Coral */
   --warning-500: #fdab3d; /* Monday Working Amber */
   
@@ -50,19 +50,18 @@
   --radius-xl: 1rem;
   --radius-2xl: 1.25rem;
   
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.25);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
-  --shadow-lg: 0 12px 28px rgba(0,0,0,0.45);
-  --shadow-glow: 0 0 24px rgba(0, 115, 234, 0.35);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  --shadow-glow: 0 0 24px rgba(0, 115, 234, 0.2);
 
   /* Monday.com signature color tokens */
   --monday-done: #00c875;
   --monday-working: #fdab3d;
   --monday-stuck: #e2445c;
   --monday-review: #a25ddc;
-  --monday-info: #579bfc;
-  --monday-blue: #0073ea;
-  --monday-gray: #4b4f6b;
+  --monday-info: #0073ea;
+  --monday-gray: #94a3b8;
 }
 
 /* Monday.com Signature Status Pills */
@@ -78,11 +77,11 @@
   color: #ffffff !important;
   text-align: center;
   min-width: 80px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 .monday-pill:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.06);
   transform: scale(1.02);
 }
 .monday-pill-done { background-color: #00c875; }
@@ -90,7 +89,7 @@
 .monday-pill-stuck { background-color: #e2445c; }
 .monday-pill-review { background-color: #a25ddc; }
 .monday-pill-info { background-color: #0073ea; }
-.monday-pill-empty { background-color: #4b4f6b; }
+.monday-pill-empty { background-color: #94a3b8; }
 
 /* Monday.com Battery / Progress Bar */
 .monday-battery {
@@ -98,7 +97,7 @@
   height: 9px;
   border-radius: 9999px;
   overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: #e2e8f0;
 }
 
 * {
@@ -108,8 +107,9 @@
 }
 
 body {
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-primary);
+  font-family: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 45%, #eff6ff 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -128,25 +128,26 @@ button {
   font-family: inherit;
 }
 
-/* Glassmorphism & Surface Cards */
+/* Glassmorphism & Light Surface Cards */
 .glass {
-  background: rgba(24, 29, 47, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
 }
 
 .glass-card {
-  background: rgba(24, 29, 47, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
   border-radius: var(--radius-xl);
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
 }
 
 /* Typography utilities */
@@ -155,7 +156,7 @@ button {
 .h3 { font-size: 1.35rem; font-weight: 600; color: var(--text-primary); }
 
 .gradient-text {
-  background: linear-gradient(135deg, #60a5fa 0%, #0073ea 50%, #a855f7 100%);
+  background: linear-gradient(135deg, #0073ea 0%, #2563eb 50%, #7c3aed 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -177,24 +178,43 @@ button {
 .btn-primary {
   background-color: var(--brand-500);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 115, 234, 0.35);
+  box-shadow: 0 4px 14px rgba(0, 115, 234, 0.3);
 }
 
 .btn-primary:hover {
   background-color: var(--brand-600);
-  box-shadow: 0 6px 18px rgba(0, 115, 234, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 115, 234, 0.45);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: #ffffff;
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
   transform: translateY(-1px);
+}
+
+/* Form inputs styling for light mode */
+input, select, textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #0073ea !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(0, 115, 234, 0.15) !important;
 }
 
 /* Animations */
@@ -207,20 +227,20 @@ button {
   animation: fadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* Custom Scrollbar for modern dashboards */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 18, 29, 0.5);
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: #94a3b8;
 }
 
 /* Mobile-Specific UX & Ergonomics */

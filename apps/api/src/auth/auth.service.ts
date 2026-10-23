@@ -13,7 +13,7 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signup(email: string, passwordPlain: string, businessName: string) {
+  async signup(email: string, passwordPlain: string, businessName: string, industry?: string) {
     const existing = await this.userModel.findOne({ email }).exec();
     if (existing) {
       throw new ConflictException('User already exists');
@@ -27,6 +27,7 @@ export class AuthService {
     
     const tenant = await this.tenantModel.create({
       name: businessName,
+      industry: industry || 'RETAIL',
       subscription_status: 'TRIAL',
       trial_ends_at: trialEnds
     });

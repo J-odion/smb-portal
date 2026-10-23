@@ -6,7 +6,7 @@ export declare class AuthService {
     private tenantModel;
     private jwtService;
     constructor(userModel: Model<User>, tenantModel: Model<Tenant>, jwtService: JwtService);
-    signup(email: string, passwordPlain: string, businessName: string): Promise<{
+    signup(email: string, passwordPlain: string, businessName: string, industry?: string): Promise<{
         access_token: string;
     }>;
     login(email: string, passwordPlain: string): Promise<{
