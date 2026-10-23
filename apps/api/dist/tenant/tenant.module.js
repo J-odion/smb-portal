@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TenantModule = void 0;
 const common_1 = require("@nestjs/common");
+const passport_1 = require("@nestjs/passport");
 const tenant_service_js_1 = require("./tenant.service.js");
 const tenant_controller_js_1 = require("./tenant.controller.js");
 let TenantModule = class TenantModule {
@@ -15,8 +16,10 @@ let TenantModule = class TenantModule {
 exports.TenantModule = TenantModule;
 exports.TenantModule = TenantModule = __decorate([
     (0, common_1.Module)({
+        imports: [passport_1.PassportModule.register({ defaultStrategy: 'jwt' })],
         providers: [tenant_service_js_1.TenantService],
-        controllers: [tenant_controller_js_1.TenantController]
+        controllers: [tenant_controller_js_1.TenantController],
+        exports: [tenant_service_js_1.TenantService],
     })
 ], TenantModule);
 //# sourceMappingURL=tenant.module.js.map

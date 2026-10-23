@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SuperAdminModule = void 0;
 const common_1 = require("@nestjs/common");
+const passport_1 = require("@nestjs/passport");
 const super_admin_controller_js_1 = require("./super-admin.controller.js");
 const super_admin_service_js_1 = require("./super-admin.service.js");
 const mongoose_1 = require("@nestjs/mongoose");
@@ -19,6 +20,7 @@ exports.SuperAdminModule = SuperAdminModule;
 exports.SuperAdminModule = SuperAdminModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             mongoose_1.MongooseModule.forFeature([
                 { name: index_js_1.Tenant.name, schema: index_js_2.TenantSchema },
                 { name: index_js_1.User.name, schema: index_js_2.UserSchema }

@@ -2,28 +2,40 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import {
+  Sparkles,
+  Mail,
+  Lock,
+  Building2,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  AlertCircle,
+  ShieldCheck,
+  Check
+} from "lucide-react";
 
 export default function SignupPage() {
   const router = useRouter();
+  const [businessName, setBusinessName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [industry, setIndustry] = useState("RETAIL");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const formData = new FormData(e.currentTarget);
-      const email = formData.get("email") as string;
-      const password = formData.get("password") as string;
-      const businessName = formData.get("businessName") as string;
-
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, businessName }),
+        body: JSON.stringify({ email, password, businessName, industry }),
       });
 
       const data = await res.json();
@@ -36,128 +48,210 @@ export default function SignupPage() {
       localStorage.setItem("token", token);
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.message || "Error creating account");
+      setError(err.message || "Error creating account. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-row-reverse w-full bg-primary font-sans">
-      
-      {/* Right Column - Dynamic Visual */}
-      <div className="hidden md:flex flex-col justify-center items-center w-1/2 p-12 relative overflow-hidden bg-brand-900 text-white">
-        {/* Background blobs */}
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-brand-500/40 blur-[80px]"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-danger-500/30 blur-[80px]"></div>
+    <div className="min-h-screen flex w-full bg-primary font-sans">
+      {/* Left Column - Signup Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-between p-6 sm:p-12 overflow-y-auto">
+        <div className="w-full flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-blue-400 flex items-center justify-center text-white font-bold shadow-md">
+              <Sparkles size={16} />
+            </div>
+            <span className="font-extrabold text-white text-sm">SMB Portal</span>
+          </Link>
 
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, type: "spring" }}
-          className="relative z-10 w-full max-w-lg"
-        >
-          <div className="text-center mb-10">
-            <h2 className="text-4xl font-extrabold mb-4 leading-tight">
-              Create workflows that <br/> <span className="text-brand-400">click.</span>
+          <span className="text-xs text-secondary">
+            Already have an account?{" "}
+            <Link href="/login" className="text-brand-400 font-bold hover:underline">
+              Log in
+            </Link>
+          </span>
+        </div>
+
+        <div className="my-auto max-w-md w-full mx-auto py-8 space-y-6">
+          <div className="space-y-1.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Create your workspace</h1>
+            <p className="text-xs text-secondary">
+              Start your free 14-day trial. No credit card required.
+            </p>
+          </div>
+
+          {error && (
+            <div className="p-4 rounded-xl bg-[#e2445c]/10 border border-[#e2445c]/30 text-[#e2445c] text-xs font-semibold flex items-center gap-2.5 animate-fade-in">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSignup} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                Business / Store Name
+              </label>
+              <div className="relative">
+                <Building2 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary" />
+                <input
+                  type="text"
+                  required
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                  placeholder="e.g. Apex Luxury Clothiers"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-secondary border border-white/10 text-white placeholder-secondary text-sm focus:border-brand-500 outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                Work Email Address
+              </label>
+              <div className="relative">
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="owner@business.com"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-secondary border border-white/10 text-white placeholder-secondary text-sm focus:border-brand-500 outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                Industry Module Template
+              </label>
+              <select
+                value={industry}
+                onChange={(e) => setIndustry(e.target.value)}
+                className="w-full p-3 rounded-xl bg-secondary border border-white/10 text-white text-sm focus:border-brand-500 outline-none cursor-pointer"
+              >
+                <option value="RETAIL">General Retail / Mart (Barcode Scanner Ready)</option>
+                <option value="TAILOR">Tailoring & Fashion (Custom Measurements)</option>
+                <option value="SALON">Barbing, Salon & Spa (Staff Commissions)</option>
+                <option value="FOOD">Restaurant / Food Vendor (Kitchen Orders)</option>
+                <option value="PHOTOGRAPHY">Photography Studio (Session Bookings)</option>
+                <option value="BOOK_STORE">Book Store & Stationery (ISBN)</option>
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-secondary uppercase tracking-wider">
+                Create Password
+              </label>
+              <div className="relative">
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-secondary" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="At least 8 characters"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-secondary border border-white/10 text-white placeholder-secondary text-sm focus:border-brand-500 outline-none transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary hover:text-white"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary w-full py-3.5 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-500/25 rounded-xl"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Creating Workspace...</span>
+                </>
+              ) : (
+                <>
+                  <span>Create Workspace & Start</span>
+                  <ArrowRight size={16} />
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="text-[11px] text-secondary text-center leading-relaxed">
+            By signing up, you agree to our Terms of Service and Privacy Policy. All data is protected with zero-orphan cascading isolation.
+          </p>
+        </div>
+
+        <div className="text-center text-xs text-secondary">
+          Render Cloud Backend Active &bull; Vercel Edge Cache
+        </div>
+      </div>
+
+      {/* Right Column - Monday.com Showcase Panel */}
+      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 relative overflow-hidden bg-gradient-to-br from-[#121626] via-[#181d30] to-[#0f121d] border-l border-white/10">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/10 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
+
+        <div className="relative z-10 flex items-center justify-end gap-2 text-xs text-secondary">
+          <span className="w-2 h-2 rounded-full bg-[#00c875]" />
+          <span>Instant Provisioning Active</span>
+        </div>
+
+        <div className="relative z-10 space-y-6 max-w-lg my-auto">
+          <div className="space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-brand-400">
+              Why 1,200+ Businesses Choose Us
+            </span>
+            <h2 className="text-3xl font-extrabold text-white leading-tight">
+              Workflows that actually <br />
+              <span className="gradient-text">make business flow.</span>
             </h2>
           </div>
 
-          <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-brand-400 to-danger-400 rounded-3xl blur opacity-30"></div>
-            <div className="glass p-8 rounded-3xl border border-white/10 shadow-2xl bg-black/20 backdrop-blur-xl relative">
-               <div className="flex items-center gap-4 mb-6">
-                 <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-brand-500 to-brand-300"></div>
-                 <div>
-                   <div className="h-4 bg-white/20 rounded w-24 mb-2"></div>
-                   <div className="h-3 bg-white/10 rounded w-16"></div>
-                 </div>
-               </div>
-               <div className="space-y-3">
-                 <div className="h-10 bg-white/10 rounded-xl w-full"></div>
-                 <div className="h-10 bg-white/10 rounded-xl w-5/6"></div>
-                 <div className="h-10 bg-white/10 rounded-xl w-4/6"></div>
-               </div>
+          <div className="space-y-3 pt-2">
+            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 shadow-lg space-y-2">
+              <div className="flex items-center gap-2">
+                <Check size={16} className="text-[#00c875]" />
+                <h4 className="text-xs font-bold text-white">Full Multi-Branch Sync</h4>
+              </div>
+              <p className="text-[11px] text-secondary leading-relaxed">
+                Connect your Ikeja, Lekki, and Abuja locations. Real-time centralized stock counts and profit tracking.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 shadow-lg space-y-2">
+              <div className="flex items-center gap-2">
+                <Check size={16} className="text-[#00c875]" />
+                <h4 className="text-xs font-bold text-white">Automated WhatsApp Invoicing</h4>
+              </div>
+              <p className="text-[11px] text-secondary leading-relaxed">
+                Send professional digital receipts directly to customer WhatsApp chats with one tap. Zero thermal paper expense.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 shadow-lg space-y-2">
+              <div className="flex items-center gap-2">
+                <Check size={16} className="text-[#00c875]" />
+                <h4 className="text-xs font-bold text-white">Unbreakable Offline POS</h4>
+              </div>
+              <p className="text-[11px] text-secondary leading-relaxed">
+                Keep processing sales with local IndexedDB storage when internet cuts out. Synced automatically once reconnected.
+              </p>
             </div>
           </div>
-        </motion.div>
-      </div>
-
-      {/* Left Column - Clean Signup Form */}
-      <div className="w-full md:w-1/2 flex flex-col p-8 md:p-12 relative overflow-y-auto">
-        <div className="w-full flex justify-start">
-           <Link href="/login" className="text-sm font-medium text-secondary hover:text-brand-500">
-             Already have an account? <span className="text-brand-500 font-bold">Log in</span>
-           </Link>
         </div>
 
-        <div className="flex-1 flex items-center justify-center mt-8 md:mt-0">
-          <div className="w-full max-w-sm">
-            <Link href="/" className="font-extrabold text-2xl tracking-tight flex items-center gap-2 mb-12">
-              <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white text-lg">S</div>
-              <span className="text-primary">SMB Portal</span>
-            </Link>
-
-            <h1 className="text-3xl font-extrabold mb-2 text-primary">Sign up for free</h1>
-            <p className="text-secondary mb-8 text-sm">Full access. No credit card needed.</p>
-
-            {error && (
-              <div className="bg-danger-500/10 border border-danger-500/20 text-danger-500 p-4 rounded-xl mb-6 text-sm flex items-center gap-3">
-                <span className="text-lg">⚠️</span>
-                <p>{error}</p>
-              </div>
-            )}
-
-            <form onSubmit={handleSignup} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="businessName" className="text-sm font-bold text-primary">Business Name</label>
-                <input 
-                  type="text" 
-                  id="businessName" 
-                  name="businessName" 
-                  placeholder="Acme Corp"
-                  className="w-full p-3.5 bg-tertiary border border-white/10 rounded-xl focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none text-primary"
-                  required 
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-sm font-bold text-primary">Email address</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="email" 
-                  placeholder="name@company.com"
-                  className="w-full p-3.5 bg-tertiary border border-white/10 rounded-xl focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none text-primary"
-                  required 
-                />
-              </div>
-              
-              <div className="flex flex-col gap-2">
-                <label htmlFor="password" className="text-sm font-bold text-primary">Password</label>
-                <input 
-                  type="password" 
-                  id="password" 
-                  name="password" 
-                  placeholder="••••••••"
-                  className="w-full p-3.5 bg-tertiary border border-white/10 rounded-xl focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none text-primary"
-                  required 
-                  minLength={8}
-                />
-              </div>
-              
-              <button 
-                type="submit" 
-                disabled={loading} 
-                className="btn btn-primary w-full py-4 mt-2 text-base rounded-xl font-bold shadow-md hover:shadow-lg transition-all"
-              >
-                {loading ? "Creating account..." : "Continue"}
-              </button>
-            </form>
-            <p className="text-center text-xs text-secondary mt-6">
-              By proceeding, you agree to our <a href="#" className="underline hover:text-primary">Terms of Service</a> and <a href="#" className="underline hover:text-primary">Privacy Policy</a>.
-            </p>
-          </div>
+        <div className="relative z-10 text-xs text-secondary flex items-center justify-between pt-4 border-t border-white/10">
+          <span>&copy; {new Date().getFullYear()} SMB Portal</span>
+          <span className="text-white font-medium">99.98% System Uptime SLA</span>
         </div>
       </div>
     </div>
