@@ -243,7 +243,7 @@ export default function CustomersPage() {
                     <tr key={c._id || c.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="p-3.5 pl-4">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs border border-blue-100">
+                          <div className="w-7 h-7 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-xs border border-purple-200">
                             {initial}
                           </div>
                           <span className="font-semibold text-slate-900">{c.name}</span>

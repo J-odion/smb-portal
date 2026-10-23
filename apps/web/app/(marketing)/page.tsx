@@ -51,17 +51,17 @@ export default function Home() {
             </Link>
             <Link
               href="/signup"
-              className="btn btn-primary text-xs md:text-sm font-bold px-5 py-2.5 rounded-xl"
+              className="bg-purple-600 hover:bg-purple-700 text-white text-xs md:text-sm font-bold px-5 py-2.5 rounded-xl shadow-md shadow-purple-600/20 inline-flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <span>Get Started Free</span>
-              <ArrowRight size={15} className="ml-1" />
+              <ArrowRight size={15} />
             </Link>
           </div>
         </div>
       </nav>
 
       {/* Main Container */}
-      <main className="pt-36 pb-20 relative z-10 max-w-7xl mx-auto px-6 space-y-28">
+      <main className="pt-36 md:pt-44 pb-20 relative z-10 max-w-7xl mx-auto px-6 space-y-28">
         {/* HERO SECTION */}
         <section className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto">
           {/* Eyebrow Badge */}
@@ -71,28 +71,28 @@ export default function Home() {
           </div>
 
           {/* Headline */}
-          <h1 className="h1 text-black font-extrabold">
+          <h1 className="h1 text-black font-extrabold text-4xl sm:text-5xl md:text-6xl tracking-tight leading-tight">
             Run your business on a workspace <br className="hidden md:block" />
-            <span className="gradient-text">that actually feels modern.</span>
+            <span className="text-purple-600">that actually feels modern.</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-zinc-600 max-w-2xl leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-zinc-600 max-w-2xl leading-relaxed">
             Multi-branch inventory, rapid offline POS cashiering, automated WhatsApp receipts, and staff payroll — unified in one clean HosOS board.
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
+          <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 w-full sm:w-auto justify-center">
             <Link
               href="/signup"
-              className="btn btn-primary text-base font-bold px-8 py-3.5 rounded-xl shadow-md shadow-purple-600/25 w-full sm:w-auto"
+              className="bg-purple-600 hover:bg-purple-700 text-white text-base font-bold px-8 py-3.5 rounded-xl shadow-md shadow-purple-600/25 w-full sm:w-auto inline-flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <span>Start Free 14-Day Trial</span>
-              <ArrowRight size={18} className="ml-2" />
+              <ArrowRight size={18} />
             </Link>
             <Link
               href="/dashboard"
-              className="btn btn-secondary text-base font-bold px-8 py-3.5 rounded-xl w-full sm:w-auto flex items-center justify-center gap-2"
+              className="bg-white hover:bg-zinc-50 border border-zinc-300 text-black text-base font-bold px-8 py-3.5 rounded-xl w-full sm:w-auto flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
             >
               <Zap size={18} className="text-purple-600" />
               <span>Explore Live Workspace</span>
@@ -382,14 +382,14 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <Link
               href="/signup"
-              className="btn btn-primary text-base font-bold px-10 py-4 rounded-xl shadow-md w-full sm:w-auto"
+              className="bg-purple-600 hover:bg-purple-700 text-white text-base font-bold px-10 py-4 rounded-xl shadow-md shadow-purple-600/25 w-full sm:w-auto inline-flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <span>Get Started Now</span>
-              <ArrowRight size={18} className="ml-2" />
+              <ArrowRight size={18} />
             </Link>
             <Link
               href="/login"
-              className="btn btn-secondary text-base font-bold px-8 py-4 rounded-xl w-full sm:w-auto"
+              className="bg-white hover:bg-zinc-50 border border-zinc-300 text-black text-base font-bold px-8 py-4 rounded-xl w-full sm:w-auto inline-flex items-center justify-center transition-all cursor-pointer shadow-xs"
             >
               <span>Log In to Workspace</span>
             </Link>

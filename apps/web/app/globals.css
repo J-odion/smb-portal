@@ -1,23 +1,6 @@
-@import "tailwindcss";
-
-@theme {
-  --color-brand-50: var(--brand-50);
-  --color-brand-100: var(--brand-100);
-  --color-brand-200: var(--brand-200);
-  --color-brand-400: var(--brand-400);
-  --color-brand-500: var(--brand-500);
-  --color-brand-600: var(--brand-600);
-  --color-brand-700: var(--brand-700);
-  --color-brand-900: var(--brand-900);
-  --color-danger-50: var(--danger-50);
-  --color-danger-500: var(--danger-500);
-  --color-danger-600: #dc2626;
-  --color-success-50: var(--success-50);
-  --color-success-500: var(--success-500);
-  --color-success-600: #16a34a;
-  --color-warning-50: var(--warning-50);
-  --color-warning-500: var(--warning-500);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 .bg-primary { background-color: var(--bg-primary); }
 .bg-secondary { background-color: var(--bg-secondary); }
@@ -231,6 +214,15 @@ input:focus, select:focus, textarea:focus {
   border-color: #7c3aed !important;
   outline: none !important;
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15) !important;
+}
+
+/* Prevent pale yellow browser autofill background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+  -webkit-text-fill-color: #000000 !important;
 }
 
 /* Animations */
