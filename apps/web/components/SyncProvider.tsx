@@ -80,8 +80,8 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!isOnline && (
-        <div className="fixed top-0 left-0 right-0 bg-danger-500 text-white text-center py-1 text-sm z-50 animate-fade-in">
-          You are currently offline. Changes will be saved locally and synced when you reconnect.
+        <div className="fixed top-0 left-0 right-0 bg-red-600 text-white text-center py-2 px-4 text-sm font-bold z-50 shadow-md flex items-center justify-center gap-2 animate-fade-in">
+          <span>⚠️ You are currently offline. Transactions & orders will be saved locally and auto-synced upon reconnecting.</span>
         </div>
       )}
       {children}

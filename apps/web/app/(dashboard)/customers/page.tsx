@@ -87,17 +87,17 @@ export default function CustomersPage() {
 
   return (
     <div className="animate-fade-in relative space-y-6 pb-24 md:pb-8">
-      {/* Monday.com Board Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200/80 pb-5">
+      {/* Board Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-200 pb-5">
         <div>
-          <div className="flex items-center gap-2 text-xs text-secondary mb-1">
+          <div className="flex items-center gap-2 text-xs text-zinc-500 mb-1">
             <span>Workspaces</span>
             <span>&rsaquo;</span>
-            <span className="text-brand-600 font-semibold">CRM & Directory</span>
+            <span className="text-purple-600 font-bold">CRM & Directory</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 flex items-center gap-2">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-black flex items-center gap-2">
             <span>Customers & Clients</span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold border border-slate-200">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 font-semibold border border-zinc-200">
               {filteredCustomers.length} contacts
             </span>
           </h1>
@@ -105,11 +105,11 @@ export default function CustomersPage() {
 
         <div className="flex items-center gap-3 w-full md:w-auto">
           {/* View Mode Switcher */}
-          <div className="bg-slate-100/90 p-1 rounded-xl border border-slate-200 flex text-xs">
+          <div className="bg-zinc-100 p-1 rounded-xl border border-zinc-200 flex text-xs">
             <button
               onClick={() => setViewMode("cards")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                viewMode === "cards" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
+                viewMode === "cards" ? "bg-white text-purple-700 shadow-2xs font-bold" : "text-zinc-600 hover:text-black"
               }`}
             >
               🃏 Cards
@@ -117,7 +117,7 @@ export default function CustomersPage() {
             <button
               onClick={() => setViewMode("table")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                viewMode === "table" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
+                viewMode === "table" ? "bg-white text-purple-700 shadow-2xs font-bold" : "text-zinc-600 hover:text-black"
               }`}
             >
               📋 Table
@@ -126,7 +126,7 @@ export default function CustomersPage() {
 
           <button
             onClick={() => setIsModalOpen(true)}
-            className="btn btn-primary flex-1 md:flex-none text-sm px-4 py-2 gap-1.5 shadow-md shadow-brand-500/20 font-bold"
+            className="btn btn-primary flex-1 md:flex-none text-sm px-4 py-2 gap-1.5 shadow-sm font-bold"
           >
             <span className="text-base font-bold">+</span>
             <span>Add Customer</span>
@@ -134,35 +134,33 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      {/* Monday.com Search Bar */}
-      <div className="bg-white/90 p-3 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3">
+      {/* Search Bar */}
+      <div className="bg-white p-3 rounded-2xl border border-zinc-200 shadow-2xs flex items-center gap-3">
         <input
           type="search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="🔍 Search customers by name, phone, or address..."
-          className="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none transition-all"
+          className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3.5 py-2 text-sm text-black placeholder-zinc-400 focus:bg-white focus:border-purple-600 outline-none transition-all"
         />
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-secondary">
-          <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+        <div className="text-center py-12 text-zinc-500">
+          <div className="w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
           <p className="text-sm font-medium">Loading contacts...</p>
         </div>
       ) : filteredCustomers.length === 0 ? (
-        <div className="bg-white p-12 text-center rounded-2xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-12 text-center rounded-2xl border border-zinc-200 shadow-sm">
           <p className="text-4xl mb-3">👥</p>
-          <h3 className="text-lg font-bold text-slate-900 mb-1">No customers yet</h3>
-          <p className="text-sm text-slate-500 mb-4">Add your clients to track invoices and sales history.</p>
+          <h3 className="text-lg font-bold text-black mb-1">No customers yet</h3>
+          <p className="text-sm text-zinc-500 mb-4">Add your clients to track invoices and sales history.</p>
           <button onClick={() => setIsModalOpen(true)} className="btn btn-primary text-sm font-bold">
             + Add First Customer
           </button>
         </div>
       ) : viewMode === "cards" ? (
-        /* ========================================================== */
-        /* MONDAY.COM MOBILE-FIRST CONTACT CARDS                     */
-        /* ========================================================== */
+        /* Mobile-First Contact Cards */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {filteredCustomers.map((cust) => {
             const initial = cust.name.charAt(0).toUpperCase();
@@ -172,32 +170,32 @@ export default function CustomersPage() {
             return (
               <div
                 key={cust._id || cust.id}
-                className="bg-white p-4 rounded-xl border border-slate-200/90 border-l-4 border-l-[#0073ea] hover:border-brand-300 hover:shadow-md transition-all shadow-xs flex flex-col justify-between"
+                className="bg-white p-4 rounded-xl border border-zinc-200 border-l-4 border-l-purple-600 hover:border-purple-300 hover:shadow-xs transition-all shadow-2xs flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm border border-blue-200">
+                    <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-sm border border-purple-200">
                       {initial}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-slate-900 text-base truncate">{cust.name}</h4>
-                      <p className="text-xs text-slate-500 truncate">{cust.phone || "No phone"}</p>
+                      <h4 className="font-bold text-black text-base truncate">{cust.name}</h4>
+                      <p className="text-xs text-zinc-500 truncate">{cust.phone || "No phone"}</p>
                     </div>
                   </div>
 
                   {cust.address && (
-                    <p className="text-xs text-slate-600 line-clamp-1 mb-3">
+                    <p className="text-xs text-zinc-600 line-clamp-1 mb-3">
                       📍 {cust.address}
                     </p>
                   )}
                 </div>
 
-                {/* Quick Action Buttons for Mobile */}
-                <div className="flex items-center gap-2 pt-3 border-t border-slate-100 mt-auto">
+                {/* Quick Action Buttons */}
+                <div className="flex items-center gap-2 pt-3 border-t border-zinc-100 mt-auto">
                   {cleanPhone && (
                     <a
                       href={`tel:${cleanPhone}`}
-                      className="flex-1 text-center py-2 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition-colors flex items-center justify-center gap-1.5"
+                      className="flex-1 text-center py-2 px-3 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-xs font-semibold text-zinc-800 transition-colors flex items-center justify-center gap-1.5"
                     >
                       <span>📞</span>
                       <span>Call</span>

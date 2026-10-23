@@ -155,8 +155,8 @@ export default function StaffPage() {
         <div
           className={`p-4 rounded-xl flex items-center gap-3 border shadow-sm animate-fade-in ${
             notification.type === "success"
-              ? "bg-[#00c875]/10 border-[#00c875]/40 text-[#00c875]"
-              : "bg-[#e2445c]/10 border-[#e2445c]/40 text-[#e2445c]"
+              ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+              : "bg-red-50 border-red-200 text-red-700"
           }`}
         >
           {notification.type === "success" ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
@@ -164,80 +164,80 @@ export default function StaffPage() {
         </div>
       )}
 
-      {/* Monday Board Breadcrumb & Top Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200/80 pb-5">
+      {/* Board Top Bar */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-200 pb-5">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-secondary uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">
             <span>Workspaces</span>
             <span>&rsaquo;</span>
-            <span className="text-brand-600">Staff & Payroll</span>
+            <span className="text-purple-600 font-bold">Staff & Payroll</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Staff & Compensation Board</h1>
-          <p className="text-slate-500 text-sm mt-0.5">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-black">Staff & Compensation Board</h1>
+          <p className="text-zinc-500 text-sm mt-0.5">
             Manage your store associates, salary tiers, and commission percentages.
           </p>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="btn btn-primary flex items-center gap-2 w-full md:w-auto justify-center shadow-md shadow-brand-500/20 text-sm font-bold py-2.5 px-5"
+          className="btn btn-primary flex items-center gap-2 w-full md:w-auto justify-center shadow-sm text-sm font-bold py-2.5 px-5"
         >
           <UserPlus size={18} />
           <span>+ Add Staff Member</span>
         </button>
       </div>
 
-      {/* Monday Progress Battery Bar */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-3">
+      {/* Progress Battery Bar */}
+      <div className="bg-white p-5 rounded-2xl border border-zinc-200 shadow-2xs space-y-3">
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-700">
               Payroll Structure Battery
             </span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold border border-slate-200">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 font-semibold border border-zinc-200">
               {totalStaffCount} Employees
             </span>
           </div>
           <div className="flex items-center gap-4 text-xs font-semibold">
-            <span className="flex items-center gap-1.5 text-[#00c875]">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00c875]"></span>
+            <span className="flex items-center gap-1.5 text-emerald-600">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#16a34a]"></span>
               Fixed Salary ({flatCount})
             </span>
-            <span className="flex items-center gap-1.5 text-[#fdab3d]">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#fdab3d]"></span>
+            <span className="flex items-center gap-1.5 text-amber-600">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]"></span>
               Commission ({commissionCount})
             </span>
           </div>
         </div>
 
         {/* Segmented Battery */}
-        <div className="monday-battery w-full h-3 rounded-full overflow-hidden flex bg-slate-100">
+        <div className="monday-battery w-full h-3 rounded-full overflow-hidden flex bg-zinc-100">
           <div
             style={{ width: `${flatPercentage}%` }}
-            className="bg-[#00c875] transition-all duration-500 hover:brightness-110"
+            className="bg-[#16a34a] transition-all duration-500 hover:brightness-110"
             title={`Fixed Salary: ${flatCount} (${Math.round(flatPercentage)}%)`}
           />
           <div
             style={{ width: `${commissionPercentage}%` }}
-            className="bg-[#fdab3d] transition-all duration-500 hover:brightness-110"
+            className="bg-[#f59e0b] transition-all duration-500 hover:brightness-110"
             title={`Commission: ${commissionCount} (${Math.round(commissionPercentage)}%)`}
           />
         </div>
 
-        {/* Monday KPI summary cards */}
+        {/* KPI summary cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 border-l-4 border-l-[#00c875]">
-            <span className="text-xs text-slate-500 font-medium block">Monthly Fixed Commitment</span>
-            <span className="text-lg font-extrabold text-slate-900">
+          <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200 border-l-4 border-l-emerald-600">
+            <span className="text-xs text-zinc-500 font-medium block">Monthly Fixed Commitment</span>
+            <span className="text-lg font-extrabold text-black">
               ₦{totalMonthlyCommitment.toLocaleString()}
             </span>
           </div>
-          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 border-l-4 border-l-[#fdab3d]">
-            <span className="text-xs text-slate-500 font-medium block">Commission Associates</span>
-            <span className="text-lg font-extrabold text-slate-900">{commissionCount} Members</span>
+          <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200 border-l-4 border-l-amber-500">
+            <span className="text-xs text-zinc-500 font-medium block">Commission Associates</span>
+            <span className="text-lg font-extrabold text-black">{commissionCount} Members</span>
           </div>
-          <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 border-l-4 border-l-[#0073ea]">
-            <span className="text-xs text-slate-500 font-medium block">Total Active Roster</span>
+          <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200 border-l-4 border-l-purple-600">
+            <span className="text-xs text-zinc-500 font-medium block">Total Active Roster</span>
             <span className="text-lg font-extrabold text-slate-900">{totalStaffCount} Onboarded</span>
           </div>
         </div>

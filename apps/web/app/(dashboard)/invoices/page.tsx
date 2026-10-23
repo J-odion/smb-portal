@@ -176,28 +176,28 @@ export default function InvoicesPage() {
   return (
     <div className="animate-fade-in relative space-y-6 pb-24 md:pb-8">
       {/* Monday.com Board Header Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200/80 pb-5">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-200 pb-5">
         <div>
-          <div className="flex items-center gap-2 text-xs text-secondary mb-1">
+          <div className="flex items-center gap-2 text-xs text-zinc-500 mb-1">
             <span>Workspaces</span>
             <span>&rsaquo;</span>
-            <span className="text-brand-600 font-semibold">Sales Pipeline</span>
+            <span className="text-purple-600 font-bold">Sales Pipeline</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 flex items-center gap-2">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-black flex items-center gap-2">
             <span>Transactions & Invoices</span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold border border-slate-200">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 font-semibold border border-zinc-200">
               {filteredInvoices.length} items
             </span>
           </h1>
         </div>
 
         <div className="flex items-center gap-3 w-full md:w-auto">
-          {/* View Mode Switcher (Monday.com pattern) */}
-          <div className="bg-slate-100/90 p-1 rounded-xl border border-slate-200 flex text-xs">
+          {/* View Mode Switcher */}
+          <div className="bg-zinc-100 p-1 rounded-xl border border-zinc-200 flex text-xs">
             <button
               onClick={() => setViewMode("table")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                viewMode === "table" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
+                viewMode === "table" ? "bg-white text-purple-700 shadow-2xs font-bold" : "text-zinc-600 hover:text-black"
               }`}
             >
               📋 Table
@@ -205,7 +205,7 @@ export default function InvoicesPage() {
             <button
               onClick={() => setViewMode("cards")}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                viewMode === "cards" ? "bg-white text-brand-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
+                viewMode === "cards" ? "bg-white text-purple-700 shadow-2xs font-bold" : "text-zinc-600 hover:text-black"
               }`}
             >
               🃏 Cards
@@ -214,7 +214,7 @@ export default function InvoicesPage() {
 
           <button
             onClick={() => setIsModalOpen(true)}
-            className="btn btn-primary flex-1 md:flex-none text-sm px-4 py-2 gap-1.5 shadow-md shadow-brand-500/20 font-bold"
+            className="btn btn-primary flex-1 md:flex-none text-sm px-4 py-2 gap-1.5 shadow-sm font-bold"
           >
             <span className="text-base font-bold">+</span>
             <span>New Item</span>
@@ -222,37 +222,37 @@ export default function InvoicesPage() {
         </div>
       </div>
 
-      {/* Monday.com Battery Progress Bar */}
+      {/* Progress Battery Bar */}
       {totalCount > 0 && (
-        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-2.5">
+        <div className="bg-white p-4 rounded-2xl border border-zinc-200 shadow-2xs space-y-2.5">
           <div className="flex justify-between items-center text-xs">
-            <span className="text-slate-600 font-semibold">Board Settlement Progress</span>
-            <span className="text-slate-900 font-bold">{Math.round(paidPercent)}% Settled</span>
+            <span className="text-zinc-600 font-semibold">Board Settlement Progress</span>
+            <span className="text-black font-bold">{Math.round(paidPercent)}% Settled</span>
           </div>
           <div className="monday-battery w-full">
-            <div style={{ width: `${paidPercent}%` }} className="bg-[#00c875] h-full transition-all duration-500"></div>
-            <div style={{ width: `${pendingPercent}%` }} className="bg-[#fdab3d] h-full transition-all duration-500"></div>
+            <div style={{ width: `${paidPercent}%` }} className="bg-[#16a34a] h-full transition-all duration-500"></div>
+            <div style={{ width: `${pendingPercent}%` }} className="bg-[#f59e0b] h-full transition-all duration-500"></div>
           </div>
-          <div className="flex items-center gap-4 text-xs text-slate-600 pt-1 font-medium">
+          <div className="flex items-center gap-4 text-xs text-zinc-600 pt-1 font-medium">
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00c875]"></span> Paid ({paidCount})
+              <span className="w-2.5 h-2.5 rounded-full bg-[#16a34a]"></span> Paid ({paidCount})
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#fdab3d]"></span> Working / Pending ({pendingCount})
+              <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]"></span> Working / Pending ({pendingCount})
             </span>
           </div>
         </div>
       )}
 
-      {/* Monday.com Search & Filter Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/90 p-3 rounded-2xl border border-slate-200/80 shadow-xs">
+      {/* Search & Filter Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-zinc-200 shadow-2xs">
         <div className="flex-1 min-w-[240px]">
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="🔍 Search items, customers, or amounts..."
-            className="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none transition-all"
+            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3.5 py-2 text-sm text-black placeholder-zinc-400 focus:bg-white focus:border-purple-600 outline-none transition-all"
           />
         </div>
 
@@ -264,8 +264,8 @@ export default function InvoicesPage() {
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1.5 rounded-full font-semibold transition-all ${
                 statusFilter === st
-                  ? "bg-brand-50 text-brand-600 border border-brand-200 shadow-xs"
-                  : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-transparent"
+                  ? "bg-purple-50 text-purple-700 border border-purple-200 shadow-2xs font-bold"
+                  : "bg-zinc-100 text-zinc-600 hover:text-black border border-transparent"
               }`}
             >
               {st}
