@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Settings,
   Building2,
@@ -248,10 +249,17 @@ export default function SettingsPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700 border border-purple-200">
+          <Link
+            href="/onboarding"
+            className="px-3 py-1.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-black text-xs font-bold inline-flex items-center gap-1.5 transition-colors shadow-2xs"
+          >
+            <Building2 size={13} className="text-purple-600" />
+            <span>Store Onboarding</span>
+          </Link>
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200">
             {tenantName}
           </span>
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700 border border-purple-200">
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200">
             {selectedIndustryObj.label}
           </span>
         </div>

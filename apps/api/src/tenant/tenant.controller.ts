@@ -15,6 +15,12 @@ export class TenantController {
   }
 
   @Roles('OWNER', 'MANAGER')
+  @Put('profile')
+  updateProfile(@Req() req: any, @Body() body: any) {
+    return this.tenantService.updateProfile(req.user.tenantId, body);
+  }
+
+  @Roles('OWNER', 'MANAGER')
   @Put('industry')
   updateIndustry(@Req() req: any, @Body('industry') industry: string) {
     return this.tenantService.updateIndustry(req.user.tenantId, industry);

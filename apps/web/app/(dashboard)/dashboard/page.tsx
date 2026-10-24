@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   AreaChart,
@@ -23,40 +23,100 @@ import {
   Receipt,
   Package,
   MessageSquare,
+  RefreshCw,
+  Clock
 } from "lucide-react";
-
-const chartData = [
-  { name: "Mon", revenue: 42000, expenses: 14000 },
-  { name: "Tue", revenue: 58000, expenses: 18000 },
-  { name: "Wed", revenue: 32000, expenses: 9500 },
-  { name: "Thu", revenue: 76000, expenses: 22000 },
-  { name: "Fri", revenue: 95000, expenses: 31000 },
-  { name: "Sat", revenue: 110000, expenses: 28000 },
-  { name: "Sun", revenue: 84000, expenses: 19000 },
-];
 
 export default function DashboardOverview() {
   const [chartType, setChartType] = useState<"area" | "bar">("area");
-  const [stats, setStats] = useState({
-    totalRevenue: 497000,
-    totalExpenses: 141500,
-    activeCustomers: 38,
-    recentTransactions: [
-      { id: "1", desc: "Standard POS Cashier Sale", amount: 45000, time: "10 mins ago", status: "PAID", customer: "Amaka Obi", phone: "08034567890", channel: "POS Terminal" },
-      { id: "2", desc: "Bulk Accessories Order", amount: 120000, time: "1 hour ago", status: "WORKING", customer: "Emeka Trading", phone: "08023456789", channel: "Direct Transfer" },
-      { id: "3", desc: "Hardware Service & Setup", amount: 25000, time: "3 hours ago", status: "PAID", customer: "Tunde Bakare", phone: "08098765432", channel: "Card POS" },
-      { id: "4", desc: "Generator Diesel Fuel Refill", amount: 18500, time: "Yesterday", status: "STUCK", customer: "Station Operations", phone: "08011223344", channel: "Cash Outflow" },
-    ],
-  });
+  const [loading, setLoading] = useState(true);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [activeCustomers, setActiveCustomers] = useState(0);
+  const [inventoryCount, setInventoryCount] = useState(0);
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
 
-  const netProfit = stats.totalRevenue - stats.totalExpenses;
-  const marginPercent = Math.round((netProfit / stats.totalRevenue) * 100);
+  const getToken = () => {
+    if (typeof window === "undefined") return "";
+    return (
+      localStorage.getItem("token") ||
+      document.cookie.split("; ").find((row) => row.startsWith("token="))?.split("=")[1] ||
+      ""
+    );
+  };
+
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    const token = getToken();
+    const headers = { Authorization: `Bearer ${token}` };
+
+    try {
+      const [txRes, expRes, custRes, invRes] = await Promise.all([
+        fetch("/api/transactions", { headers }).catch(() => null),
+        fetch("/api/expenses", { headers }).catch(() => null),
+        fetch("/api/customers", { headers }).catch(() => null),
+        fetch("/api/inventory", { headers }).catch(() => null),
+      ]);
+
+      if (txRes && txRes.ok) {
+        const txData = await txRes.json();
+        const txList = Array.isArray(txData) ? txData : txData.data || [];
+        setRecentTransactions(txList.slice(0, 8));
+        const rev = txList
+          .filter((t: any) => t.status === "Paid" || !t.status)
+          .reduce((sum: number, t: any) => sum + (Number(t.total) || 0), 0);
+        setTotalRevenue(rev);
+      }
+
+      if (expRes && expRes.ok) {
+        const expData = await expRes.json();
+        const expList = Array.isArray(expData) ? expData : expData.data || [];
+        const expTotal = expList.reduce((sum: number, e: any) => sum + (Number(e.amount) || 0), 0);
+        setTotalExpenses(expTotal);
+      }
+
+      if (custRes && custRes.ok) {
+        const custData = await custRes.json();
+        const custList = Array.isArray(custData) ? custData : custData.data || [];
+        setActiveCustomers(custList.length);
+      }
+
+      if (invRes && invRes.ok) {
+        const invData = await invRes.json();
+        const invList = Array.isArray(invData) ? invData : invData.data || [];
+        setInventoryCount(invList.length);
+      }
+    } catch (err) {
+      console.warn("Could not fetch dashboard metrics", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const netProfit = totalRevenue - totalExpenses;
+  const marginPercent = totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0;
+
+  const chartData = [
+    { name: "Mon", revenue: Math.round(totalRevenue * 0.1), expenses: Math.round(totalExpenses * 0.12) },
+    { name: "Tue", revenue: Math.round(totalRevenue * 0.15), expenses: Math.round(totalExpenses * 0.1) },
+    { name: "Wed", revenue: Math.round(totalRevenue * 0.12), expenses: Math.round(totalExpenses * 0.15) },
+    { name: "Thu", revenue: Math.round(totalRevenue * 0.18), expenses: Math.round(totalExpenses * 0.14) },
+    { name: "Fri", revenue: Math.round(totalRevenue * 0.22), expenses: Math.round(totalExpenses * 0.25) },
+    { name: "Sat", revenue: Math.round(totalRevenue * 0.28), expenses: Math.round(totalExpenses * 0.18) },
+    { name: "Sun", revenue: Math.round(totalRevenue * 0.05), expenses: Math.round(totalExpenses * 0.06) },
+  ];
 
   const formatWhatsAppUrl = (phone: string, customer: string, amount: number) => {
-    const cleanPhone = phone.replace(/\D/g, "");
+    const cleanPhone = (phone || "").replace(/\D/g, "");
     let intPhone = cleanPhone;
     if (cleanPhone.startsWith("0")) intPhone = "234" + cleanPhone.slice(1);
-    const msg = encodeURIComponent(`Hello ${customer}, thank you for your payment of ₦${amount.toLocaleString()} with SMB Portal. Here is your digital receipt.`);
+    const msg = encodeURIComponent(
+      `Hello ${customer || "Valued Customer"}, thank you for your payment of ₦${amount.toLocaleString()} with SMB Portal. Here is your digital receipt.`
+    );
     return `https://wa.me/${intPhone}?text=${msg}`;
   };
 
@@ -68,32 +128,35 @@ export default function DashboardOverview() {
           <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">
             <span>Workspaces</span>
             <span>&rsaquo;</span>
-            <span className="text-purple-600 font-bold">Operations Pulse</span>
+            <span className="text-purple-600 font-bold">Executive Board</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-black flex items-center gap-3">
-            <span>Business Pulse</span>
-            <span className="text-xs px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold flex items-center gap-1.5 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-              Live Pulse
-            </span>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-black">
+            Business Financial Pulse
           </h1>
           <p className="text-xs text-zinc-500 mt-1">
-            Real-time financial performance, settlement battery, and branch transactions.
+            Live revenue, branch transactions, catalog count, and operating margins.
           </p>
         </div>
 
         {/* Action Hub */}
         <div className="flex items-center gap-2.5 w-full md:w-auto">
+          <button
+            onClick={fetchDashboardData}
+            className="p-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600 hover:text-black transition-colors"
+            title="Refresh metrics"
+          >
+            <RefreshCw size={15} className={loading ? "animate-spin text-purple-600" : ""} />
+          </button>
           <Link
             href="/invoices"
             className="btn btn-secondary text-xs px-4 py-2.5 flex items-center gap-2 flex-1 md:flex-none justify-center rounded-xl font-semibold"
           >
             <Receipt size={14} className="text-zinc-500" />
-            <span>Transactions Board</span>
+            <span>Invoices</span>
           </Link>
           <Link
             href="/pos"
-            className="btn btn-primary text-xs px-5 py-2.5 flex items-center gap-2 flex-1 md:flex-none justify-center shadow-md shadow-purple-600/25 rounded-xl font-bold"
+            className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-purple-600/25 flex-1 md:flex-none justify-center transition-all cursor-pointer"
           >
             <Zap size={15} />
             <span>Launch POS</span>
@@ -129,7 +192,7 @@ export default function DashboardOverview() {
             <span className="text-xs font-bold text-black block group-hover:text-emerald-600 transition-colors">
               Invoices
             </span>
-            <span className="text-[11px] text-zinc-500 block">Issue Receipt</span>
+            <span className="text-[11px] text-zinc-500 block">Record Receipt</span>
           </div>
         </Link>
 
@@ -144,7 +207,7 @@ export default function DashboardOverview() {
             <span className="text-xs font-bold text-black block group-hover:text-amber-600 transition-colors">
               Inventory
             </span>
-            <span className="text-[11px] text-zinc-500 block">Stock Manager</span>
+            <span className="text-[11px] text-zinc-500 block">{inventoryCount} live items</span>
           </div>
         </Link>
 
@@ -164,315 +227,167 @@ export default function DashboardOverview() {
         </Link>
       </div>
 
-      {/* Target Achievement Battery Summary */}
-      <div className="bg-white p-5 rounded-2xl border border-zinc-200 shadow-2xs space-y-3">
-        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-700">
-              Weekly Revenue Goal (₦500,000 Target)
-            </span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 font-bold border border-purple-200">
-              {Math.round((stats.totalRevenue / 500000) * 100)}% Reached
-            </span>
-          </div>
-          <span className="text-xs font-bold text-emerald-600">
-            Net Operating Margin: {marginPercent}%
-          </span>
-        </div>
-
-        {/* Multi-segment battery */}
-        <div className="monday-battery w-full h-3 rounded-full overflow-hidden flex bg-zinc-100">
-          <div
-            style={{ width: "72%" }}
-            className="bg-emerald-600 h-full transition-all duration-500 hover:brightness-105"
-            title="Settled Inflows: 72%"
-          />
-          <div
-            style={{ width: "18%" }}
-            className="bg-amber-500 h-full transition-all duration-500 hover:brightness-105"
-            title="Pending Collections: 18%"
-          />
-          <div
-            style={{ width: "10%" }}
-            className="bg-red-600 h-full transition-all duration-500 hover:brightness-105"
-            title="Operational Expenses: 10%"
-          />
-        </div>
-
-        {/* Legend */}
-        <div className="flex flex-wrap items-center justify-between text-xs text-zinc-600 pt-1 gap-2">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5 text-zinc-800 font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-600" />
-              Settled Sales (₦357,840)
-            </span>
-            <span className="flex items-center gap-1.5 text-zinc-800 font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-              Pending Tabs (₦139,160)
-            </span>
-            <span className="flex items-center gap-1.5 text-zinc-800 font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-600" />
-              Outflows (₦141,500)
-            </span>
-          </div>
-          <span className="text-[11px] text-zinc-500">Target window ends in 2 days</span>
-        </div>
-      </div>
-
-      {/* 4 High-Impact KPI Cards */}
+      {/* KPI Metric Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Net Profit - Green */}
-        <div className="bg-white p-5 rounded-2xl border border-zinc-200 border-l-4 border-l-emerald-600 shadow-2xs flex items-center justify-between hover:shadow-xs transition-all">
-          <div>
-            <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider block mb-1">
-              Net Profit
-            </span>
-            <h3 className="text-2xl font-black text-black">₦{netProfit.toLocaleString()}</h3>
-            <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1 mt-1">
-              <TrendingUp size={13} /> +14.2% vs last week
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-lg border border-emerald-100">
-            ₦
-          </div>
-        </div>
-
-        {/* Gross Sales - Purple */}
-        <div className="bg-white p-5 rounded-2xl border border-zinc-200 border-l-4 border-l-purple-600 shadow-2xs flex items-center justify-between hover:shadow-xs transition-all">
-          <div>
-            <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider block mb-1">
-              Gross Sales
-            </span>
-            <h3 className="text-2xl font-black text-black">₦{stats.totalRevenue.toLocaleString()}</h3>
-            <span className="text-xs text-purple-600 font-semibold flex items-center gap-1 mt-1">
-              <ArrowUpRight size={13} /> 48 transactions
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
-            <CreditCard size={20} />
-          </div>
-        </div>
-
-        {/* Expenses - Red */}
-        <div className="bg-white p-5 rounded-2xl border border-zinc-200 border-l-4 border-l-red-600 shadow-2xs flex items-center justify-between hover:shadow-xs transition-all">
-          <div>
-            <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider block mb-1">
-              Total Expenses
-            </span>
-            <h3 className="text-2xl font-black text-red-600">₦{stats.totalExpenses.toLocaleString()}</h3>
-            <span className="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
-              <Activity size={13} /> -3.5% controlled spend
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-100">
-            <DollarSign size={20} />
-          </div>
-        </div>
-
-        {/* Active Clients */}
-        <div className="bg-white p-5 rounded-2xl border border-zinc-200 border-l-4 border-l-purple-700 shadow-2xs flex items-center justify-between hover:shadow-xs transition-all">
-          <div>
-            <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider block mb-1">
-              Active Clients
-            </span>
-            <h3 className="text-2xl font-black text-black">{stats.activeCustomers}</h3>
-            <span className="text-xs text-purple-600 font-semibold flex items-center gap-1 mt-1">
-              <Users size={13} /> +4 new this week
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center border border-purple-100">
-            <Users size={20} />
-          </div>
-        </div>
-      </div>
-
-      {/* Main Revenue Analytics & Live Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Performance Chart with Tab Toggle */}
-        <div className="lg:col-span-2 bg-white p-5 md:p-6 rounded-2xl border border-zinc-200 flex flex-col h-[400px] shadow-2xs">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3 className="font-bold text-black text-base">Weekly Inflow vs Outflow</h3>
-              <p className="text-xs text-zinc-500">
-                Daily breakdown of revenue generated vs operational overhead
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div className="flex items-center bg-zinc-100 p-1 rounded-xl border border-zinc-200 text-xs">
-                <button
-                  onClick={() => setChartType("area")}
-                  className={`px-3 py-1 rounded-lg font-semibold transition-all ${
-                    chartType === "area" ? "bg-white text-black shadow-2xs" : "text-zinc-500 hover:text-black"
-                  }`}
-                >
-                  Area
-                </button>
-                <button
-                  onClick={() => setChartType("bar")}
-                  className={`px-3 py-1 rounded-lg font-semibold transition-all ${
-                    chartType === "bar" ? "bg-white text-black shadow-2xs" : "text-zinc-500 hover:text-black"
-                  }`}
-                >
-                  Bars
-                </button>
-              </div>
+        {/* Total Revenue */}
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-zinc-500">
+            <span className="text-xs font-bold uppercase tracking-wider">Total Sales Inflow</span>
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+              ₦
             </div>
           </div>
-
-          <div className="flex-1 w-full min-h-0 pt-2">
-            <ResponsiveContainer width="100%" height="100%">
-              {chartType === "area" ? (
-                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="revenueGreen" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#16a34a" stopOpacity={0.25} />
-                      <stop offset="95%" stopColor="#16a34a" stopOpacity={0.02} />
-                    </linearGradient>
-                    <linearGradient id="expenseRed" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#dc2626" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#dc2626" stopOpacity={0.02} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f4f4f5" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#71717a", fontSize: 11 }} />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#71717a", fontSize: 11 }}
-                    tickFormatter={(v) => `₦${v / 1000}k`}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#ffffff",
-                      border: "1px solid #e4e4e7",
-                      borderRadius: "12px",
-                      color: "#000000",
-                      fontSize: "12px",
-                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#16a34a"
-                    strokeWidth={2.5}
-                    fill="url(#revenueGreen)"
-                    name="Revenue"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="expenses"
-                    stroke="#dc2626"
-                    strokeWidth={2}
-                    fill="url(#expenseRed)"
-                    name="Expenses"
-                  />
-                </AreaChart>
-              ) : (
-                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f4f4f5" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#71717a", fontSize: 11 }} />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#71717a", fontSize: 11 }}
-                    tickFormatter={(v) => `₦${v / 1000}k`}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#ffffff",
-                      border: "1px solid #e4e4e7",
-                      borderRadius: "12px",
-                      color: "#000000",
-                      fontSize: "12px",
-                    }}
-                  />
-                  <Bar dataKey="revenue" fill="#16a34a" radius={[6, 6, 0, 0]} name="Revenue" />
-                  <Bar dataKey="expenses" fill="#dc2626" radius={[6, 6, 0, 0]} name="Expenses" />
-                </BarChart>
-              )}
-            </ResponsiveContainer>
+          <span className="text-2xl sm:text-3xl font-extrabold text-black block">
+            ₦{totalRevenue.toLocaleString()}
+          </span>
+          <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-bold pt-1">
+            <TrendingUp size={14} />
+            <span>Live MongoDB ledger</span>
           </div>
         </div>
 
-        {/* Live Activity Stream */}
-        <div className="bg-white p-5 md:p-6 rounded-2xl border border-zinc-200 flex flex-col shadow-2xs">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3 className="font-bold text-black text-base">Live Board Activity</h3>
-              <p className="text-xs text-zinc-500">Real-time store transaction stream</p>
+        {/* Total Expenses */}
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-zinc-500">
+            <span className="text-xs font-bold uppercase tracking-wider">Store Expenses</span>
+            <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center font-bold">
+              <DollarSign size={16} />
             </div>
-            <Link
-              href="/invoices"
-              className="text-xs text-purple-600 hover:text-purple-700 font-bold"
-            >
-              View Board &rsaquo;
+          </div>
+          <span className="text-2xl sm:text-3xl font-extrabold text-black block">
+            ₦{totalExpenses.toLocaleString()}
+          </span>
+          <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-semibold pt-1">
+            <span>Operating cost tracked</span>
+          </div>
+        </div>
+
+        {/* Net Profit */}
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-zinc-500">
+            <span className="text-xs font-bold uppercase tracking-wider">Net Operating Profit</span>
+            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+              <Activity size={16} />
+            </div>
+          </div>
+          <span className={`text-2xl sm:text-3xl font-extrabold block ${netProfit >= 0 ? "text-purple-700" : "text-red-600"}`}>
+            ₦{netProfit.toLocaleString()}
+          </span>
+          <div className="flex items-center gap-1.5 text-xs text-purple-700 font-bold pt-1">
+            <span>{marginPercent}% Operating Margin</span>
+          </div>
+        </div>
+
+        {/* Customer Directory */}
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-2xs space-y-2">
+          <div className="flex items-center justify-between text-zinc-500">
+            <span className="text-xs font-bold uppercase tracking-wider">Customer Directory</span>
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+              <Users size={16} />
+            </div>
+          </div>
+          <span className="text-2xl sm:text-3xl font-extrabold text-black block">
+            {activeCustomers}
+          </span>
+          <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-semibold pt-1">
+            <Link href="/customers" className="text-purple-600 font-bold hover:underline">
+              View customer profiles &rsaquo;
             </Link>
           </div>
+        </div>
+      </div>
 
-          <div className="flex flex-col gap-2.5 flex-1 overflow-y-auto pr-1">
-            {stats.recentTransactions.map((item) => {
-              const isPaid = item.status === "PAID";
-              const isWorking = item.status === "WORKING";
-
-              return (
-                <div
-                  key={item.id}
-                  className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-between gap-3 hover:bg-zinc-100 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <h5 className="font-bold text-black text-xs truncate leading-tight">
-                      {item.desc}
-                    </h5>
-                    <div className="flex items-center gap-1.5 text-[11px] text-zinc-500 mt-0.5">
-                      <span className="text-zinc-800 font-medium">{item.customer}</span>
-                      <span>&bull;</span>
-                      <span>{item.channel}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className="text-xs font-black text-black">
-                      ₦{item.amount.toLocaleString()}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      {isPaid ? (
-                        <span className="monday-pill monday-pill-done !text-[10px] !py-0.5 !min-w-[65px]">
-                          Paid
-                        </span>
-                      ) : isWorking ? (
-                        <span className="monday-pill monday-pill-working !text-[10px] !py-0.5 !min-w-[65px]">
-                          Working
-                        </span>
-                      ) : (
-                        <span className="monday-pill monday-pill-stuck !text-[10px] !py-0.5 !min-w-[65px]">
-                          Stuck
-                        </span>
-                      )}
-                      <a
-                        href={formatWhatsAppUrl(item.phone, item.customer, item.amount)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1 rounded-md text-emerald-600 hover:bg-emerald-50 transition-colors"
-                        title="Send WhatsApp Receipt"
-                      >
-                        <MessageSquare size={13} />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+      {/* Recent Transactions Table */}
+      <div className="bg-white rounded-3xl border border-zinc-200 shadow-2xs overflow-hidden">
+        <div className="p-5 border-b border-zinc-200 flex items-center justify-between">
+          <div>
+            <h3 className="font-extrabold text-base text-black">Live Ledger Transactions</h3>
+            <p className="text-xs text-zinc-500">Real-time point of sale transactions and invoices</p>
           </div>
-
           <Link
             href="/invoices"
-            className="mt-3 pt-3 border-t border-zinc-200 text-center text-xs font-bold text-purple-600 hover:text-purple-700 block"
+            className="text-xs font-bold text-purple-600 hover:text-purple-700 hover:underline"
           >
-            + Create New Transaction in Board
+            View All Ledger Entries &rsaquo;
           </Link>
         </div>
+
+        {recentTransactions.length === 0 ? (
+          <div className="p-12 text-center space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto">
+              <Receipt size={24} />
+            </div>
+            <h4 className="font-bold text-sm text-black">No transactions recorded yet</h4>
+            <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+              Ready to take your first order? Launch the POS terminal or issue an invoice to see live records here.
+            </p>
+            <Link
+              href="/pos"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-sm shadow-purple-600/25 mt-2"
+            >
+              <Zap size={14} />
+              <span>Launch POS Cashier</span>
+            </Link>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-zinc-50/80 border-b border-zinc-200 text-zinc-500 uppercase tracking-wider font-bold">
+                  <th className="py-3 px-4">Description</th>
+                  <th className="py-3 px-4">Customer</th>
+                  <th className="py-3 px-4">Amount (₦)</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4 text-right">Receipt</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {recentTransactions.map((tx: any) => {
+                  const customerName = tx.customer_id?.name || tx.customer?.name || "Walk-in Customer";
+                  const phone = tx.customer_id?.phone || tx.customer?.phone || "";
+                  const desc = tx.items?.[0]?.description || tx.metadata?.description || "POS Cashier Sale";
+                  const isPaid = tx.status === "Paid" || !tx.status;
+                  return (
+                    <tr key={tx._id || tx.id} className="hover:bg-zinc-50/70 transition-colors">
+                      <td className="py-3.5 px-4 font-bold text-black">{desc}</td>
+                      <td className="py-3.5 px-4 text-zinc-700">{customerName}</td>
+                      <td className="py-3.5 px-4 font-extrabold text-black">
+                        ₦{Number(tx.total || 0).toLocaleString()}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+                            isPaid
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-amber-50 text-amber-700 border-amber-200"
+                          }`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${isPaid ? "bg-emerald-600" : "bg-amber-600"}`} />
+                          {isPaid ? "Paid" : "Pending"}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        {phone ? (
+                          <a
+                            href={formatWhatsAppUrl(phone, customerName, tx.total)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-xs text-emerald-600 font-bold hover:underline"
+                          >
+                            <MessageSquare size={13} />
+                            <span>WhatsApp</span>
+                          </a>
+                        ) : (
+                          <span className="text-zinc-400 text-[11px]">No Phone</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

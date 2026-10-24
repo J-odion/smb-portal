@@ -26,6 +26,9 @@ let TenantController = class TenantController {
     getProfile(req) {
         return this.tenantService.getProfile(req.user.tenantId);
     }
+    updateProfile(req, body) {
+        return this.tenantService.updateProfile(req.user.tenantId, body);
+    }
     updateIndustry(req, industry) {
         return this.tenantService.updateIndustry(req.user.tenantId, industry);
     }
@@ -47,6 +50,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], TenantController.prototype, "getProfile", null);
+__decorate([
+    (0, roles_decorator_js_1.Roles)('OWNER', 'MANAGER'),
+    (0, common_1.Put)('profile'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], TenantController.prototype, "updateProfile", null);
 __decorate([
     (0, roles_decorator_js_1.Roles)('OWNER', 'MANAGER'),
     (0, common_1.Put)('industry'),

@@ -1,176 +1,309 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
+import {
+  Package,
+  Plus,
+  Search,
+  Filter,
+  Trash2,
+  RefreshCw,
+  AlertCircle,
+  CheckCircle2,
+  X,
+  Boxes,
+  Tag,
+  DollarSign,
+  Layers,
+  ArrowUpDown
+} from "lucide-react";
 
-interface ProductItem {
-  id: string;
+export interface ProductItem {
+  _id?: string;
+  id?: string;
   name: string;
   sku: string;
   price: number;
   stock_level: number;
   category: string;
-  status: "In Stock" | "Low Stock" | "Out of Stock";
-  icon: string;
+  created_at?: string;
 }
 
 export default function InventoryPage() {
-  const [products, setProducts] = useState<ProductItem[]>([
-    { id: "1", name: "Smartphone Pro Max", sku: "ELEC-SPM-01", price: 950000, stock_level: 12, category: "Electronics", status: "In Stock", icon: "📱" },
-    { id: "2", name: "Wireless Earbuds", sku: "ACC-WEB-02", price: 45000, stock_level: 45, category: "Accessories", status: "In Stock", icon: "🎧" },
-    { id: "3", name: "Laptop Ultra 15\"", sku: "ELEC-LU-03", price: 1250000, stock_level: 3, category: "Electronics", status: "Low Stock", icon: "💻" },
-    { id: "4", name: "Screen Protector", sku: "ACC-SP-04", price: 5000, stock_level: 120, category: "Accessories", status: "In Stock", icon: "🛡️" },
-    { id: "5", name: "Fast Charger 30W", sku: "ACC-FC-05", price: 15000, stock_level: 0, category: "Accessories", status: "Out of Stock", icon: "⚡" },
-    { id: "6", name: "Smartwatch Series X", sku: "ELEC-SW-06", price: 85000, stock_level: 8, category: "Electronics", status: "Low Stock", icon: "⌚" },
-    { id: "7", name: "USB-C Cable 2m", sku: "ACC-UC-07", price: 3500, stock_level: 200, category: "Accessories", status: "In Stock", icon: "🔌" },
-    { id: "8", name: "Bluetooth Speaker", sku: "ELEC-BS-08", price: 25000, stock_level: 15, category: "Electronics", status: "In Stock", icon: "🔊" },
-  ]);
-
+  const [products, setProducts] = useState<ProductItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
-  const [viewMode, setViewMode] = useState<"table" | "cards">("cards");
+  const [viewMode, setViewMode] = useState<"table" | "cards">("table");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [modalError, setModalError] = useState("");
+  const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-  const categories = ["All", "Electronics", "Accessories", "Services"];
+  // New product form state
+  const [name, setName] = useState("");
+  const [sku, setSku] = useState("");
+  const [category, setCategory] = useState("General");
+  const [price, setPrice] = useState("");
+  const [stockLevel, setStockLevel] = useState("0");
+
+  const categories = ["All", "General", "Electronics", "Accessories", "Fashion", "Beauty", "Services"];
+
+  const getToken = () => {
+    if (typeof window === "undefined") return "";
+    return (
+      localStorage.getItem("token") ||
+      document.cookie.split("; ").find((row) => row.startsWith("token="))?.split("=")[1] ||
+      ""
+    );
+  };
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const token = getToken();
+      const res = await fetch("/api/inventory", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(Array.isArray(data) ? data : []);
+      } else {
+        console.warn("Failed to load inventory from API, status:", res.status);
+      }
+    } catch (err) {
+      console.error("Error fetching inventory", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
       const q = searchQuery.toLowerCase();
       const matchesSearch =
         p.name.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q);
+        (p.sku && p.sku.toLowerCase().includes(q)) ||
+        (p.category && p.category.toLowerCase().includes(q));
       const matchesCat = categoryFilter === "All" || p.category === categoryFilter;
       return matchesSearch && matchesCat;
     });
   }, [products, searchQuery, categoryFilter]);
 
-  const inStockCount = products.filter((p) => p.status === "In Stock").length;
-  const lowStockCount = products.filter((p) => p.status === "Low Stock").length;
-  const outOfStockCount = products.filter((p) => p.status === "Out of Stock").length;
+  const inStockCount = products.filter((p) => (p.stock_level || 0) > 10).length;
+  const lowStockCount = products.filter((p) => (p.stock_level || 0) > 0 && (p.stock_level || 0) <= 10).length;
+  const outOfStockCount = products.filter((p) => (p.stock_level || 0) === 0).length;
 
-  const handleAddProduct = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAddProduct = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const stock = parseInt(formData.get("stock_level") as string, 10) || 0;
+    setIsSubmitting(true);
+    setModalError("");
 
-    let status: "In Stock" | "Low Stock" | "Out of Stock" = "In Stock";
-    if (stock === 0) status = "Out of Stock";
-    else if (stock < 10) status = "Low Stock";
+    const token = getToken();
+    try {
+      const res = await fetch("/api/inventory", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          sku: sku.trim() || undefined,
+          category,
+          price: parseFloat(price) || 0,
+          stock_level: parseInt(stockLevel, 10) || 0,
+        }),
+      });
 
-    const newProd: ProductItem = {
-      id: String(Date.now()),
-      name: formData.get("name") as string,
-      sku: formData.get("sku") as string || `SKU-${Date.now().toString().slice(-4)}`,
-      category: formData.get("category") as string || "Accessories",
-      price: parseFloat(formData.get("price") as string) || 0,
-      stock_level: stock,
-      status,
-      icon: "📦",
-    };
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || "Failed to create item in inventory");
+      }
 
-    setProducts((prev) => [newProd, ...prev]);
-    setIsModalOpen(false);
+      const created = await res.json();
+      setProducts((prev) => [created, ...prev]);
+      setIsModalOpen(false);
+      setName("");
+      setSku("");
+      setPrice("");
+      setStockLevel("0");
+      setNotification({ type: "success", message: `"${created.name}" created successfully!` });
+      setTimeout(() => setNotification(null), 4000);
+    } catch (err: any) {
+      setModalError(err.message || "Failed to create item. Please verify details.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const getStatusBadge = (status: string) => {
-    if (status === "In Stock") return <span className="monday-pill monday-pill-done">In Stock</span>;
-    if (status === "Low Stock") return <span className="monday-pill monday-pill-working">Low Stock</span>;
-    return <span className="monday-pill monday-pill-stuck">Out of Stock</span>;
+  const handleDeleteProduct = async (id: string, itemName: string) => {
+    if (!confirm(`Are you sure you want to delete "${itemName}"?`)) return;
+    const token = getToken();
+    try {
+      const res = await fetch(`/api/inventory/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setProducts((prev) => prev.filter((p) => (p._id || p.id) !== id));
+        setNotification({ type: "success", message: `"${itemName}" deleted.` });
+        setTimeout(() => setNotification(null), 3500);
+      } else {
+        alert("Could not delete item. Please try again.");
+      }
+    } catch (err) {
+      alert("Error deleting item.");
+    }
+  };
+
+  const getStatusBadge = (stock: number) => {
+    if (stock > 10) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+          In Stock ({stock})
+        </span>
+      );
+    }
+    if (stock > 0) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
+          Low Stock ({stock})
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold border border-red-200">
+        <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
+        Out of Stock
+      </span>
+    );
   };
 
   return (
-    <div className="animate-fade-in relative space-y-6 pb-24 md:pb-8">
-      {/* Board Header */}
+    <div className="space-y-6 animate-fade-in font-sans text-black pb-24 md:pb-8">
+      {/* Top Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-200 pb-5">
         <div>
-          <div className="flex items-center gap-2 text-xs text-zinc-500 mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">
             <span>Workspaces</span>
             <span>&rsaquo;</span>
-            <span className="text-purple-600 font-bold">Inventory & Catalog</span>
+            <span className="text-purple-600 font-bold">Inventory Management</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-black flex items-center gap-2">
-            <span>Stock Management</span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 font-semibold border border-zinc-200">
-              {filteredProducts.length} items
+            <span>Store Products & Stock</span>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 font-bold">
+              {products.length} live {products.length === 1 ? "item" : "items"}
             </span>
           </h1>
         </div>
 
         <div className="flex items-center gap-3 w-full md:w-auto">
-          {/* View Mode Switcher */}
-          <div className="bg-zinc-100 p-1 rounded-xl border border-zinc-200 flex text-xs">
-            <button
-              onClick={() => setViewMode("cards")}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                viewMode === "cards" ? "bg-white text-purple-700 shadow-2xs font-bold" : "text-zinc-600 hover:text-black"
-              }`}
-            >
-              🃏 Cards
-            </button>
-            <button
-              onClick={() => setViewMode("table")}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                viewMode === "table" ? "bg-white text-purple-700 shadow-2xs font-bold" : "text-zinc-600 hover:text-black"
-              }`}
-            >
-              📋 Table
-            </button>
-          </div>
+          <button
+            onClick={fetchProducts}
+            className="p-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600 hover:text-black transition-colors"
+            title="Refresh inventory"
+          >
+            <RefreshCw size={16} className={loading ? "animate-spin text-purple-600" : ""} />
+          </button>
 
           <button
-            onClick={() => setIsModalOpen(true)}
-            className="btn btn-primary flex-1 md:flex-none text-sm px-4 py-2 gap-1.5 shadow-sm font-bold"
+            onClick={() => {
+              setModalError("");
+              setIsModalOpen(true);
+            }}
+            className="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-purple-600/25 transition-all cursor-pointer"
           >
-            <span className="text-base font-bold">+</span>
+            <Plus size={16} />
             <span>Add Item</span>
           </button>
         </div>
       </div>
 
-      {/* Stock Health Battery */}
-      <div className="bg-white p-4 rounded-2xl border border-zinc-200 shadow-2xs space-y-2.5">
-        <div className="flex justify-between items-center text-xs">
-          <span className="text-zinc-600 font-semibold">Inventory Health Status</span>
-          <span className="text-black font-bold">{inStockCount} Healthy &bull; {lowStockCount} Need Restock</span>
+      {/* Toast Notification */}
+      {notification && (
+        <div
+          className={`p-4 rounded-2xl border text-xs font-bold flex items-center gap-2.5 animate-fade-in ${
+            notification.type === "success"
+              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+              : "bg-red-50 border-red-200 text-red-800"
+          }`}
+        >
+          {notification.type === "success" ? (
+            <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+          ) : (
+            <AlertCircle size={16} className="text-red-600 shrink-0" />
+          )}
+          <span>{notification.message}</span>
         </div>
-        <div className="monday-battery w-full">
-          <div style={{ width: `${(inStockCount / products.length) * 100}%` }} className="bg-[#16a34a] h-full"></div>
-          <div style={{ width: `${(lowStockCount / products.length) * 100}%` }} className="bg-[#f59e0b] h-full"></div>
-          <div style={{ width: `${(outOfStockCount / products.length) * 100}%` }} className="bg-[#dc2626] h-full"></div>
+      )}
+
+      {/* KPI Metric Summary Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="p-4 rounded-2xl bg-white border border-zinc-200 shadow-2xs">
+          <div className="flex items-center justify-between text-zinc-500 mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider">Total Items</span>
+            <Boxes size={18} className="text-purple-600" />
+          </div>
+          <span className="text-2xl font-extrabold text-black">{products.length}</span>
+          <span className="text-[11px] text-zinc-500 block mt-1">Catalog SKU listings</span>
         </div>
-        <div className="flex items-center gap-4 text-xs text-zinc-600 pt-1 font-medium">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#16a34a]"></span> In Stock ({inStockCount})
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]"></span> Low Stock ({lowStockCount})
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#dc2626]"></span> Out of Stock ({outOfStockCount})
-          </span>
+
+        <div className="p-4 rounded-2xl bg-white border border-zinc-200 shadow-2xs">
+          <div className="flex items-center justify-between text-zinc-500 mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider">In Stock</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+          </div>
+          <span className="text-2xl font-extrabold text-emerald-600">{inStockCount}</span>
+          <span className="text-[11px] text-zinc-500 block mt-1">&gt; 10 units available</span>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-white border border-zinc-200 shadow-2xs">
+          <div className="flex items-center justify-between text-zinc-500 mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider">Low Stock</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+          </div>
+          <span className="text-2xl font-extrabold text-amber-600">{lowStockCount}</span>
+          <span className="text-[11px] text-zinc-500 block mt-1">&le; 10 units threshold</span>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-white border border-zinc-200 shadow-2xs">
+          <div className="flex items-center justify-between text-zinc-500 mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider">Out of Stock</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+          </div>
+          <span className="text-2xl font-extrabold text-red-600">{outOfStockCount}</span>
+          <span className="text-[11px] text-zinc-500 block mt-1">0 units remaining</span>
         </div>
       </div>
 
-      {/* Search and Category Filter */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-zinc-200 shadow-2xs">
-        <div className="flex-1 min-w-[240px]">
+      {/* Search & Filter Toolbar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-zinc-200 shadow-2xs">
+        <div className="relative w-full sm:w-80">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
           <input
-            type="search"
+            type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="🔍 Search items by name, SKU, or category..."
-            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3.5 py-2 text-sm text-black placeholder-zinc-400 focus:bg-white focus:border-purple-600 outline-none transition-all"
+            placeholder="Search items by name, SKU, or category..."
+            className="w-full pl-10 pr-4 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-black placeholder-zinc-400 text-xs focus:border-purple-600 focus:bg-white outline-none transition-all"
           />
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto text-xs pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto text-xs pb-1 sm:pb-0">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
-              className={`px-3 py-1.5 rounded-full font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
                 categoryFilter === cat
-                  ? "bg-purple-50 text-purple-700 border border-purple-200 shadow-2xs font-bold"
-                  : "bg-zinc-100 text-zinc-600 hover:text-black border border-transparent"
+                  ? "bg-purple-600 text-white shadow-xs"
+                  : "bg-zinc-100 text-zinc-600 hover:text-black hover:bg-zinc-200"
               }`}
             >
               {cat}
@@ -179,90 +312,92 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      {filteredProducts.length === 0 ? (
-        <div className="bg-white p-12 text-center rounded-2xl border border-slate-200 shadow-sm">
-          <p className="text-4xl mb-3">📦</p>
-          <h3 className="text-lg font-bold text-slate-900 mb-1">No items found</h3>
-          <p className="text-sm text-slate-500 mb-4">No products match your search or filter.</p>
+      {/* Main Content Area */}
+      {loading ? (
+        <div className="p-12 text-center bg-white rounded-3xl border border-zinc-200 shadow-2xs space-y-3">
+          <div className="w-8 h-8 border-3 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Loading items from cloud database...</p>
         </div>
-      ) : viewMode === "cards" ? (
-        /* ========================================================== */
-        /* MONDAY.COM MOBILE-FIRST STOCK CARDS                       */
-        /* ========================================================== */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
-          {filteredProducts.map((p) => {
-            const borderCol =
-              p.status === "In Stock"
-                ? "border-l-[#00c875]"
-                : p.status === "Low Stock"
-                ? "border-l-[#fdab3d]"
-                : "border-l-[#e2445c]";
-
-            return (
-              <div
-                key={p.id}
-                className={`bg-white p-4 rounded-xl border border-slate-200/90 border-l-4 ${borderCol} hover:border-brand-300 hover:shadow-md transition-all shadow-xs flex flex-col justify-between`}
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-2.5">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-2xl">{p.icon}</span>
-                      <div>
-                        <h4 className="font-semibold text-slate-900 text-sm leading-tight line-clamp-1">{p.name}</h4>
-                        <span className="text-[11px] text-slate-500 font-mono">{p.sku}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center my-3 py-2 border-y border-slate-100 text-xs">
-                    <span className="text-slate-600">Current Stock:</span>
-                    <span className="font-bold text-slate-900">{p.stock_level} units</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-base font-bold text-brand-600">
-                    ₦{p.price.toLocaleString()}
-                  </span>
-                  <div>{getStatusBadge(p.status)}</div>
-                </div>
-              </div>
-            );
-          })}
+      ) : filteredProducts.length === 0 ? (
+        /* Empty State */
+        <div className="p-12 text-center bg-white rounded-3xl border border-zinc-200 shadow-2xs space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto shadow-xs">
+            <Package size={28} />
+          </div>
+          <div className="space-y-1 max-w-sm mx-auto">
+            <h3 className="text-lg font-extrabold text-black">
+              {searchQuery ? "No matching products found" : "Your store inventory is empty"}
+            </h3>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              {searchQuery
+                ? `No products matched "${searchQuery}". Clear your search or add a new item.`
+                : "Add your retail items, fashion clothes, or spare parts. They'll instantly sync with your POS cashiering terminal."}
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setModalError("");
+              setIsModalOpen(true);
+            }}
+            className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs inline-flex items-center gap-2 shadow-md shadow-purple-600/20 cursor-pointer transition-all"
+          >
+            <Plus size={16} />
+            <span>Add First Item</span>
+          </button>
         </div>
       ) : (
-        /* ========================================================== */
-        /* MONDAY.COM INVENTORY TABLE                                 */
-        /* ========================================================== */
-        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs">
+        /* Table View */
+        <div className="bg-white rounded-3xl border border-zinc-200 shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[700px]">
-              <thead className="bg-slate-50/80 text-xs text-slate-500 uppercase tracking-wider border-b border-slate-200">
-                <tr>
-                  <th className="p-3.5 pl-4 font-semibold">Product Name</th>
-                  <th className="p-3.5 font-semibold">SKU</th>
-                  <th className="p-3.5 font-semibold">Category</th>
-                  <th className="p-3.5 font-semibold text-right">Price (₦)</th>
-                  <th className="p-3.5 font-semibold text-center">Stock Level</th>
-                  <th className="p-3.5 pr-4 font-semibold text-center">Status</th>
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-zinc-50/80 border-b border-zinc-200 text-zinc-500 uppercase tracking-wider font-bold">
+                  <th className="py-3.5 px-4">Item Name & SKU</th>
+                  <th className="py-3.5 px-4">Category</th>
+                  <th className="py-3.5 px-4">Unit Price</th>
+                  <th className="py-3.5 px-4">Stock Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-sm">
-                {filteredProducts.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="p-3.5 pl-4">
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-xl">{p.icon}</span>
-                        <span className="font-semibold text-slate-900">{p.name}</span>
-                      </div>
-                    </td>
-                    <td className="p-3.5 font-mono text-xs text-slate-500">{p.sku}</td>
-                    <td className="p-3.5 text-slate-600">{p.category}</td>
-                    <td className="p-3.5 font-bold text-slate-900 text-right">₦{p.price.toLocaleString()}</td>
-                    <td className="p-3.5 text-center font-bold text-slate-900">{p.stock_level}</td>
-                    <td className="p-3.5 pr-4 text-center">{getStatusBadge(p.status)}</td>
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-zinc-100">
+                {filteredProducts.map((p) => {
+                  const id = p._id || p.id || "";
+                  return (
+                    <tr key={id} className="hover:bg-zinc-50/70 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-sm shrink-0 border border-purple-100">
+                            📦
+                          </div>
+                          <div>
+                            <span className="font-extrabold text-black text-sm block leading-tight">{p.name}</span>
+                            <span className="text-[11px] text-zinc-500 font-mono mt-0.5 block">{p.sku || "NO-SKU"}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 font-semibold text-zinc-700">
+                        <span className="px-2.5 py-1 rounded-lg bg-zinc-100 text-zinc-800 text-[11px] font-bold">
+                          {p.category || "General"}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 font-extrabold text-black text-sm">
+                        ₦{Number(p.price || 0).toLocaleString()}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        {getStatusBadge(p.stock_level || 0)}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <button
+                          onClick={() => handleDeleteProduct(id, p.name)}
+                          className="p-2 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                          title="Delete item"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -270,96 +405,145 @@ export default function InventoryPage() {
       )}
 
       {/* ========================================================== */}
-      {/* MONDAY.COM BOTTOM-SHEET / MODAL FOR NEW PRODUCT            */}
+      {/* IMPROVED POPUP MODAL FOR ADDING INVENTORY ITEM             */}
       {/* ========================================================== */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 animate-fade-in">
-          <div className="bg-white rounded-t-3xl sm:rounded-2xl p-6 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl">
-            <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-4 sm:hidden"></div>
-
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">Add New Product</h2>
-                <p className="text-xs text-slate-500">Add item to inventory and POS catalog</p>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl border border-zinc-200 shadow-2xl p-6 sm:p-8 space-y-6 my-auto text-black">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center border-b border-zinc-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-purple-600 flex items-center justify-center text-white font-extrabold shadow-sm shadow-purple-600/30">
+                  <Package size={20} />
+                </div>
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-black">Add New Item</h2>
+                  <p className="text-xs text-zinc-500 font-medium">Add to catalog & offline POS cashiering</p>
+                </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200"
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
               >
-                &times;
+                <X size={18} />
               </button>
             </div>
 
-            <form className="flex flex-col gap-4" onSubmit={handleAddProduct}>
-              <div>
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
-                  Product Name
+            {/* Error in modal */}
+            {modalError && (
+              <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs font-semibold flex items-center gap-2 animate-fade-in">
+                <AlertCircle size={16} className="shrink-0 text-red-600" />
+                <span>{modalError}</span>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleAddProduct} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                  Item / Product Name *
                 </label>
                 <input
                   type="text"
-                  name="name"
                   required
-                  placeholder="e.g. Wireless Headset"
-                  className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Italian Wool Suit (3-Piece)"
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-zinc-300 text-black text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
-                    Price (₦)
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                    SKU / Barcode Code
+                  </label>
+                  <input
+                    type="text"
+                    value={sku}
+                    onChange={(e) => setSku(e.target.value)}
+                    placeholder="e.g. SUIT-IW-001 (auto if empty)"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-zinc-300 text-black text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                    Category
+                  </label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-zinc-300 text-black text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all cursor-pointer"
+                  >
+                    <option value="General">General Retail</option>
+                    <option value="Fashion">Fashion & Apparel</option>
+                    <option value="Electronics">Electronics & Phones</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Beauty">Beauty & Salon Supplies</option>
+                    <option value="Food">Food & Beverage</option>
+                    <option value="Services">Services / Repairs</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                    Selling Price (₦) *
                   </label>
                   <input
                     type="number"
                     step="0.01"
-                    name="price"
                     required
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
                     placeholder="0.00"
-                    className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-zinc-300 text-black text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                   />
                 </div>
-                <div>
-                  <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
-                    Opening Stock
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                    Initial Stock Level
                   </label>
                   <input
                     type="number"
-                    name="stock_level"
-                    defaultValue="10"
-                    required
-                    className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
+                    min="0"
+                    value={stockLevel}
+                    onChange={(e) => setStockLevel(e.target.value)}
+                    placeholder="0"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-zinc-300 text-black text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
-                  Category
-                </label>
-                <select
-                  name="category"
-                  defaultValue="Electronics"
-                  className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
-                >
-                  <option value="Electronics">Electronics</option>
-                  <option value="Accessories">Accessories</option>
-                  <option value="Services">Services</option>
-                </select>
-              </div>
-
-              <div className="flex gap-3 pt-3 mt-2 border-t border-slate-200">
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="btn btn-secondary flex-1 p-3 text-sm font-semibold"
+                  className="px-5 py-3 rounded-xl bg-white hover:bg-zinc-50 border border-zinc-300 text-black font-semibold text-sm transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-primary flex-1 p-3 text-sm font-bold shadow-lg shadow-brand-500/20"
+                  disabled={isSubmitting}
+                  className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md shadow-purple-600/25 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
                 >
-                  Save Product
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Saving Item...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={16} />
+                      <span>Create Item</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>

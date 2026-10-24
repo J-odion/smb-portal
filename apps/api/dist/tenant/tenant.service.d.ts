@@ -44,6 +44,13 @@ export declare class TenantService {
     } & {
         id: string;
     }) | null>;
+    updateProfile(tenantId: string, data: any): Promise<(import("mongoose").Document<unknown, {}, Tenant, {}, import("mongoose").DefaultSchemaOptions> & Tenant & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
+        id: string;
+    }) | null>;
     updateSubscription(tenantId: string, tier: string): Promise<(import("mongoose").Document<unknown, {}, Tenant, {}, import("mongoose").DefaultSchemaOptions> & Tenant & Required<{
         _id: import("mongoose").Types.ObjectId;
     }> & {

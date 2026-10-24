@@ -571,21 +571,24 @@ export default function StaffPage() {
         </div>
       )}
 
-      {/* Slide-up Bottom Sheet (Mobile) / Centered Modal (Desktop) */}
+      {/* ========================================================== */}
+      {/* IMPROVED POPUP MODAL FOR ONBOARDING STAFF                  */}
+      {/* ========================================================== */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white w-full max-w-lg border border-slate-200 rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto space-y-5 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl border border-zinc-200 shadow-2xl p-6 sm:p-8 space-y-5 my-auto text-black">
             {/* Modal Header */}
-            <div className="flex justify-between items-center pb-4 border-b border-slate-200">
+            <div className="flex justify-between items-center border-b border-zinc-100 pb-3">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Onboard Staff Member</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-black">Onboard Staff Member</h3>
+                <p className="text-xs text-zinc-500 font-medium">
                   Set up employee details, contact info, and compensation structure.
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 text-slate-500 hover:text-slate-800 rounded-full bg-slate-100"
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -594,43 +597,43 @@ export default function StaffPage() {
             {/* Modal Form */}
             <form onSubmit={handleAddStaff} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Full Name
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                  Full Name *
                 </label>
                 <input
                   type="text"
                   name="name"
                   required
                   placeholder="e.g. Samuel Adekunle"
-                  className="w-full p-3 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-base focus:border-brand-500 outline-none"
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-zinc-300 text-black placeholder-zinc-400 text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Phone Number
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                  Phone Number *
                 </label>
                 <input
                   type="tel"
                   name="phone"
                   required
                   placeholder="e.g. 08012345678"
-                  className="w-full p-3 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-base focus:border-brand-500 outline-none"
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-zinc-300 text-black placeholder-zinc-400 text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
                   Compensation Model
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setPayType("flat")}
-                    className={`py-3 px-4 rounded-xl border text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
+                    className={`py-3 px-4 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                       payType === "flat"
-                        ? "bg-[#00c875]/15 border-[#00c875] text-[#00c875]"
-                        : "bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900"
+                        ? "bg-purple-50 border-purple-600 text-purple-700 shadow-xs"
+                        : "bg-zinc-50 border-zinc-200 text-zinc-600 hover:text-black"
                     }`}
                   >
                     <DollarSign size={16} />
@@ -639,10 +642,10 @@ export default function StaffPage() {
                   <button
                     type="button"
                     onClick={() => setPayType("commission")}
-                    className={`py-3 px-4 rounded-xl border text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
+                    className={`py-3 px-4 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                       payType === "commission"
-                        ? "bg-[#fdab3d]/15 border-[#fdab3d] text-[#fdab3d]"
-                        : "bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900"
+                        ? "bg-purple-50 border-purple-600 text-purple-700 shadow-xs"
+                        : "bg-zinc-50 border-zinc-200 text-zinc-600 hover:text-black"
                     }`}
                   >
                     <TrendingUp size={16} />
@@ -654,8 +657,8 @@ export default function StaffPage() {
 
               {payType === "flat" ? (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                    Monthly Salary Amount (₦)
+                  <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                    Monthly Salary Amount (₦) *
                   </label>
                   <input
                     type="number"
@@ -663,13 +666,13 @@ export default function StaffPage() {
                     name="flat_amount"
                     required
                     placeholder="e.g. 75000"
-                    className="w-full p-3 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-base focus:border-brand-500 outline-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-zinc-300 text-black placeholder-zinc-400 text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                   />
                 </div>
               ) : (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                    Commission Percentage (%)
+                  <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                    Commission Percentage (%) *
                   </label>
                   <input
                     type="number"
@@ -678,24 +681,24 @@ export default function StaffPage() {
                     name="commission_percent"
                     required
                     placeholder="e.g. 15"
-                    className="w-full p-3 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-base focus:border-brand-500 outline-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-zinc-300 text-black placeholder-zinc-400 text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                   />
                 </div>
               )}
 
               {/* Form Action Buttons */}
-              <div className="flex gap-3 pt-4 border-t border-slate-200">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="btn btn-secondary w-full py-3.5 text-sm font-semibold"
+                  className="px-5 py-3 rounded-xl bg-white hover:bg-zinc-50 border border-zinc-300 text-black font-semibold text-sm transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn btn-primary w-full py-3.5 text-sm font-bold flex items-center justify-center gap-2"
+                  className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md shadow-purple-600/25 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
@@ -703,7 +706,7 @@ export default function StaffPage() {
                       <span>Saving...</span>
                     </>
                   ) : (
-                    <span>Add Member</span>
+                    <span>Add Staff Member</span>
                   )}
                 </button>
               </div>

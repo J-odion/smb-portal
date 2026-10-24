@@ -583,19 +583,20 @@ export default function TeamManagement() {
 
       {/* Invite Modal */}
       {showInviteModal && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white w-full max-w-lg border border-zinc-200 rounded-t-3xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto space-y-5 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-lg bg-white rounded-3xl border border-zinc-200 shadow-2xl p-6 sm:p-8 space-y-5 my-auto text-black">
             {/* Modal Header */}
-            <div className="flex justify-between items-center pb-4 border-b border-zinc-200">
+            <div className="flex justify-between items-center pb-4 border-b border-zinc-100">
               <div>
-                <h3 className="text-lg font-bold text-black">Invite Team Member</h3>
-                <p className="text-xs text-zinc-500">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-black">Invite Team Member</h3>
+                <p className="text-xs text-zinc-500 font-medium">
                   Grant secure dashboard or POS access to an employee.
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setShowInviteModal(false)}
-                className="p-2 text-zinc-500 hover:text-black rounded-full bg-zinc-100 cursor-pointer"
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>

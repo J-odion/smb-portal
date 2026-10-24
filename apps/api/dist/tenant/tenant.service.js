@@ -67,6 +67,9 @@ let TenantService = class TenantService {
     async updateIndustry(tenantId, industry) {
         return this.tenantModel.findByIdAndUpdate(tenantId, { industry }, { new: true }).exec();
     }
+    async updateProfile(tenantId, data) {
+        return this.tenantModel.findByIdAndUpdate(tenantId, { $set: data }, { new: true }).exec();
+    }
     async updateSubscription(tenantId, tier) {
         return this.tenantModel.findByIdAndUpdate(tenantId, { subscription_tier: tier }, { new: true }).exec();
     }

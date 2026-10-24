@@ -21,6 +21,10 @@ export class TenantService {
     return this.tenantModel.findByIdAndUpdate(tenantId, { industry }, { new: true }).exec();
   }
 
+  async updateProfile(tenantId: string, data: any) {
+    return this.tenantModel.findByIdAndUpdate(tenantId, { $set: data }, { new: true }).exec();
+  }
+
   async updateSubscription(tenantId: string, tier: string) {
     return this.tenantModel.findByIdAndUpdate(tenantId, { subscription_tier: tier }, { new: true }).exec();
   }

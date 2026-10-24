@@ -276,89 +276,88 @@ export default function CustomersPage() {
       )}
 
       {/* ========================================================== */}
-      {/* MONDAY.COM BOTTOM-SHEET / MODAL FOR NEW CUSTOMER          */}
+      {/* IMPROVED POPUP MODAL FOR NEW CUSTOMER                      */}
       {/* ========================================================== */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 animate-fade-in">
-          <div className="bg-white rounded-t-3xl sm:rounded-2xl p-6 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl">
-            <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-4 sm:hidden"></div>
-
-            <div className="flex justify-between items-center mb-6">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-md bg-white rounded-3xl border border-zinc-200 shadow-2xl p-6 sm:p-8 space-y-5 my-auto text-black">
+            <div className="flex justify-between items-center border-b border-zinc-100 pb-3">
               <div>
-                <h2 className="text-xl font-bold text-slate-900">Add New Customer</h2>
-                <p className="text-xs text-slate-500">Store client details for invoices and messaging</p>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-black">Add New Customer</h2>
+                <p className="text-xs text-zinc-500 font-medium">Store client details for invoices and messaging</p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200"
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
               >
-                &times;
+                <span className="text-lg leading-none">&times;</span>
               </button>
             </div>
 
-            <form className="flex flex-col gap-4" onSubmit={handleAddCustomer}>
-              <div>
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
-                  Full Name
+            <form className="space-y-4" onSubmit={handleAddCustomer}>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                  Full Name *
                 </label>
                 <input
                   type="text"
                   name="name"
                   required
                   placeholder="e.g. Adebayo Ogunlesi"
-                  className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
+                  className="w-full px-4 py-3 rounded-xl border border-zinc-300 bg-white text-black text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                 />
               </div>
 
-              <div>
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
-                  Phone Number
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
+                  Phone Number *
                 </label>
                 <input
                   type="tel"
                   name="phone"
                   required
                   placeholder="e.g. 08012345678"
-                  className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
+                  className="w-full px-4 py-3 rounded-xl border border-zinc-300 bg-white text-black text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                 />
               </div>
 
-              <div>
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
                   WhatsApp Number (Optional)
                 </label>
                 <input
                   type="tel"
                   name="whatsapp"
                   placeholder="e.g. 08012345678"
-                  className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
+                  className="w-full px-4 py-3 rounded-xl border border-zinc-300 bg-white text-black text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all"
                 />
               </div>
 
-              <div>
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider block mb-1">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-black uppercase tracking-wider block">
                   Address (Optional)
                 </label>
                 <textarea
                   name="address"
                   rows={2}
                   placeholder="Shop address or delivery location"
-                  className="w-full p-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-brand-500"
+                  className="w-full px-4 py-3 rounded-xl border border-zinc-300 bg-white text-black text-sm focus:border-purple-600 focus:ring-1 focus:ring-purple-600 outline-none transition-all resize-none"
                 ></textarea>
               </div>
 
-              <div className="flex gap-3 pt-3 mt-2 border-t border-slate-200">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="btn btn-secondary flex-1 p-3 text-sm font-semibold"
+                  className="px-5 py-3 rounded-xl bg-white hover:bg-zinc-50 border border-zinc-300 text-black font-semibold text-sm transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn btn-primary flex-1 p-3 text-sm font-bold shadow-lg shadow-brand-500/20"
+                  className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md shadow-purple-600/25 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
                 >
                   {isSubmitting ? "Saving..." : "Save Contact"}
                 </button>

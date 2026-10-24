@@ -44,7 +44,7 @@ export default function SignupPage() {
       const token = data.access_token;
       document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Lax`;
       localStorage.setItem("token", token);
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch (err: any) {
       setError(err.message || "Error creating account. Please try again.");
     } finally {

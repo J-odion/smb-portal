@@ -35,6 +35,13 @@ export declare class TenantController {
         schema: import("mongoose").Schema;
         __v: number;
     }>;
+    updateProfile(req: any, body: any): Promise<(import("mongoose").Document<unknown, {}, import("../schemas/index.js").Tenant, {}, import("mongoose").DefaultSchemaOptions> & import("../schemas/index.js").Tenant & Required<{
+        _id: import("mongoose").Types.ObjectId;
+    }> & {
+        __v: number;
+    } & {
+        id: string;
+    }) | null>;
     updateIndustry(req: any, industry: string): Promise<(import("mongoose").Document<unknown, {}, import("../schemas/index.js").Tenant, {}, import("mongoose").DefaultSchemaOptions> & import("../schemas/index.js").Tenant & Required<{
         _id: import("mongoose").Types.ObjectId;
     }> & {
